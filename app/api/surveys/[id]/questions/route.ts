@@ -14,6 +14,7 @@ type QuestionInput = {
 async function checkSurveyAccess(surveyId: string, userId: string, role: string) {
   const survey = await prisma.survey.findUnique({ where: { id: surveyId } });
   if (!survey) return null;
+  if (role === "super") return survey;
   if (role !== "admin" && survey.userId !== userId) return null;
   return survey;
 }
