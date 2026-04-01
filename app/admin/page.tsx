@@ -153,6 +153,8 @@ export default function SuperAdminDashboard() {
             <svg viewBox="0 0 200 200" className="w-44 h-44 shrink-0">
               {stats.industryDistribution.length === 0 ? (
                 <circle cx={100} cy={100} r={80} fill="#F3F4F6" />
+              ) : stats.industryDistribution.length === 1 ? (
+                <circle cx={100} cy={100} r={80} fill={PIE_COLORS[0]} />
               ) : (
                 (() => {
                   let cum = 0;

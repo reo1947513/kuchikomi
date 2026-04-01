@@ -4,17 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const items = [
-  { href: "/admin", label: "ダッシュボード" },
-  { href: "/admin/shops", label: "ショップ管理" },
-  { href: "/admin/agencies", label: "代理店管理" },
-  { href: "/admin/industries", label: "業種管理" },
+  { href: "/dashboard/surveys", label: "アンケート" },
+  { href: "/dashboard/settings", label: "設定" },
 ];
 
-export default function AdminNav() {
+export default function DashboardNav() {
   const pathname = usePathname();
   return (
     <div className="bg-white border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-6 flex gap-0">
+      <div className="max-w-4xl mx-auto px-6 flex gap-0">
         {items.map((item) => (
           <Link
             key={item.href}

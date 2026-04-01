@@ -14,6 +14,13 @@ model Agency {
   users     User[]
 }
 
+model Industry {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
 model User {
   id           String   @id @default(cuid())
   email        String?  @unique
