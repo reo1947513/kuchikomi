@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import ChatMessage from "@/components/ChatMessage";
 
 interface Choice {
@@ -40,7 +41,7 @@ type Phase =
   | { type: "questioning"; questionIndex: number }
   | { type: "text_input"; questionIndex: number }
   | { type: "generating" }
-  | { type: "done"; reviewText: string; googleBusinessUrl: string | null }
+  | { type: "done"; reviewText: string; googleBusinessUrl: string | null; completionMessage: string | null }
   | { type: "error"; message: string };
 
 export default function SurveyPage({
@@ -56,6 +57,7 @@ export default function SurveyPage({
   const [textInput, setTextInput] = useState("");
   const [answeredCount, setAnsweredCount] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [reviewEditText, setReviewEditText] = useState("");
 
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -193,13 +195,27 @@ export default function SurveyPage({
         return;
       }
 
-      const data: { reviewText: string; googleBusinessUrl: string | null } =
-        await res.json();
+      const data: {
+        reviewText: string;
+        googleBusinessUrl: string | null;
+        completionMessage: string | null;
+      } = await res.json();
 
+      // Add completionMessage as a bot message if present
+      if (data.completionMessage) {
+        const completionMsg: Message = {
+          role: "bot",
+          text: data.completionMessage,
+        };
+        setMessages((prev) => [...prev, completionMsg]);
+      }
+
+      setReviewEditText(data.reviewText);
       setPhase({
         type: "done",
         reviewText: data.reviewText,
         googleBusinessUrl: data.googleBusinessUrl,
+        completionMessage: data.completionMessage ?? null,
       });
     } catch {
       setPhase({ type: "error", message: "口コミの生成に失敗しました。" });
@@ -219,15 +235,15 @@ export default function SurveyPage({
     await submitAnswer(qi, undefined, val);
   }
 
-  async function copyReview(text: string) {
+  async function copyReview() {
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(reviewEditText);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
       // fallback for older browsers
       const el = document.createElement("textarea");
-      el.value = text;
+      el.value = reviewEditText;
       document.body.appendChild(el);
       el.select();
       document.execCommand("copy");
@@ -235,6 +251,17 @@ export default function SurveyPage({
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
+  }
+
+  async function handleGooglePost(url: string) {
+    // copy the current edited text to clipboard
+    try {
+      await navigator.clipboard.writeText(reviewEditText);
+    } catch {
+      // fallback
+    }
+    // open Google Business URL
+    window.open(url, "_blank");
   }
 
   const progressPercent =
@@ -353,17 +380,24 @@ export default function SurveyPage({
                   生成された口コミ文章
                 </span>
               </div>
-              <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">
-                {phase.reviewText}
+
+              {/* Editable textarea */}
+              <textarea
+                className="w-full min-h-[120px] resize-y rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                value={reviewEditText}
+                onChange={(e) => setReviewEditText(e.target.value)}
+              />
+
+              {/* Character count */}
+              <p className="text-xs text-gray-400 text-right mt-1">
+                {reviewEditText.length}文字
               </p>
             </div>
 
             <div className="flex flex-col gap-3 mt-4">
               {phase.googleBusinessUrl && (
-                <a
-                  href={phase.googleBusinessUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={() => handleGooglePost(phase.googleBusinessUrl!)}
                   className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl text-white text-sm font-semibold shadow-sm transition-opacity hover:opacity-90"
                   style={{ backgroundColor: "#4285F4" }}
                 >
@@ -374,12 +408,12 @@ export default function SurveyPage({
                   >
                     <path d="M12 11h8.533c.044.385.067.78.067 1.184 0 2.734-.98 5.047-2.683 6.61C16.32 20.218 14.32 21 12 21c-4.97 0-9-4.03-9-9s4.03-9 9-9c2.43 0 4.467.884 6.025 2.33L16.5 6.852C15.346 5.77 13.753 5.1 12 5.1 7.965 5.1 4.7 8.365 4.7 12s3.265 6.9 7.3 6.9c3.486 0 5.93-2.328 6.36-5.4H12v-2.5Z" />
                   </svg>
-                  Googleに投稿する
-                </a>
+                  Google Mapで口コミを投稿
+                </button>
               )}
 
               <button
-                onClick={() => copyReview(phase.reviewText)}
+                onClick={copyReview}
                 className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl text-gray-700 text-sm font-semibold shadow-sm border border-gray-200 bg-white transition-colors hover:bg-gray-50"
               >
                 {copied ? (
@@ -416,6 +450,15 @@ export default function SurveyPage({
                   </>
                 )}
               </button>
+
+              <div className="text-center">
+                <Link
+                  href={`/survey/${surveyId}`}
+                  className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+                >
+                  アンケートへ戻る
+                </Link>
+              </div>
             </div>
           </div>
         )}
