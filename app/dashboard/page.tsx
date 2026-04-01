@@ -19,9 +19,10 @@ async function fetchSurveys(): Promise<Survey[]> {
 
   if (!token) return [];
 
+  // Use NEXT_PUBLIC_APP_URL if set, otherwise fall back to localhost:3000
   const baseUrl =
-    process.env.NEXT_PUBLIC_APP_URL ??
-    `http://localhost:${process.env.PORT ?? 3000}`;
+    (process.env["NEXT_PUBLIC_APP_URL"] as string | undefined) ??
+    `http://localhost:${(process.env["PORT"] as string | undefined) ?? "3000"}`;
 
   try {
     const res = await fetch(`${baseUrl}/api/surveys`, {
