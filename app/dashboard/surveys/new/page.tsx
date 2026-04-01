@@ -4,6 +4,24 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+const DEFAULT_PROMPT_TEMPLATE = `以下のアンケート回答をもとに、Googleビジネスプロフィールに投稿する口コミ文章を作成してください。
+
+口調: {tone}
+キーワード（可能であれば含める）: {keywords}
+
+アンケート回答:
+{formattedResponses}
+
+ガイドライン:
+- 100文字程度の自然な文章
+- 実際のお客様が書いたような口語的な表現
+- 冒頭の表現を毎回変える
+- アンケート回答に基づく具体的な内容のみ（架空の情報は禁止）
+- 文章構成を毎回変える
+- ポジティブな内容（ネガティブな回答は温かく改善点として表現）
+
+口コミ文章のみ出力してください。`;
+
 type Choice = {
   text: string;
   order: number;
@@ -15,6 +33,12 @@ type Question = {
   order: number;
   type: "choice" | "text";
   choices: Choice[];
+  isRandom: boolean;
+};
+
+type Tone = {
+  id: string;
+  name: string;
 };
 
 const DEFAULT_CHOICES: Choice[] = [
@@ -31,7 +55,13 @@ function newQuestion(order: number): Question {
     order,
     type: "choice",
     choices: DEFAULT_CHOICES.map((c) => ({ ...c })),
+    isRandom: false,
   };
+}
+
+let toneCounter = 0;
+function newToneId() {
+  return `tone-${++toneCounter}`;
 }
 
 export default function NewSurveyPage() {
@@ -39,10 +69,38 @@ export default function NewSurveyPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Basic info
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [googleBusinessUrl, setGoogleBusinessUrl] = useState("");
+  const [openingMessage, setOpeningMessage] = useState("");
+  const [closingMessage, setClosingMessage] = useState("");
+  const [completionMessage, setCompletionMessage] = useState("");
+  const [keywords, setKeywords] = useState("");
+  const [monthlyReviewLimit, setMonthlyReviewLimit] = useState(100);
+
+  // AI settings
+  const [promptTemplate, setPromptTemplate] = useState(DEFAULT_PROMPT_TEMPLATE);
+  const [tones, setTones] = useState<Tone[]>([
+    { id: newToneId(), name: "敬体（です・ます調）" },
+    { id: newToneId(), name: "情緒的で感情豊かな表現" },
+  ]);
+
+  // Questions
   const [questions, setQuestions] = useState<Question[]>([newQuestion(0)]);
+
+  // ---- Tone helpers ----
+  const addTone = () => {
+    setTones((prev) => [...prev, { id: newToneId(), name: "" }]);
+  };
+
+  const removeTone = (id: string) => {
+    setTones((prev) => prev.filter((t) => t.id !== id));
+  };
+
+  const updateToneName = (id: string, name: string) => {
+    setTones((prev) => prev.map((t) => (t.id === id ? { ...t, name } : t)));
+  };
 
   // ---- Question helpers ----
   const addQuestion = () => {
@@ -62,7 +120,6 @@ export default function NewSurveyPage() {
       prev.map((q, i) => {
         if (i !== idx) return q;
         const updated = { ...q, ...patch };
-        // When switching to "choice" type, pre-populate defaults if empty
         if (patch.type === "choice" && q.type !== "choice" && updated.choices.length === 0) {
           updated.choices = DEFAULT_CHOICES.map((c) => ({ ...c }));
         }
@@ -78,10 +135,7 @@ export default function NewSurveyPage() {
         if (i !== qIdx) return q;
         return {
           ...q,
-          choices: [
-            ...q.choices,
-            { text: "", order: q.choices.length, score: 0 },
-          ],
+          choices: [...q.choices, { text: "", order: q.choices.length, score: 0 }],
         };
       })
     );
@@ -107,9 +161,7 @@ export default function NewSurveyPage() {
         if (i !== qIdx) return q;
         return {
           ...q,
-          choices: q.choices.map((c, ci) =>
-            ci === cIdx ? { ...c, ...patch } : c
-          ),
+          choices: q.choices.map((c, ci) => (ci === cIdx ? { ...c, ...patch } : c)),
         };
       })
     );
@@ -140,6 +192,15 @@ export default function NewSurveyPage() {
           title: title.trim(),
           description: description.trim(),
           googleBusinessUrl: googleBusinessUrl.trim(),
+          openingMessage: openingMessage.trim(),
+          closingMessage: closingMessage.trim(),
+          completionMessage: completionMessage.trim(),
+          keywords: keywords.trim(),
+          monthlyReviewLimit,
+          promptTemplate: promptTemplate.trim(),
+          tones: tones
+            .filter((t) => t.name.trim())
+            .map((t, i) => ({ name: t.name.trim(), order: i, isActive: true })),
           questions,
         }),
       });
@@ -163,28 +224,15 @@ export default function NewSurveyPage() {
       {/* Top bar */}
       <header className="bg-[#F5C518] shadow-sm">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link
-            href="/dashboard"
-            className="text-xl font-black text-gray-900 tracking-tight"
-          >
+          <Link href="/dashboard" className="text-xl font-black text-gray-900 tracking-tight">
             クチコミファースト
           </Link>
           <Link
             href="/dashboard"
             className="flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:text-gray-900"
           >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
             ダッシュボードへ戻る
           </Link>
@@ -194,9 +242,7 @@ export default function NewSurveyPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">新規アンケート作成</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            アンケートの基本情報と質問を設定してください
-          </p>
+          <p className="text-sm text-gray-500 mt-1">アンケートの基本情報と質問を設定してください</p>
         </div>
 
         {error && (
@@ -206,16 +252,13 @@ export default function NewSurveyPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Survey Info */}
+          {/* ===== 基本情報 ===== */}
           <div className="bg-white rounded-xl shadow p-6 space-y-4">
-            <h2 className="text-base font-semibold text-gray-800">
-              基本情報
-            </h2>
+            <h2 className="text-base font-semibold text-gray-800">基本情報</h2>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                アンケートタイトル
-                <span className="text-red-500 ml-1">*</span>
+                アンケートタイトル<span className="text-red-500 ml-1">*</span>
               </label>
               <input
                 type="text"
@@ -227,9 +270,7 @@ export default function NewSurveyPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                説明文
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">説明文</label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -251,13 +292,129 @@ export default function NewSurveyPage() {
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent"
               />
             </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">開始挨拶文</label>
+              <textarea
+                value={openingMessage}
+                onChange={(e) => setOpeningMessage(e.target.value)}
+                rows={3}
+                placeholder="アンケート開始時に表示するメッセージ（任意）"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent resize-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">終了挨拶文</label>
+              <textarea
+                value={closingMessage}
+                onChange={(e) => setClosingMessage(e.target.value)}
+                rows={3}
+                placeholder="アンケート終了時に表示するメッセージ（任意）"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent resize-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                レビュー確認メッセージ
+              </label>
+              <p className="text-xs text-gray-400 mb-1">アンケート完了後に口コミ画面で表示するメッセージ</p>
+              <textarea
+                value={completionMessage}
+                onChange={(e) => setCompletionMessage(e.target.value)}
+                rows={3}
+                placeholder="口コミ投稿を促すメッセージ（任意）"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent resize-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">キーワード</label>
+              <input
+                type="text"
+                value={keywords}
+                onChange={(e) => setKeywords(e.target.value)}
+                placeholder="例：親切,丁寧,スピーディ"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Googleビジネス月間レビュー制限
+              </label>
+              <input
+                type="number"
+                min={0}
+                value={monthlyReviewLimit}
+                onChange={(e) => setMonthlyReviewLimit(Number(e.target.value))}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent"
+              />
+            </div>
           </div>
 
-          {/* Questions */}
+          {/* ===== AI設定 ===== */}
+          <div className="bg-white rounded-xl shadow p-6 space-y-4">
+            <h2 className="text-base font-semibold text-gray-800">AI設定</h2>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                AIプロンプトテンプレート
+              </label>
+              <p className="text-xs text-gray-400 mb-1">
+                変数: &#123;tone&#125;, &#123;keywords&#125;, &#123;formattedResponses&#125;
+              </p>
+              <textarea
+                value={promptTemplate}
+                onChange={(e) => setPromptTemplate(e.target.value)}
+                rows={8}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent resize-y font-mono"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">口調設定</label>
+              <div className="space-y-2">
+                {tones.map((tone) => (
+                  <div key={tone.id} className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={tone.name}
+                      onChange={(e) => updateToneName(tone.id, e.target.value)}
+                      placeholder="例：丁寧な敬体"
+                      className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeTone(tone.id)}
+                      disabled={tones.length <= 1}
+                      className="text-gray-300 hover:text-red-400 transition-colors disabled:opacity-30"
+                      title="削除"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={addTone}
+                className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#D4A017] transition-colors mt-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                口調を追加
+              </button>
+            </div>
+          </div>
+
+          {/* ===== Questions ===== */}
           <div className="space-y-4">
-            <h2 className="text-base font-semibold text-gray-800">
-              質問リスト
-            </h2>
+            <h2 className="text-base font-semibold text-gray-800">質問リスト</h2>
 
             {questions.map((question, qIdx) => (
               <QuestionBlock
@@ -278,18 +435,8 @@ export default function NewSurveyPage() {
               onClick={addQuestion}
               className="w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:border-[#F5C518] hover:text-gray-700 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
             >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
               質問を追加する
             </button>
@@ -353,18 +500,8 @@ function QuestionBlock({
             className="text-gray-400 hover:text-red-500 transition-colors"
             title="この質問を削除"
           >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         )}
@@ -386,9 +523,7 @@ function QuestionBlock({
 
       {/* Question type */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          回答タイプ
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">回答タイプ</label>
         <div className="flex gap-3">
           <label className="flex items-center gap-2 cursor-pointer">
             <input
@@ -415,12 +550,23 @@ function QuestionBlock({
         </div>
       </div>
 
+      {/* isRandom checkbox */}
+      <div>
+        <label className="flex items-center gap-2 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={question.isRandom}
+            onChange={(e) => onUpdate({ isRandom: e.target.checked })}
+            className="rounded border-gray-300 text-[#F5C518] focus:ring-[#F5C518]"
+          />
+          <span className="text-sm text-gray-700">ランダム表示</span>
+        </label>
+      </div>
+
       {/* Choices (only for "choice" type) */}
       {question.type === "choice" && (
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            選択肢
-          </label>
+          <label className="block text-sm font-medium text-gray-700">選択肢</label>
           {question.choices.map((choice, cIdx) => (
             <div key={cIdx} className="flex items-center gap-2">
               <input
@@ -431,14 +577,10 @@ function QuestionBlock({
                 className="flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent"
               />
               <div className="flex items-center gap-1.5 shrink-0">
-                <label className="text-xs text-gray-500 whitespace-nowrap">
-                  スコア
-                </label>
+                <label className="text-xs text-gray-500 whitespace-nowrap">スコア</label>
                 <select
                   value={choice.score}
-                  onChange={(e) =>
-                    onUpdateChoice(cIdx, { score: Number(e.target.value) })
-                  }
+                  onChange={(e) => onUpdateChoice(cIdx, { score: Number(e.target.value) })}
                   className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent bg-white"
                 >
                   <option value={2}>+2（非常に満足）</option>
@@ -454,18 +596,8 @@ function QuestionBlock({
                 disabled={question.choices.length <= 1}
                 className="text-gray-300 hover:text-red-400 transition-colors disabled:opacity-30"
               >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
@@ -475,18 +607,8 @@ function QuestionBlock({
             onClick={onAddChoice}
             className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#D4A017] transition-colors mt-1"
           >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4v16m8-8H4"
-              />
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
             選択肢を追加
           </button>

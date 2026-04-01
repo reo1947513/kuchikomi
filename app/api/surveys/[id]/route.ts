@@ -19,6 +19,7 @@ export async function GET(request: NextRequest, { params }: Params) {
         },
         orderBy: { order: "asc" },
       },
+      tones: { orderBy: { order: "asc" } },
       user: { select: { id: true, name: true, email: true } },
     },
   });
@@ -27,7 +28,7 @@ export async function GET(request: NextRequest, { params }: Params) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  if (session.role !== "admin" && survey.userId !== session.userId) {
+  if (session.role !== "super" && session.role !== "admin" && survey.userId !== session.userId) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -48,15 +49,24 @@ export async function PUT(request: NextRequest, { params }: Params) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  if (session.role !== "admin" && survey.userId !== session.userId) {
+  if (session.role !== "super" && session.role !== "admin" && survey.userId !== session.userId) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   let body: {
     title?: string;
-    description?: string;
+    openingMessage?: string;
+    closingMessage?: string;
+    completionMessage?: string;
+    keywords?: string;
+    promptTemplate?: string;
     googleBusinessUrl?: string;
+    logoUrl?: string;
+    couponEnabled?: boolean;
+    maxRandomQuestions?: number;
+    monthlyReviewLimit?: number;
     isActive?: boolean;
+    tones?: Array<{ name: string; order: number; isActive?: boolean }>;
   };
 
   try {
@@ -65,23 +75,59 @@ export async function PUT(request: NextRequest, { params }: Params) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { title, description, googleBusinessUrl, isActive } = body;
+  const {
+    title,
+    openingMessage,
+    closingMessage,
+    completionMessage,
+    keywords,
+    promptTemplate,
+    googleBusinessUrl,
+    logoUrl,
+    couponEnabled,
+    maxRandomQuestions,
+    monthlyReviewLimit,
+    isActive,
+    tones,
+  } = body;
+
+  // If tones are provided, replace all existing tones
+  if (tones !== undefined) {
+    await prisma.tone.deleteMany({ where: { surveyId: params.id } });
+  }
 
   const updated = await prisma.survey.update({
     where: { id: params.id },
     data: {
       ...(title !== undefined && { title: title.trim() }),
-      ...(description !== undefined && { description: description.trim() }),
-      ...(googleBusinessUrl !== undefined && {
-        googleBusinessUrl: googleBusinessUrl.trim(),
-      }),
+      ...(openingMessage !== undefined && { openingMessage: openingMessage.trim() || null }),
+      ...(closingMessage !== undefined && { closingMessage: closingMessage.trim() || null }),
+      ...(completionMessage !== undefined && { completionMessage: completionMessage.trim() || null }),
+      ...(keywords !== undefined && { keywords: keywords.trim() || null }),
+      ...(promptTemplate !== undefined && { promptTemplate: promptTemplate.trim() || null }),
+      ...(googleBusinessUrl !== undefined && { googleBusinessUrl: googleBusinessUrl.trim() || null }),
+      ...(logoUrl !== undefined && { logoUrl: logoUrl.trim() || null }),
+      ...(couponEnabled !== undefined && { couponEnabled }),
+      ...(maxRandomQuestions !== undefined && { maxRandomQuestions }),
+      ...(monthlyReviewLimit !== undefined && { monthlyReviewLimit }),
       ...(isActive !== undefined && { isActive }),
+      ...(tones !== undefined && {
+        tones: {
+          create: tones.map((t) => ({
+            name: t.name,
+            order: t.order,
+            isActive: t.isActive ?? true,
+          })),
+        },
+      }),
     },
     include: {
       questions: {
         include: { choices: { orderBy: { order: "asc" } } },
         orderBy: { order: "asc" },
       },
+      tones: { orderBy: { order: "asc" } },
+      user: { select: { id: true, name: true, email: true } },
     },
   });
 
@@ -102,7 +148,7 @@ export async function DELETE(request: NextRequest, { params }: Params) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  if (session.role !== "admin" && survey.userId !== session.userId) {
+  if (session.role !== "super" && session.role !== "admin" && survey.userId !== session.userId) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
