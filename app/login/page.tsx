@@ -36,7 +36,11 @@ export default function LoginPage() {
         return;
       }
 
-      router.push("/dashboard");
+      if (json.user?.role === "super") {
+        router.push("/admin");
+      } else {
+        router.push("/dashboard");
+      }
     } catch {
       setServerError("サーバーに接続できませんでした。しばらくしてから再度お試しください。");
     }

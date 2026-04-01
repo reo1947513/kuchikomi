@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 
 // ---- Types ----
 type Agency = {
@@ -46,6 +47,7 @@ const emptyForm = (): FormData => ({
 });
 
 export default function AdminPage() {
+  const router = useRouter();
   const [shops, setShops] = useState<Shop[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -54,6 +56,18 @@ export default function AdminPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [agencies, setAgencies] = useState<Agency[]>([]);
+
+  // Auth check: only super admin
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.role !== "super") {
+          router.replace("/dashboard");
+        }
+      })
+      .catch(() => router.replace("/login"));
+  }, [router]);
 
   // Modal state
   const [modalOpen, setModalOpen] = useState(false);
@@ -207,9 +221,14 @@ export default function AdminPage() {
       <header className="bg-[#F5C518] shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <span className="text-xl font-black text-gray-900 tracking-tight">クチコミPlus</span>
-          <span className="inline-flex items-center px-3 py-1 rounded-full bg-gray-900 text-white text-xs font-semibold">
-            スーパー管理者
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-gray-900 text-white text-xs font-semibold">
+              スーパー管理者
+            </span>
+            <a href="/api/auth/logout" className="text-sm text-gray-700 hover:text-gray-900 underline">
+              ログアウト
+            </a>
+          </div>
         </div>
       </header>
 

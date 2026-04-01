@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import SurveyListClient from "./SurveyListClient";
+import { verifyToken } from "@/lib/auth";
 
 type Survey = {
   id: string;
@@ -13,22 +14,14 @@ type Survey = {
   user?: { name: string };
 };
 
-async function fetchSurveys(): Promise<Survey[]> {
-  const cookieStore = cookies();
-  const token = cookieStore.get("auth_token")?.value;
-
-  if (!token) return [];
-
-  // Use NEXT_PUBLIC_APP_URL if set, otherwise fall back to localhost:3000
+async function fetchSurveys(token: string): Promise<Survey[]> {
   const baseUrl =
     (process.env["NEXT_PUBLIC_APP_URL"] as string | undefined) ??
     `http://localhost:${(process.env["PORT"] as string | undefined) ?? "3000"}`;
 
   try {
     const res = await fetch(`${baseUrl}/api/surveys`, {
-      headers: {
-        Cookie: `auth_token=${token}`,
-      },
+      headers: { Cookie: `auth_token=${token}` },
       cache: "no-store",
     });
     if (!res.ok) return [];
@@ -42,11 +35,15 @@ export default async function DashboardPage() {
   const cookieStore = cookies();
   const token = cookieStore.get("auth_token")?.value;
 
-  if (!token) {
-    redirect("/login");
-  }
+  if (!token) redirect("/login");
 
-  const surveys = await fetchSurveys();
+  const session = verifyToken(token);
+  if (!session) redirect("/login");
+
+  // スーパー管理者はショップ管理画面へ
+  if (session.role === "super") redirect("/admin");
+
+  const surveys = await fetchSurveys(token);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -59,8 +56,8 @@ export default async function DashboardPage() {
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm font-medium text-gray-700">
-              管理コンソール
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-white/60 text-xs font-semibold text-gray-700">
+              管理者
             </span>
             <Link
               href="/api/auth/logout"
