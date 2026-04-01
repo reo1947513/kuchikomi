@@ -15,7 +15,7 @@ type Survey = {
 
 async function fetchSurveys(): Promise<Survey[]> {
   const cookieStore = cookies();
-  const token = cookieStore.get("token")?.value;
+  const token = cookieStore.get("auth_token")?.value;
 
   if (!token) return [];
 
@@ -27,7 +27,7 @@ async function fetchSurveys(): Promise<Survey[]> {
   try {
     const res = await fetch(`${baseUrl}/api/surveys`, {
       headers: {
-        Cookie: `token=${token}`,
+        Cookie: `auth_token=${token}`,
       },
       cache: "no-store",
     });
@@ -40,7 +40,7 @@ async function fetchSurveys(): Promise<Survey[]> {
 
 export default async function DashboardPage() {
   const cookieStore = cookies();
-  const token = cookieStore.get("token")?.value;
+  const token = cookieStore.get("auth_token")?.value;
 
   if (!token) {
     redirect("/login");
