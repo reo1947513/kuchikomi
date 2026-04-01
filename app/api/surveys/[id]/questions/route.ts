@@ -21,7 +21,7 @@ async function checkSurveyAccess(surveyId: string, userId: string, role: string)
 
 // POST: add a single question to the survey
 export async function POST(request: NextRequest, { params }: Params) {
-  const session = await getSession(request);
+  const session = getSession();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest, { params }: Params) {
 
 // PUT: replace ALL questions for the survey (delete existing, create new)
 export async function PUT(request: NextRequest, { params }: Params) {
-  const session = await getSession(request);
+  const session = getSession();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

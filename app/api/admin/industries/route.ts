@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
-  const session = getSession(req);
+  const session = getSession();
   if (!session || session.role !== "super") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const session = getSession(req);
+  const session = getSession();
   if (!session || session.role !== "super") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

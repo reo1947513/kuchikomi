@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
-  const session = getSession(req);
+  const session = getSession();
   if (!session || session.role !== "super") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -23,7 +23,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
-  const session = getSession(req);
+  const session = getSession();
   if (!session || session.role !== "super") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

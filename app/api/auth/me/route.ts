@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
 
 export async function GET(request: NextRequest) {
-  const session = getSession(request);
+  const session = getSession();
 
   if (!session) {
     return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
-  const session = getSession(request);
+  const session = getSession();
   if (!session) {
     return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
   }

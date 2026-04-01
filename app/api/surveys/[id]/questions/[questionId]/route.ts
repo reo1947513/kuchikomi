@@ -5,7 +5,7 @@ import { prisma } from "@/lib/db";
 type Params = { params: { id: string; questionId: string } };
 
 export async function DELETE(request: NextRequest, { params }: Params) {
-  const session = await getSession(request);
+  const session = getSession();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

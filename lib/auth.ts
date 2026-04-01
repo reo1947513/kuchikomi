@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { cookies } from "next/headers";
 
 const JWT_SECRET = process.env.JWT_SECRET || "fallback-secret-change-in-production";
 
@@ -15,19 +16,9 @@ export function verifyToken(token: string): { userId: string; role: string } | n
   }
 }
 
-export function getSession(request: Request): { userId: string; role: string } | null {
-  const cookieHeader = request.headers.get("cookie");
-  if (!cookieHeader) return null;
-
-  const cookies = Object.fromEntries(
-    cookieHeader.split(";").map((c) => {
-      const [key, ...rest] = c.trim().split("=");
-      return [key.trim(), rest.join("=")];
-    })
-  );
-
-  const token = cookies["auth_token"];
+// Use Next.js cookies() API — works reliably in route handlers and server components
+export function getSession(): { userId: string; role: string } | null {
+  const token = cookies().get("auth_token")?.value;
   if (!token) return null;
-
   return verifyToken(token);
 }

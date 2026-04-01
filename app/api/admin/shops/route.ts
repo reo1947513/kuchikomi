@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
 
 export async function GET(request: NextRequest) {
-  const session = await getSession(request);
+  const session = getSession();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const session = await getSession(request);
+  const session = getSession();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
