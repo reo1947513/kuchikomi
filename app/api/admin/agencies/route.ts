@@ -15,11 +15,20 @@ export async function GET(request: NextRequest) {
   const agencies = await prisma.agency.findMany({
     include: {
       _count: { select: { users: true } },
+      users: { select: { _count: { select: { surveys: true } } } },
     },
-    orderBy: { createdAt: "desc" },
+    orderBy: { name: "asc" },
   });
 
-  return NextResponse.json(agencies);
+  return NextResponse.json(
+    agencies.map((a) => ({
+      id: a.id,
+      name: a.name,
+      createdAt: a.createdAt,
+      userCount: a._count.users,
+      shopCount: a.users.reduce((sum, u) => sum + u._count.surveys, 0),
+    }))
+  );
 }
 
 export async function POST(request: NextRequest) {

@@ -1,546 +1,195 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-// ---- Types ----
-type Agency = {
-  id: string;
-  name: string;
+type Stats = {
+  totalShops: number;
+  totalReviews: number;
+  monthlyReviews: { month: string; count: number }[];
+  industryDistribution: { industry: string; count: number }[];
 };
 
-type Shop = {
-  id: string;
-  shopName: string;
-  email: string;
-  loginId: string;
-  address?: string | null;
-  industry?: string | null;
-  agencyId?: string | null;
-  agencyName?: string | null;
-  monthlyReviewLimit: number;
-};
+const PIE_COLORS = ["#EF4444", "#F5C518", "#F97316", "#FBBF24", "#FB923C", "#FCD34D"];
 
-type FormData = {
-  shopName: string;
-  email: string;
-  loginId: string;
-  password: string;
-  address: string;
-  industry: string;
-  agencyId: string;
-  monthlyReviewLimit: number;
-};
-
-const INDUSTRIES = ["飲食店", "美容・サロン", "医療・クリニック", "整体・マッサージ", "その他"];
-const PAGE_SIZE = 20;
-
-const emptyForm = (): FormData => ({
-  shopName: "",
-  email: "",
-  loginId: "",
-  password: "",
-  address: "",
-  industry: "",
-  agencyId: "",
-  monthlyReviewLimit: 100,
-});
-
-export default function AdminPage() {
-  const router = useRouter();
-  const [shops, setShops] = useState<Shop[]>([]);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const [agencies, setAgencies] = useState<Agency[]>([]);
-
-  // Auth check: only super admin
-  useEffect(() => {
-    fetch("/api/auth/me")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.role !== "super") {
-          router.replace("/dashboard");
-        }
-      })
-      .catch(() => router.replace("/login"));
-  }, [router]);
-
-  // Modal state
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editingShop, setEditingShop] = useState<Shop | null>(null);
-  const [formData, setFormData] = useState<FormData>(emptyForm());
-  const [formError, setFormError] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
-
-  // ---- Fetch agencies once ----
-  useEffect(() => {
-    fetch("/api/admin/agencies")
-      .then((r) => r.json())
-      .then((data: Agency[]) => setAgencies(data))
-      .catch(() => {});
-  }, []);
-
-  // ---- Fetch shops ----
-  const fetchShops = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const params = new URLSearchParams({
-        page: String(page),
-        limit: String(PAGE_SIZE),
-        ...(searchQuery.trim() ? { search: searchQuery.trim() } : {}),
-      });
-      const res = await fetch(`/api/admin/shops?${params}`);
-      if (!res.ok) throw new Error("取得に失敗しました");
-      const data = await res.json();
-      setShops(Array.isArray(data) ? data : data.shops ?? []);
-      setTotal(typeof data.total === "number" ? data.total : Array.isArray(data) ? data.length : 0);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "エラーが発生しました");
-    } finally {
-      setLoading(false);
-    }
-  }, [page, searchQuery]);
-
-  useEffect(() => {
-    fetchShops();
-  }, [fetchShops]);
-
-  // Reset page on search change
-  const handleSearchChange = (v: string) => {
-    setSearchQuery(v);
-    setPage(1);
-  };
-
-  // ---- Open modal ----
-  const openAdd = () => {
-    setEditingShop(null);
-    setFormData(emptyForm());
-    setFormError(null);
-    setModalOpen(true);
-  };
-
-  const openEdit = (shop: Shop) => {
-    setEditingShop(shop);
-    setFormData({
-      shopName: shop.shopName,
-      email: shop.email,
-      loginId: shop.loginId,
-      password: "",
-      address: shop.address ?? "",
-      industry: shop.industry ?? "",
-      agencyId: shop.agencyId ?? "",
-      monthlyReviewLimit: shop.monthlyReviewLimit,
-    });
-    setFormError(null);
-    setModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setModalOpen(false);
-    setEditingShop(null);
-  };
-
-  // ---- Form submit ----
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormError(null);
-
-    if (!formData.shopName.trim()) { setFormError("ショップ名を入力してください"); return; }
-    if (!formData.email.trim()) { setFormError("メールアドレスを入力してください"); return; }
-    if (!formData.loginId.trim()) { setFormError("ログインIDを入力してください"); return; }
-    if (!editingShop && !formData.password.trim()) { setFormError("パスワードを入力してください"); return; }
-
-    setSubmitting(true);
-    try {
-      const payload: Record<string, unknown> = {
-        shopName: formData.shopName.trim(),
-        email: formData.email.trim(),
-        loginId: formData.loginId.trim(),
-        address: formData.address.trim(),
-        industry: formData.industry,
-        agencyId: formData.agencyId || null,
-        monthlyReviewLimit: formData.monthlyReviewLimit,
-      };
-      if (formData.password.trim()) payload.password = formData.password.trim();
-
-      let res: Response;
-      if (editingShop) {
-        res = await fetch(`/api/admin/shops/${editingShop.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-      } else {
-        res = await fetch("/api/admin/shops", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-      }
-
-      if (!res.ok) {
-        const d = await res.json().catch(() => ({}));
-        throw new Error(d.error ?? "保存に失敗しました");
-      }
-
-      closeModal();
-      fetchShops();
-    } catch (e) {
-      setFormError(e instanceof Error ? e.message : "エラーが発生しました");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  // ---- Delete ----
-  const handleDelete = async (shop: Shop) => {
-    if (!confirm(`「${shop.shopName}」を削除してもよろしいですか？`)) return;
-    try {
-      const res = await fetch(`/api/admin/shops/${shop.id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("削除に失敗しました");
-      fetchShops();
-    } catch (e) {
-      alert(e instanceof Error ? e.message : "削除に失敗しました");
-    }
-  };
-
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-
-  const setField = <K extends keyof FormData>(key: K, value: FormData[K]) => {
-    setFormData((prev) => ({ ...prev, [key]: value }));
-  };
-
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Top bar */}
-      <header className="bg-[#F5C518] shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <span className="text-xl font-black text-gray-900 tracking-tight">クチコミPlus</span>
-          <div className="flex items-center gap-3">
-            <span className="inline-flex items-center px-3 py-1 rounded-full bg-gray-900 text-white text-xs font-semibold">
-              スーパー管理者
-            </span>
-            <a href="/api/auth/logout" className="text-sm text-gray-700 hover:text-gray-900 underline">
-              ログアウト
-            </a>
-          </div>
-        </div>
-      </header>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Page header */}
-        <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">ショップ管理</h1>
-            <p className="text-sm text-gray-500 mt-0.5">全{total}件</p>
-          </div>
-          <button
-            type="button"
-            onClick={openAdd}
-            className="flex items-center gap-2 px-4 py-2 bg-[#F5C518] hover:bg-[#D4A017] text-gray-900 font-semibold rounded-xl shadow transition-colors text-sm"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            新規ショップ追加
-          </button>
-        </div>
-
-        {/* Search */}
-        <div className="mb-4">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            placeholder="ショップ名で検索..."
-            className="w-full max-w-sm border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent"
-          />
-        </div>
-
-        {error && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
-            {error}
-          </div>
-        )}
-
-        {/* Table */}
-        <div className="bg-white rounded-xl shadow overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  <th className="text-left px-4 py-3 font-semibold text-gray-700">ショップ名</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-700">住所</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-700">業種</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-700">代理店</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-700">月間制限</th>
-                  <th className="text-right px-4 py-3 font-semibold text-gray-700">操作</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {loading && (
-                  <tr>
-                    <td colSpan={6} className="text-center py-10 text-gray-400">
-                      読み込み中...
-                    </td>
-                  </tr>
-                )}
-                {!loading && shops.length === 0 && (
-                  <tr>
-                    <td colSpan={6} className="text-center py-10 text-gray-400">
-                      ショップが見つかりません
-                    </td>
-                  </tr>
-                )}
-                {!loading &&
-                  shops.map((shop) => (
-                    <tr key={shop.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-4 py-3">
-                        <div className="font-medium text-gray-900">{shop.shopName}</div>
-                        <div className="text-xs text-gray-400">{shop.email}</div>
-                      </td>
-                      <td className="px-4 py-3 text-gray-600">{shop.address ?? "—"}</td>
-                      <td className="px-4 py-3 text-gray-600">{shop.industry ?? "—"}</td>
-                      <td className="px-4 py-3 text-gray-600">{shop.agencyName ?? "—"}</td>
-                      <td className="px-4 py-3 text-gray-600">{shop.monthlyReviewLimit}</td>
-                      <td className="px-4 py-3 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <button
-                            type="button"
-                            onClick={() => openEdit(shop)}
-                            className="px-3 py-1.5 text-xs font-medium rounded-lg bg-[#F5C518] hover:bg-[#D4A017] text-gray-900 transition-colors"
-                          >
-                            編集
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDelete(shop)}
-                            className="px-3 py-1.5 text-xs font-medium rounded-lg border border-red-200 text-red-500 hover:bg-red-50 transition-colors"
-                          >
-                            削除
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between mt-4">
-            <p className="text-sm text-gray-500">
-              {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, total)} / 全{total}件
-            </p>
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page <= 1}
-                className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors"
-              >
-                前へ
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1)
-                .filter((p) => Math.abs(p - page) <= 2)
-                .map((p) => (
-                  <button
-                    key={p}
-                    type="button"
-                    onClick={() => setPage(p)}
-                    className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
-                      p === page
-                        ? "bg-[#F5C518] text-gray-900 font-semibold"
-                        : "border border-gray-300 hover:bg-gray-50"
-                    }`}
-                  >
-                    {p}
-                  </button>
-                ))}
-              <button
-                type="button"
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page >= totalPages}
-                className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors"
-              >
-                次へ
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* ===== Modal ===== */}
-      {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-black/40"
-            onClick={closeModal}
-          />
-          {/* Modal content */}
-          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white rounded-t-2xl border-b border-gray-100 px-6 py-4 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-gray-900">
-                {editingShop ? "ショップ編集" : "新規ショップ追加"}
-              </h2>
-              <button
-                type="button"
-                onClick={closeModal}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              {formError && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-                  {formError}
-                </div>
-              )}
-
-              <ModalField label="ショップ名" required>
-                <input
-                  type="text"
-                  value={formData.shopName}
-                  onChange={(e) => setField("shopName", e.target.value)}
-                  placeholder="例：美容室サンプル"
-                  className={inputCls}
-                />
-              </ModalField>
-
-              <ModalField label="メールアドレス" required>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setField("email", e.target.value)}
-                  placeholder="shop@example.com"
-                  className={inputCls}
-                />
-              </ModalField>
-
-              <ModalField label="ログインID" required>
-                <input
-                  type="text"
-                  value={formData.loginId}
-                  onChange={(e) => setField("loginId", e.target.value)}
-                  placeholder="AG-XXXXXX"
-                  className={inputCls}
-                />
-              </ModalField>
-
-              <ModalField label={editingShop ? "パスワード（変更する場合のみ）" : "パスワード"} required={!editingShop}>
-                <input
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => setField("password", e.target.value)}
-                  placeholder={editingShop ? "変更しない場合は空白" : "パスワードを入力"}
-                  className={inputCls}
-                />
-              </ModalField>
-
-              <ModalField label="住所">
-                <input
-                  type="text"
-                  value={formData.address}
-                  onChange={(e) => setField("address", e.target.value)}
-                  placeholder="例：東京都渋谷区..."
-                  className={inputCls}
-                />
-              </ModalField>
-
-              <ModalField label="業種">
-                <select
-                  value={formData.industry}
-                  onChange={(e) => setField("industry", e.target.value)}
-                  className={selectCls}
-                >
-                  <option value="">選択してください</option>
-                  {INDUSTRIES.map((ind) => (
-                    <option key={ind} value={ind}>{ind}</option>
-                  ))}
-                </select>
-              </ModalField>
-
-              <ModalField label="代理店">
-                <select
-                  value={formData.agencyId}
-                  onChange={(e) => setField("agencyId", e.target.value)}
-                  className={selectCls}
-                >
-                  <option value="">なし</option>
-                  {agencies.map((a) => (
-                    <option key={a.id} value={a.id}>{a.name}</option>
-                  ))}
-                </select>
-              </ModalField>
-
-              <ModalField label="月間レビュー制限">
-                <input
-                  type="number"
-                  min={0}
-                  value={formData.monthlyReviewLimit}
-                  onChange={(e) => setField("monthlyReviewLimit", Number(e.target.value))}
-                  className={inputCls}
-                />
-              </ModalField>
-
-              <div className="flex gap-3 pt-2">
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="flex-1 py-2.5 bg-[#F5C518] hover:bg-[#D4A017] text-gray-900 font-semibold rounded-xl shadow transition-colors disabled:opacity-60 text-sm"
-                >
-                  {submitting ? "保存中..." : editingShop ? "更新" : "追加"}
-                </button>
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="flex-1 py-2.5 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-                >
-                  キャンセル
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+function polar(cx: number, cy: number, r: number, deg: number) {
+  const rad = ((deg - 90) * Math.PI) / 180;
+  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
 }
 
-// ---- Shared styles ----
-const inputCls =
-  "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent";
-const selectCls =
-  "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent bg-white";
+function slicePath(cx: number, cy: number, r: number, start: number, end: number) {
+  const s = polar(cx, cy, r, start);
+  const e = polar(cx, cy, r, end);
+  const large = end - start > 180 ? 1 : 0;
+  return `M${cx},${cy} L${s.x.toFixed(2)},${s.y.toFixed(2)} A${r},${r} 0 ${large} 1 ${e.x.toFixed(2)},${e.y.toFixed(2)} Z`;
+}
 
-function ModalField({
-  label,
-  required,
-  children,
-}: {
-  label: string;
-  required?: boolean;
-  children: React.ReactNode;
-}) {
+export default function SuperAdminDashboard() {
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/admin/stats")
+      .then((r) => r.json())
+      .then(setStats)
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-24 text-gray-400 text-sm">
+        読み込み中...
+      </div>
+    );
+  }
+
+  if (!stats) return null;
+
+  const maxCount = Math.max(...stats.monthlyReviews.map((m) => m.count), 1);
+  const yMax = Math.ceil(maxCount / Math.pow(10, Math.floor(Math.log10(maxCount || 1)))) *
+    Math.pow(10, Math.floor(Math.log10(maxCount || 1)));
+  const safeYMax = yMax > 0 ? yMax : 10;
+
+  const totalIndustry = stats.industryDistribution.reduce((s, d) => s + d.count, 0) || 1;
+
+  const chartW = 520;
+  const chartH = 200;
+  const barCount = stats.monthlyReviews.length || 1;
+  const slotW = chartW / barCount;
+  const barW = Math.max(20, slotW * 0.55);
+
+  const yTicks = [0, 0.25, 0.5, 0.75, 1];
+
   return (
-    <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">
-        {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
-      </label>
-      {children}
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold text-gray-900">ダッシュボード</h1>
+
+      {/* Stats cards */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="bg-white rounded-2xl shadow-sm border border-yellow-100 p-6">
+          <div className="flex items-start justify-between">
+            <svg className="w-9 h-9 text-[#F5C518]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span className="text-sm font-medium text-gray-500">総ショップ数</span>
+          </div>
+          <div className="mt-6">
+            <span className="text-5xl font-bold text-[#F5C518]">{stats.totalShops.toLocaleString()}</span>
+            <p className="text-sm text-gray-400 mt-1">登録ショップ</p>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-sm border border-yellow-100 p-6">
+          <div className="flex items-start justify-between">
+            <svg className="w-9 h-9 text-[#F5C518]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+            </svg>
+            <span className="text-sm font-medium text-gray-500">総レビュー数</span>
+          </div>
+          <div className="mt-6">
+            <span className="text-5xl font-bold text-[#F5C518]">{stats.totalReviews.toLocaleString()}</span>
+            <p className="text-sm text-gray-400 mt-1">投稿されたレビュー</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Charts */}
+      <div className="grid grid-cols-2 gap-4">
+        {/* Bar chart */}
+        <div className="bg-white rounded-2xl shadow-sm border border-yellow-100 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <svg className="w-5 h-5 text-[#F5C518]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            <span className="text-sm font-semibold text-gray-700">月別レビュー数</span>
+          </div>
+          <svg viewBox={`0 0 ${chartW + 50} ${chartH + 55}`} className="w-full">
+            {/* Grid lines & y labels */}
+            {yTicks.map((t) => {
+              const y = chartH - t * chartH;
+              const label = Math.round(safeYMax * t);
+              return (
+                <g key={t}>
+                  <line x1={45} y1={y} x2={chartW + 45} y2={y} stroke="#F3F4F6" strokeWidth={1} />
+                  <text x={40} y={y + 4} textAnchor="end" fontSize={10} fill="#9CA3AF">
+                    {label.toLocaleString()}
+                  </text>
+                </g>
+              );
+            })}
+            {/* Bars */}
+            {stats.monthlyReviews.map((m, i) => {
+              const ratio = m.count / safeYMax;
+              const bh = ratio * chartH;
+              const bx = 45 + i * slotW + (slotW - barW) / 2;
+              const by = chartH - bh;
+              return (
+                <g key={m.month}>
+                  <rect x={bx} y={by} width={barW} height={bh} fill="#F5C518" rx={3} />
+                  <text x={bx + barW / 2} y={chartH + 18} textAnchor="middle" fontSize={9} fill="#6B7280">
+                    {m.month}
+                  </text>
+                </g>
+              );
+            })}
+          </svg>
+        </div>
+
+        {/* Pie chart */}
+        <div className="bg-white rounded-2xl shadow-sm border border-yellow-100 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <svg className="w-5 h-5 text-[#F5C518]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+            </svg>
+            <span className="text-sm font-semibold text-gray-700">業種別ショップ分布</span>
+          </div>
+          <div className="flex items-center gap-6 mt-2">
+            <svg viewBox="0 0 200 200" className="w-44 h-44 shrink-0">
+              {stats.industryDistribution.length === 0 ? (
+                <circle cx={100} cy={100} r={80} fill="#F3F4F6" />
+              ) : (
+                (() => {
+                  let cum = 0;
+                  return stats.industryDistribution.map((d, i) => {
+                    const angle = (d.count / totalIndustry) * 360;
+                    const path = slicePath(100, 100, 80, cum, cum + angle);
+                    cum += angle;
+                    return (
+                      <path
+                        key={i}
+                        d={path}
+                        fill={PIE_COLORS[i % PIE_COLORS.length]}
+                        stroke="white"
+                        strokeWidth={2}
+                      />
+                    );
+                  });
+                })()
+              )}
+            </svg>
+            <div className="space-y-2">
+              {stats.industryDistribution.map((d, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <div
+                    className="w-3 h-3 rounded-sm shrink-0"
+                    style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }}
+                  />
+                  <span className="text-xs text-gray-600">{d.industry}</span>
+                </div>
+              ))}
+              {stats.industryDistribution.length === 0 && (
+                <p className="text-xs text-gray-400">データなし</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

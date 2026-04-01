@@ -1,0 +1,33 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+const items = [
+  { href: "/admin", label: "ダッシュボード" },
+  { href: "/admin/shops", label: "ショップ管理" },
+  { href: "/admin/agencies", label: "代理店管理" },
+];
+
+export default function AdminNav() {
+  const pathname = usePathname();
+  return (
+    <div className="bg-white border-b border-gray-200">
+      <div className="max-w-7xl mx-auto px-6 flex gap-0">
+        {items.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors ${
+              pathname === item.href
+                ? "border-[#F5C518] text-gray-900"
+                : "border-transparent text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            {item.label}
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}

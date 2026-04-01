@@ -13,25 +13,63 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const shops = await prisma.user.findMany({
-    where: { role: "admin" },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      loginId: true,
-      shopName: true,
-      address: true,
-      industry: true,
-      agencyId: true,
-      agency: { select: { id: true, name: true } },
-      createdAt: true,
-      _count: { select: { surveys: true } },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  const { searchParams } = new URL(request.url);
+  const search = searchParams.get("search") ?? "";
+  const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
+  const limit = Math.min(50, parseInt(searchParams.get("limit") ?? "20", 10));
 
-  return NextResponse.json(shops);
+  const where = {
+    role: "admin" as const,
+    ...(search
+      ? {
+          OR: [
+            { shopName: { contains: search } },
+            { name: { contains: search } },
+          ],
+        }
+      : {}),
+  };
+
+  const [total, shops] = await Promise.all([
+    prisma.user.count({ where }),
+    prisma.user.findMany({
+      where,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        loginId: true,
+        shopName: true,
+        address: true,
+        industry: true,
+        agencyId: true,
+        agency: { select: { id: true, name: true } },
+        createdAt: true,
+        surveys: {
+          select: { id: true, googleBusinessUrl: true, monthlyReviewLimit: true },
+          orderBy: { createdAt: "asc" },
+          take: 1,
+        },
+        _count: { select: { surveys: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+  ]);
+
+  return NextResponse.json({
+    shops: shops.map((s) => ({
+      ...s,
+      firstSurveyId: s.surveys[0]?.id ?? null,
+      googleBusinessUrl: s.surveys[0]?.googleBusinessUrl ?? null,
+      monthlyReviewLimit: s.surveys[0]?.monthlyReviewLimit ?? 100,
+      surveys: undefined,
+    })),
+    total,
+    page,
+    totalPages: Math.max(1, Math.ceil(total / limit)),
+  });
 }
 
 export async function POST(request: NextRequest) {

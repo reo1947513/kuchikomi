@@ -75,6 +75,8 @@ export async function PUT(request: NextRequest, { params }: Params) {
     address?: string;
     industry?: string;
     agencyId?: string;
+    googleBusinessUrl?: string;
+    monthlyReviewLimit?: number;
   };
 
   try {
@@ -83,7 +85,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { name, email, loginId, password, shopName, address, industry, agencyId } = body;
+  const { name, email, loginId, password, shopName, address, industry, agencyId, googleBusinessUrl, monthlyReviewLimit } = body;
 
   const updateData: Record<string, unknown> = {};
   if (name !== undefined) updateData.name = name.trim();
@@ -95,6 +97,23 @@ export async function PUT(request: NextRequest, { params }: Params) {
   if (agencyId !== undefined) updateData.agencyId = agencyId || null;
   if (password && password.length > 0) {
     updateData.password = await bcrypt.hash(password, 10);
+  }
+
+  // Update first survey's googleBusinessUrl and monthlyReviewLimit if provided
+  if (googleBusinessUrl !== undefined || monthlyReviewLimit !== undefined) {
+    const firstSurvey = await prisma.survey.findFirst({
+      where: { userId: params.id },
+      orderBy: { createdAt: "asc" },
+    });
+    if (firstSurvey) {
+      await prisma.survey.update({
+        where: { id: firstSurvey.id },
+        data: {
+          ...(googleBusinessUrl !== undefined && { googleBusinessUrl: googleBusinessUrl.trim() || null }),
+          ...(monthlyReviewLimit !== undefined && { monthlyReviewLimit }),
+        },
+      });
+    }
   }
 
   const updated = await prisma.user.update({
