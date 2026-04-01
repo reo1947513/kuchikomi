@@ -85,7 +85,8 @@ export async function PUT(request: NextRequest, { params }: Params) {
   const { questions = [] } = body;
 
   // Replace all questions in a transaction
-  const updatedQuestions = await prisma.$transaction(async (tx) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const updatedQuestions = await prisma.$transaction(async (tx: any) => {
     // Delete all existing questions (choices cascade via schema)
     await tx.question.deleteMany({ where: { surveyId: params.id } });
 
