@@ -7,32 +7,63 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Agency {
   id        String   @id @default(cuid())
-  email     String?  @unique
-  loginId   String?  @unique // AG-XXXXXX format
-  password  String
   name      String
-  role      String   @default("agent") // "admin" | "agent"
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  users     User[]
+}
 
-  surveys   Survey[]
+model User {
+  id           String   @id @default(cuid())
+  email        String?  @unique
+  loginId      String?  @unique // AG-XXXXXX format
+  password     String
+  name         String
+  role         String   @default("agent") // "super" | "admin" | "agent"
+  shopName     String?
+  address      String?
+  industry     String?
+  agencyId     String?
+  agency       Agency?  @relation(fields: [agencyId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  surveys      Survey[]
 }
 
 model Survey {
-  id                 String     @id @default(cuid())
-  title              String
-  description        String?
-  googleBusinessUrl  String?    // Google Business Profile URL
-  isActive           Boolean    @default(true)
-  createdAt          DateTime   @default(now())
-  updatedAt          DateTime   @updatedAt
+  id                  String   @id @default(cuid())
+  title               String
+  openingMessage      String?  // 冒頭の挨拶文（同意確認含む）
+  closingMessage      String?  // 終了挨拶文（お礼・再来店案内）
+  completionMessage   String?  // レビュー確認メッセージ（口コミ投稿促進）
+  keywords            String?  // キーワード（カンマ区切り）
+  promptTemplate      String?  // AIプロンプトテンプレート ({tone}, {keywords}, {formattedResponses})
+  googleBusinessUrl   String?
+  logoUrl             String?
+  couponEnabled       Boolean  @default(false)
+  maxRandomQuestions  Int      @default(0) // 0 = 全質問表示
+  isActive            Boolean  @default(true)
+  monthlyReviewLimit  Int      @default(100)
+  monthlyReviewCount  Int      @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
-  userId    String
-  user      User       @relation(fields: [userId], references: [id])
-  questions Question[]
-  sessions  ReviewSession[]
+  userId     String
+  user       User    @relation(fields: [userId], references: [id])
+  questions  Question[]
+  sessions   ReviewSession[]
+  tones      Tone[]
+}
+
+model Tone {
+  id        String  @id @default(cuid())
+  name      String  // e.g. "敬体（です・ます調）", "情緒的で感情豊かな表現"
+  isActive  Boolean @default(true)
+  order     Int     @default(0)
+  surveyId  String
+  survey    Survey  @relation(fields: [surveyId], references: [id], onDelete: Cascade)
 }
 
 model Question {
@@ -40,6 +71,7 @@ model Question {
   text      String
   order     Int
   type      String   @default("choice") // "choice" | "text"
+  isRandom  Boolean  @default(false)
   surveyId  String
   survey    Survey   @relation(fields: [surveyId], references: [id], onDelete: Cascade)
   choices   Choice[]
@@ -50,7 +82,7 @@ model Choice {
   id         String   @id @default(cuid())
   text       String
   order      Int
-  score      Int      @default(0) // positive=good, negative=bad
+  score      Int      @default(0)
   questionId String
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 }
@@ -60,8 +92,9 @@ model ReviewSession {
   surveyId    String
   survey      Survey   @relation(fields: [surveyId], references: [id])
   answers     Answer[]
-  reviewText  String?  // AI generated review
+  reviewText  String?
   status      String   @default("in_progress") // "in_progress" | "completed"
+  couponUsed  Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -72,7 +105,7 @@ model Answer {
   session    ReviewSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   questionId String
   question   Question      @relation(fields: [questionId], references: [id])
-  choiceId   String?       // for choice questions
-  textValue  String?       // for text questions
+  choiceId   String?
+  textValue  String?
   createdAt  DateTime      @default(now())
 }

@@ -9,17 +9,11 @@ export async function GET(request: NextRequest) {
   }
 
   const surveys = await prisma.survey.findMany({
-    where: session.role === "admin" ? {} : { userId: session.userId },
+    where: session.role === "super" || session.role === "admin" ? {} : { userId: session.userId },
     include: {
-      questions: {
-        include: {
-          choices: true,
-        },
-        orderBy: { order: "asc" },
-      },
-      user: {
-        select: { id: true, name: true, email: true },
-      },
+      questions: { include: { choices: true }, orderBy: { order: "asc" } },
+      tones: { orderBy: { order: "asc" } },
+      user: { select: { id: true, name: true, email: true } },
     },
     orderBy: { createdAt: "desc" },
   });
@@ -35,14 +29,24 @@ export async function POST(request: NextRequest) {
 
   let body: {
     title: string;
-    description?: string;
+    openingMessage?: string;
+    closingMessage?: string;
+    completionMessage?: string;
+    keywords?: string;
+    promptTemplate?: string;
     googleBusinessUrl?: string;
+    logoUrl?: string;
+    couponEnabled?: boolean;
+    maxRandomQuestions?: number;
+    monthlyReviewLimit?: number;
     questions?: Array<{
       text: string;
       order: number;
-      type: "choice" | "text";
+      type?: "choice" | "text";
+      isRandom?: boolean;
       choices?: Array<{ text: string; order: number; score: number }>;
     }>;
+    tones?: Array<{ name: string; order: number }>;
   };
 
   try {
@@ -51,7 +55,21 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { title, description, googleBusinessUrl, questions = [] } = body;
+  const {
+    title,
+    openingMessage,
+    closingMessage,
+    completionMessage,
+    keywords,
+    promptTemplate,
+    googleBusinessUrl,
+    logoUrl,
+    couponEnabled,
+    maxRandomQuestions,
+    monthlyReviewLimit,
+    questions = [],
+    tones = [],
+  } = body;
 
   if (!title || typeof title !== "string" || title.trim() === "") {
     return NextResponse.json(
@@ -63,14 +81,23 @@ export async function POST(request: NextRequest) {
   const survey = await prisma.survey.create({
     data: {
       title: title.trim(),
-      description: description?.trim() ?? null,
+      openingMessage: openingMessage?.trim() ?? null,
+      closingMessage: closingMessage?.trim() ?? null,
+      completionMessage: completionMessage?.trim() ?? null,
+      keywords: keywords?.trim() ?? null,
+      promptTemplate: promptTemplate?.trim() ?? null,
       googleBusinessUrl: googleBusinessUrl?.trim() ?? null,
+      logoUrl: logoUrl?.trim() ?? null,
+      couponEnabled: couponEnabled ?? false,
+      maxRandomQuestions: maxRandomQuestions ?? 0,
+      monthlyReviewLimit: monthlyReviewLimit ?? 100,
       userId: session.userId,
       questions: {
         create: questions.map((q) => ({
           text: q.text,
           order: q.order,
           type: q.type ?? "choice",
+          isRandom: q.isRandom ?? false,
           choices: {
             create: (q.choices ?? []).map((c) => ({
               text: c.text,
@@ -80,12 +107,17 @@ export async function POST(request: NextRequest) {
           },
         })),
       },
+      tones: {
+        create: tones.map((t) => ({
+          name: t.name,
+          order: t.order,
+        })),
+      },
     },
     include: {
-      questions: {
-        include: { choices: true },
-        orderBy: { order: "asc" },
-      },
+      questions: { include: { choices: true }, orderBy: { order: "asc" } },
+      tones: { orderBy: { order: "asc" } },
+      user: { select: { id: true, name: true, email: true } },
     },
   });
 

@@ -4,6 +4,24 @@ import Anthropic from "@anthropic-ai/sdk";
 
 const client = new Anthropic();
 
+const DEFAULT_PROMPT_TEMPLATE = `以下のアンケート回答をもとに、Googleビジネスプロフィールに投稿する口コミ文章を作成してください。
+
+口調: {tone}
+キーワード（可能であれば含める）: {keywords}
+
+アンケート回答:
+{formattedResponses}
+
+ガイドライン:
+- 100文字程度の自然な文章
+- 実際のお客様が書いたような口語的な表現
+- 冒頭の表現を毎回変える
+- アンケート回答に基づく具体的な内容のみ（架空の情報は禁止）
+- 文章構成を毎回変える
+- ポジティブな内容（ネガティブな回答は温かく改善点として表現）
+
+口コミ文章のみ出力してください。`;
+
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -13,7 +31,11 @@ export async function POST(
   const session = await prisma.reviewSession.findUnique({
     where: { id: sessionId },
     include: {
-      survey: true,
+      survey: {
+        include: {
+          tones: { where: { isActive: true }, orderBy: { order: "asc" } },
+        },
+      },
       answers: {
         include: {
           question: {
@@ -61,25 +83,24 @@ export async function POST(
     return `- 質問: ${answer.question.text}\n  回答: ${answerText}`;
   });
 
-  const surveyTitle = session.survey.title;
-  const surveyDescription = session.survey.description ?? "";
+  const formattedResponses = qaLines.join("\n");
 
-  const prompt = `以下のアンケート回答をもとに、Googleビジネスプロフィールに投稿する口コミ文章を作成してください。
+  // Select tone: randomly pick one active tone, or fall back to default
+  const activeTones = session.survey.tones;
+  let toneName = "敬体（です・ます調）";
+  if (activeTones.length > 0) {
+    const randomIndex = Math.floor(Math.random() * activeTones.length);
+    toneName = activeTones[randomIndex].name;
+  }
 
-店舗・サービス情報:
-- 店舗名: ${surveyTitle}
-${surveyDescription ? `- 説明: ${surveyDescription}` : ""}
+  // Build prompt from template or use default
+  const template = session.survey.promptTemplate || DEFAULT_PROMPT_TEMPLATE;
+  const keywords = session.survey.keywords ?? "";
 
-アンケート回答:
-${qaLines.join("\n")}
-
-口コミ文章の条件:
-- 3〜5文程度の自然な文章
-- 実際のお客様が書いたような口語的な表現
-- ポジティブな内容（回答がネガティブな場合は、改善点として温かく述べる）
-- Googleビジネスプロフィールへの投稿に適した内容
-
-口コミ文章のみ出力してください。`;
+  const prompt = template
+    .replace("{tone}", toneName)
+    .replace("{keywords}", keywords)
+    .replace("{formattedResponses}", formattedResponses);
 
   let reviewText: string;
 
@@ -108,17 +129,26 @@ ${qaLines.join("\n")}
     );
   }
 
-  // Save the review text and mark session as completed
-  await prisma.reviewSession.update({
-    where: { id: sessionId },
-    data: {
-      reviewText,
-      status: "completed",
-    },
-  });
+  // Save the review text, mark session as completed, and increment monthly count
+  await Promise.all([
+    prisma.reviewSession.update({
+      where: { id: sessionId },
+      data: {
+        reviewText,
+        status: "completed",
+      },
+    }),
+    prisma.survey.update({
+      where: { id: session.survey.id },
+      data: {
+        monthlyReviewCount: { increment: 1 },
+      },
+    }),
+  ]);
 
   return NextResponse.json({
     reviewText,
     googleBusinessUrl: session.survey.googleBusinessUrl ?? null,
+    completionMessage: session.survey.completionMessage ?? null,
   });
 }
