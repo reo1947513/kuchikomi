@@ -225,7 +225,7 @@ export default function NewSurveyPage() {
       <header className="bg-[#F5C518] shadow-sm">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/dashboard" className="text-xl font-black text-gray-900 tracking-tight">
-            クチコミファースト
+            クチコミPlus
           </Link>
           <Link
             href="/dashboard"

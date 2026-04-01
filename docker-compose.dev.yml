@@ -12,7 +12,7 @@ services:
       - DATABASE_URL=file:/app/prisma/dev.db
       - JWT_SECRET=dev-secret-key
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
-      - NEXT_PUBLIC_APP_NAME=クチコミファースト
+      - NEXT_PUBLIC_APP_NAME=クチコミPlus
     volumes:
       - .:/app
       - /app/node_modules

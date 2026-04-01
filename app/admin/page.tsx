@@ -206,7 +206,7 @@ export default function AdminPage() {
       {/* Top bar */}
       <header className="bg-[#F5C518] shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <span className="text-xl font-black text-gray-900 tracking-tight">クチコミファースト</span>
+          <span className="text-xl font-black text-gray-900 tracking-tight">クチコミPlus</span>
           <span className="inline-flex items-center px-3 py-1 rounded-full bg-gray-900 text-white text-xs font-semibold">
             スーパー管理者
           </span>

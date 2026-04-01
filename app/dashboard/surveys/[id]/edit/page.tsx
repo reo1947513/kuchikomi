@@ -267,7 +267,7 @@ export default function EditSurveyPage() {
             href="/dashboard"
             className="text-xl font-black text-gray-900 tracking-tight"
           >
-            クチコミファースト
+            クチコミPlus
           </Link>
           <Link
             href="/dashboard"

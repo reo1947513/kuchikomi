@@ -55,7 +55,7 @@ export default async function DashboardPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="text-2xl font-black text-gray-900 tracking-tight">
-              クチコミファースト
+              クチコミPlus
             </span>
           </div>
           <div className="flex items-center gap-4">
