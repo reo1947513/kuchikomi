@@ -1,0 +1,179 @@
+"use client";
+
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+
+type LoginFormValues = {
+  identifier: string;
+  password: string;
+};
+
+export default function LoginPage() {
+  const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormValues>();
+
+  const onSubmit = async (data: LoginFormValues) => {
+    setServerError(null);
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const json = await res.json();
+
+      if (!res.ok) {
+        setServerError(json.error || "ログインに失敗しました");
+        return;
+      }
+
+      router.push("/dashboard");
+    } catch {
+      setServerError("サーバーに接続できませんでした。しばらくしてから再度お試しください。");
+    }
+  };
+
+  return (
+    <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-yellow-200 to-yellow-300 px-4">
+      <div className="bg-white rounded-2xl shadow-lg w-full max-w-md px-8 py-10">
+        {/* Logo & App Name */}
+        <div className="flex flex-col items-center mb-8">
+          <div className="w-16 h-16 rounded-full bg-yellow-300 flex items-center justify-center mb-3 shadow-md">
+            <span className="text-3xl" role="img" aria-label="star">
+              ⭐
+            </span>
+          </div>
+          <h1 className="text-2xl font-bold text-gray-800 tracking-tight">
+            クチコミファースト
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">アカウントにログイン</p>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
+          {/* Identifier field */}
+          <div>
+            <label
+              htmlFor="identifier"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              メールアドレス / ログインID
+            </label>
+            <input
+              id="identifier"
+              type="text"
+              autoComplete="username"
+              placeholder="example@example.com または AG-XXXXXX"
+              className={`w-full rounded-lg border px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition ${
+                errors.identifier ? "border-red-400" : "border-gray-300"
+              }`}
+              {...register("identifier", {
+                required: "メールアドレスまたはログインIDを入力してください",
+              })}
+            />
+            {errors.identifier && (
+              <p className="mt-1 text-xs text-red-500">{errors.identifier.message}</p>
+            )}
+          </div>
+
+          {/* Password field */}
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              パスワード
+            </label>
+            <div className="relative">
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                placeholder="パスワードを入力"
+                className={`w-full rounded-lg border px-4 py-2.5 pr-11 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition ${
+                  errors.password ? "border-red-400" : "border-gray-300"
+                }`}
+                {...register("password", {
+                  required: "パスワードを入力してください",
+                })}
+              />
+              <button
+                type="button"
+                aria-label={showPassword ? "パスワードを隠す" : "パスワードを表示する"}
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-gray-600 focus:outline-none"
+              >
+                {showPassword ? (
+                  /* Eye-off SVG */
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={1.8}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                    />
+                  </svg>
+                ) : (
+                  /* Eye SVG */
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={1.8}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                    />
+                  </svg>
+                )}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>
+            )}
+          </div>
+
+          {/* Server error */}
+          {serverError && (
+            <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600">
+              {serverError}
+            </div>
+          )}
+
+          {/* Submit button */}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full rounded-lg bg-yellow-400 hover:bg-yellow-500 active:bg-yellow-600 text-gray-800 font-semibold py-2.5 text-sm transition disabled:opacity-60 disabled:cursor-not-allowed shadow-sm"
+          >
+            {isSubmitting ? "ログイン中..." : "ログイン"}
+          </button>
+        </form>
+      </div>
+    </main>
+  );
+}

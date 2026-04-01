@@ -1,0 +1,497 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+
+type Choice = {
+  text: string;
+  order: number;
+  score: number;
+};
+
+type Question = {
+  text: string;
+  order: number;
+  type: "choice" | "text";
+  choices: Choice[];
+};
+
+const DEFAULT_CHOICES: Choice[] = [
+  { text: "非常に満足", order: 0, score: 2 },
+  { text: "満足", order: 1, score: 1 },
+  { text: "どちらとも言えない", order: 2, score: 0 },
+  { text: "やや不満", order: 3, score: -1 },
+  { text: "不満", order: 4, score: -2 },
+];
+
+function newQuestion(order: number): Question {
+  return {
+    text: "",
+    order,
+    type: "choice",
+    choices: DEFAULT_CHOICES.map((c) => ({ ...c })),
+  };
+}
+
+export default function NewSurveyPage() {
+  const router = useRouter();
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [googleBusinessUrl, setGoogleBusinessUrl] = useState("");
+  const [questions, setQuestions] = useState<Question[]>([newQuestion(0)]);
+
+  // ---- Question helpers ----
+  const addQuestion = () => {
+    setQuestions((prev) => [...prev, newQuestion(prev.length)]);
+  };
+
+  const removeQuestion = (idx: number) => {
+    setQuestions((prev) =>
+      prev
+        .filter((_, i) => i !== idx)
+        .map((q, i) => ({ ...q, order: i }))
+    );
+  };
+
+  const updateQuestion = (idx: number, patch: Partial<Question>) => {
+    setQuestions((prev) =>
+      prev.map((q, i) => {
+        if (i !== idx) return q;
+        const updated = { ...q, ...patch };
+        // When switching to "choice" type, pre-populate defaults if empty
+        if (patch.type === "choice" && q.type !== "choice" && updated.choices.length === 0) {
+          updated.choices = DEFAULT_CHOICES.map((c) => ({ ...c }));
+        }
+        return updated;
+      })
+    );
+  };
+
+  // ---- Choice helpers ----
+  const addChoice = (qIdx: number) => {
+    setQuestions((prev) =>
+      prev.map((q, i) => {
+        if (i !== qIdx) return q;
+        return {
+          ...q,
+          choices: [
+            ...q.choices,
+            { text: "", order: q.choices.length, score: 0 },
+          ],
+        };
+      })
+    );
+  };
+
+  const removeChoice = (qIdx: number, cIdx: number) => {
+    setQuestions((prev) =>
+      prev.map((q, i) => {
+        if (i !== qIdx) return q;
+        return {
+          ...q,
+          choices: q.choices
+            .filter((_, ci) => ci !== cIdx)
+            .map((c, ci) => ({ ...c, order: ci })),
+        };
+      })
+    );
+  };
+
+  const updateChoice = (qIdx: number, cIdx: number, patch: Partial<Choice>) => {
+    setQuestions((prev) =>
+      prev.map((q, i) => {
+        if (i !== qIdx) return q;
+        return {
+          ...q,
+          choices: q.choices.map((c, ci) =>
+            ci === cIdx ? { ...c, ...patch } : c
+          ),
+        };
+      })
+    );
+  };
+
+  // ---- Submit ----
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!title.trim()) {
+      setError("アンケートタイトルを入力してください");
+      return;
+    }
+    for (let i = 0; i < questions.length; i++) {
+      if (!questions[i].text.trim()) {
+        setError(`質問${i + 1}の文章を入力してください`);
+        return;
+      }
+    }
+
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/surveys", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: title.trim(),
+          description: description.trim(),
+          googleBusinessUrl: googleBusinessUrl.trim(),
+          questions,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error ?? "作成に失敗しました");
+        return;
+      }
+
+      router.push("/dashboard");
+    } catch {
+      setError("ネットワークエラーが発生しました");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Top bar */}
+      <header className="bg-[#F5C518] shadow-sm">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+          <Link
+            href="/dashboard"
+            className="text-xl font-black text-gray-900 tracking-tight"
+          >
+            クチコミファースト
+          </Link>
+          <Link
+            href="/dashboard"
+            className="flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:text-gray-900"
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+            ダッシュボードへ戻る
+          </Link>
+        </div>
+      </header>
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">新規アンケート作成</h1>
+          <p className="text-sm text-gray-500 mt-1">
+            アンケートの基本情報と質問を設定してください
+          </p>
+        </div>
+
+        {error && (
+          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Survey Info */}
+          <div className="bg-white rounded-xl shadow p-6 space-y-4">
+            <h2 className="text-base font-semibold text-gray-800">
+              基本情報
+            </h2>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                アンケートタイトル
+                <span className="text-red-500 ml-1">*</span>
+              </label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="例：サービス満足度アンケート"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                説明文
+              </label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={3}
+                placeholder="アンケートの説明を入力してください（任意）"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent resize-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                GoogleビジネスプロフィールURL
+              </label>
+              <input
+                type="url"
+                value={googleBusinessUrl}
+                onChange={(e) => setGoogleBusinessUrl(e.target.value)}
+                placeholder="https://maps.google.com/..."
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          {/* Questions */}
+          <div className="space-y-4">
+            <h2 className="text-base font-semibold text-gray-800">
+              質問リスト
+            </h2>
+
+            {questions.map((question, qIdx) => (
+              <QuestionBlock
+                key={qIdx}
+                question={question}
+                index={qIdx}
+                onUpdate={(patch) => updateQuestion(qIdx, patch)}
+                onRemove={() => removeQuestion(qIdx)}
+                canRemove={questions.length > 1}
+                onAddChoice={() => addChoice(qIdx)}
+                onRemoveChoice={(cIdx) => removeChoice(qIdx, cIdx)}
+                onUpdateChoice={(cIdx, patch) => updateChoice(qIdx, cIdx, patch)}
+              />
+            ))}
+
+            <button
+              type="button"
+              onClick={addQuestion}
+              className="w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:border-[#F5C518] hover:text-gray-700 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              質問を追加する
+            </button>
+          </div>
+
+          {/* Submit */}
+          <div className="flex gap-3 justify-end">
+            <Link
+              href="/dashboard"
+              className="px-5 py-2.5 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              キャンセル
+            </Link>
+            <button
+              type="submit"
+              disabled={submitting}
+              className="px-6 py-2.5 bg-[#F5C518] hover:bg-[#D4A017] text-gray-900 font-semibold rounded-xl shadow transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-sm"
+            >
+              {submitting ? "作成中..." : "アンケートを作成"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// --- Sub-component for a single question block ---
+type QuestionBlockProps = {
+  question: Question;
+  index: number;
+  onUpdate: (patch: Partial<Question>) => void;
+  onRemove: () => void;
+  canRemove: boolean;
+  onAddChoice: () => void;
+  onRemoveChoice: (cIdx: number) => void;
+  onUpdateChoice: (cIdx: number, patch: Partial<Choice>) => void;
+};
+
+function QuestionBlock({
+  question,
+  index,
+  onUpdate,
+  onRemove,
+  canRemove,
+  onAddChoice,
+  onRemoveChoice,
+  onUpdateChoice,
+}: QuestionBlockProps) {
+  return (
+    <div className="bg-white rounded-xl shadow p-5 space-y-4 border border-gray-100">
+      {/* Question header */}
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-semibold text-[#D4A017] bg-[#F5C518]/20 px-2.5 py-0.5 rounded-full">
+          質問 {index + 1}
+        </span>
+        {canRemove && (
+          <button
+            type="button"
+            onClick={onRemove}
+            className="text-gray-400 hover:text-red-500 transition-colors"
+            title="この質問を削除"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        )}
+      </div>
+
+      {/* Question text */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          質問文<span className="text-red-500 ml-1">*</span>
+        </label>
+        <input
+          type="text"
+          value={question.text}
+          onChange={(e) => onUpdate({ text: e.target.value })}
+          placeholder="例：スタッフの対応はいかがでしたか？"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent"
+        />
+      </div>
+
+      {/* Question type */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          回答タイプ
+        </label>
+        <div className="flex gap-3">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              name={`q-type-${index}`}
+              value="choice"
+              checked={question.type === "choice"}
+              onChange={() => onUpdate({ type: "choice" })}
+              className="text-[#F5C518] focus:ring-[#F5C518]"
+            />
+            <span className="text-sm text-gray-700">選択式</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              name={`q-type-${index}`}
+              value="text"
+              checked={question.type === "text"}
+              onChange={() => onUpdate({ type: "text" })}
+              className="text-[#F5C518] focus:ring-[#F5C518]"
+            />
+            <span className="text-sm text-gray-700">テキスト入力</span>
+          </label>
+        </div>
+      </div>
+
+      {/* Choices (only for "choice" type) */}
+      {question.type === "choice" && (
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            選択肢
+          </label>
+          {question.choices.map((choice, cIdx) => (
+            <div key={cIdx} className="flex items-center gap-2">
+              <input
+                type="text"
+                value={choice.text}
+                onChange={(e) => onUpdateChoice(cIdx, { text: e.target.value })}
+                placeholder={`選択肢 ${cIdx + 1}`}
+                className="flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent"
+              />
+              <div className="flex items-center gap-1.5 shrink-0">
+                <label className="text-xs text-gray-500 whitespace-nowrap">
+                  スコア
+                </label>
+                <select
+                  value={choice.score}
+                  onChange={(e) =>
+                    onUpdateChoice(cIdx, { score: Number(e.target.value) })
+                  }
+                  className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent bg-white"
+                >
+                  <option value={2}>+2（非常に満足）</option>
+                  <option value={1}>+1（満足）</option>
+                  <option value={0}>0（どちらとも）</option>
+                  <option value={-1}>-1（やや不満）</option>
+                  <option value={-2}>-2（不満）</option>
+                </select>
+              </div>
+              <button
+                type="button"
+                onClick={() => onRemoveChoice(cIdx)}
+                disabled={question.choices.length <= 1}
+                className="text-gray-300 hover:text-red-400 transition-colors disabled:opacity-30"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={onAddChoice}
+            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#D4A017] transition-colors mt-1"
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            選択肢を追加
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}

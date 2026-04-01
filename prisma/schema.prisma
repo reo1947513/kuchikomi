@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String?  @unique
+  loginId   String?  @unique // AG-XXXXXX format
+  password  String
+  name      String
+  role      String   @default("agent") // "admin" | "agent"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  surveys   Survey[]
+}
+
+model Survey {
+  id                 String     @id @default(cuid())
+  title              String
+  description        String?
+  googleBusinessUrl  String?    // Google Business Profile URL
+  isActive           Boolean    @default(true)
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+
+  userId    String
+  user      User       @relation(fields: [userId], references: [id])
+  questions Question[]
+  sessions  ReviewSession[]
+}
+
+model Question {
+  id        String   @id @default(cuid())
+  text      String
+  order     Int
+  type      String   @default("choice") // "choice" | "text"
+  surveyId  String
+  survey    Survey   @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  choices   Choice[]
+  answers   Answer[]
+}
+
+model Choice {
+  id         String   @id @default(cuid())
+  text       String
+  order      Int
+  score      Int      @default(0) // positive=good, negative=bad
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model ReviewSession {
+  id          String   @id @default(cuid())
+  surveyId    String
+  survey      Survey   @relation(fields: [surveyId], references: [id])
+  answers     Answer[]
+  reviewText  String?  // AI generated review
+  status      String   @default("in_progress") // "in_progress" | "completed"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Answer {
+  id         String        @id @default(cuid())
+  sessionId  String
+  session    ReviewSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  questionId String
+  question   Question      @relation(fields: [questionId], references: [id])
+  choiceId   String?       // for choice questions
+  textValue  String?       // for text questions
+  createdAt  DateTime      @default(now())
+}
