@@ -99,7 +99,7 @@ export default async function DashboardPage() {
               ダッシュボード
             </Link>
             <Link
-              href="/dashboard"
+              href="/dashboard/surveys"
               className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-gray-600 hover:bg-gray-100 text-sm transition-colors"
             >
               <svg
