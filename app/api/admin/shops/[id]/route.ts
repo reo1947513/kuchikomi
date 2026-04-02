@@ -157,6 +157,31 @@ export async function DELETE(request: NextRequest, { params }: Params) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
+  // Delete in dependency order to avoid FK constraint errors
+  const surveys = await prisma.survey.findMany({
+    where: { userId: params.id },
+    select: { id: true },
+  });
+  const surveyIds = surveys.map((s) => s.id);
+
+  const sessions = await prisma.reviewSession.findMany({
+    where: { surveyId: { in: surveyIds } },
+    select: { id: true },
+  });
+  const sessionIds = sessions.map((s) => s.id);
+
+  const questions = await prisma.question.findMany({
+    where: { surveyId: { in: surveyIds } },
+    select: { id: true },
+  });
+  const questionIds = questions.map((q) => q.id);
+
+  await prisma.answer.deleteMany({ where: { sessionId: { in: sessionIds } } });
+  await prisma.reviewSession.deleteMany({ where: { id: { in: sessionIds } } });
+  await prisma.choice.deleteMany({ where: { questionId: { in: questionIds } } });
+  await prisma.question.deleteMany({ where: { id: { in: questionIds } } });
+  await prisma.tone.deleteMany({ where: { surveyId: { in: surveyIds } } });
+  await prisma.survey.deleteMany({ where: { id: { in: surveyIds } } });
   await prisma.user.delete({ where: { id: params.id } });
 
   return NextResponse.json({ success: true });
