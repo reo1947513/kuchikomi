@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
-import { writeFile } from "fs/promises";
+import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
 import { randomUUID } from "crypto";
 
@@ -13,28 +13,35 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const formData = await request.formData();
-  const file = formData.get("file") as File | null;
+  try {
+    const formData = await request.formData();
+    const file = formData.get("file") as File | null;
 
-  if (!file) {
-    return NextResponse.json({ error: "ファイルが見つかりません" }, { status: 400 });
+    if (!file) {
+      return NextResponse.json({ error: "ファイルが見つかりません" }, { status: 400 });
+    }
+
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      return NextResponse.json({ error: "JPEG・PNG・WebP・GIF・SVGのみアップロード可能です" }, { status: 400 });
+    }
+
+    if (file.size > MAX_SIZE) {
+      return NextResponse.json({ error: "ファイルサイズは5MB以下にしてください" }, { status: 400 });
+    }
+
+    const ext = file.name.split(".").pop() ?? "png";
+    const filename = `${randomUUID()}.${ext}`;
+    const uploadDir = join(process.cwd(), "public", "uploads");
+
+    // Create directory if it doesn't exist
+    await mkdir(uploadDir, { recursive: true });
+
+    const buffer = Buffer.from(await file.arrayBuffer());
+    await writeFile(join(uploadDir, filename), buffer);
+
+    return NextResponse.json({ url: `/uploads/${filename}` });
+  } catch (error) {
+    console.error("Upload error:", error);
+    return NextResponse.json({ error: "アップロードに失敗しました" }, { status: 500 });
   }
-
-  if (!ALLOWED_TYPES.includes(file.type)) {
-    return NextResponse.json({ error: "JPEG・PNG・WebP・GIF・SVGのみアップロード可能です" }, { status: 400 });
-  }
-
-  if (file.size > MAX_SIZE) {
-    return NextResponse.json({ error: "ファイルサイズは5MB以下にしてください" }, { status: 400 });
-  }
-
-  const ext = file.name.split(".").pop() ?? "png";
-  const filename = `${randomUUID()}.${ext}`;
-  const uploadDir = join(process.cwd(), "public", "uploads");
-  const filepath = join(uploadDir, filename);
-
-  const buffer = Buffer.from(await file.arrayBuffer());
-  await writeFile(filepath, buffer);
-
-  return NextResponse.json({ url: `/uploads/${filename}` });
 }
