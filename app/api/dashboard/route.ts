@@ -27,10 +27,9 @@ export async function GET() {
   }
 
   // Last 12 months of sessions
-  const twelveMonthsAgo = new Date();
-  twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 11);
-  twelveMonthsAgo.setDate(1);
-  twelveMonthsAgo.setHours(0, 0, 0, 0);
+  const now = new Date();
+  const startOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const twelveMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 11, 1);
 
   const allSessions = await prisma.reviewSession.findMany({
     where: { surveyId: survey.id, status: "completed", createdAt: { gte: twelveMonthsAgo } },
@@ -38,8 +37,10 @@ export async function GET() {
     orderBy: { createdAt: "asc" },
   });
 
+  // Monthly review count for THIS month (dynamic — never goes stale)
+  const thisMonthCount = allSessions.filter((s) => new Date(s.createdAt) >= startOfThisMonth).length;
+
   // Build monthly counts for last 12 months
-  const now = new Date();
   const monthlyCounts: { label: string; count: number }[] = [];
   for (let i = 11; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
@@ -60,9 +61,8 @@ export async function GET() {
   });
 
   // AI advice this month
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const adviceCount = await prisma.advice.count({
-    where: { surveyId: survey.id, createdAt: { gte: startOfMonth } },
+    where: { surveyId: survey.id, createdAt: { gte: startOfThisMonth } },
   });
   const adviceList = await prisma.advice.findMany({
     where: { surveyId: survey.id },
@@ -71,5 +71,8 @@ export async function GET() {
     select: { id: true, content: true, dateFrom: true, dateTo: true, createdAt: true },
   });
 
-  return NextResponse.json({ user, survey, monthlyCounts, recentSessions, adviceCount, adviceList });
+  // Inject dynamic monthly count into survey (overrides stale DB field)
+  const surveyWithCount = { ...survey, monthlyReviewCount: thisMonthCount };
+
+  return NextResponse.json({ user, survey: surveyWithCount, monthlyCounts, recentSessions, adviceCount, adviceList });
 }
