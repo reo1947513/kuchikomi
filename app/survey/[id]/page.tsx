@@ -380,12 +380,12 @@ export default function SurveyPage({
               >
                 結果を開く
               </button>
-              <Link
+              <a
                 href={`/survey/${surveyId}`}
                 className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
               >
                 アンケートへ戻る
-              </Link>
+              </a>
             </div>
           </div>
         )}
