@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const items = [
-  { href: "/dashboard/surveys", label: "アンケート" },
+  { href: "/dashboard/surveys", label: "ダッシュボード" },
   { href: "/dashboard/settings", label: "設定" },
 ];
 
