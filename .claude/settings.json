@@ -6,8 +6,24 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd /home/user/kuchikomi && FILE=$(jq -r '.tool_input.file_path // \"\"'); echo \"$FILE\" | grep -qE '\\.(ts|tsx)$' || exit 0; OUTPUT=$(npm test 2>&1); CODE=$?; if [ $CODE -ne 0 ]; then echo \"{\\\"systemMessage\\\": \\\"テスト失敗:\\n$OUTPUT\\\"}\"; fi",
+            "command": "cd /home/user/kuchikomi && FILE=$(jq -r '.tool_input.file_path // \"\"'); echo \"$FILE\" | grep -qE '\\.(ts|tsx)$' || exit 0; OUTPUT=$(npm test 2>&1); CODE=$?; if [ $CODE -ne 0 ]; then echo \"{\\\"systemMessage\\\": \\\"【テストエンジニア】テスト失敗:\\n$OUTPUT\\\"}\"; fi",
             "statusMessage": "テストエンジニアが確認中...",
+            "async": true,
+            "asyncRewake": false,
+            "timeout": 60
+          },
+          {
+            "type": "command",
+            "command": "cd /home/user/kuchikomi && FILE=$(jq -r '.tool_input.file_path // \"\"'); echo \"$FILE\" | grep -qE 'app/api/.*\\.(ts)$' || exit 0; OUTPUT=$(npx tsc --noEmit 2>&1); CODE=$?; if [ $CODE -ne 0 ]; then echo \"{\\\"systemMessage\\\": \\\"【バックエンドエンジニア】型エラー検出:\\n$OUTPUT\\\"}\"; fi",
+            "statusMessage": "バックエンドエンジニアが確認中...",
+            "async": true,
+            "asyncRewake": false,
+            "timeout": 60
+          },
+          {
+            "type": "command",
+            "command": "cd /home/user/kuchikomi && FILE=$(jq -r '.tool_input.file_path // \"\"'); echo \"$FILE\" | grep -qE 'app/.*(page|layout|components?)/.*\\.(tsx)$' || exit 0; OUTPUT=$(npx tsc --noEmit 2>&1); CODE=$?; if [ $CODE -ne 0 ]; then echo \"{\\\"systemMessage\\\": \\\"【フロントエンドエンジニア】型エラー検出:\\n$OUTPUT\\\"}\"; fi",
+            "statusMessage": "フロントエンドエンジニアが確認中...",
             "async": true,
             "asyncRewake": false,
             "timeout": 60
