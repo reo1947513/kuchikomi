@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback } from "react";
 type Agency = {
   id: string;
   name: string;
-  userCount: number;
+  agentCount: number;
   shopCount: number;
 };
 
@@ -142,7 +142,7 @@ export default function AgenciesPage() {
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50">
               <th className="text-left px-4 py-3 font-semibold text-gray-700">代理店名</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700">ユーザー数</th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-700">担当者数</th>
               <th className="text-left px-4 py-3 font-semibold text-gray-700">店舗数</th>
               <th className="text-right px-4 py-3 font-semibold text-gray-700">操作</th>
             </tr>
@@ -157,7 +157,7 @@ export default function AgenciesPage() {
             {!loading && filtered.map((agency) => (
               <tr key={agency.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-4 py-3 font-medium text-gray-900">{agency.name}</td>
-                <td className="px-4 py-3 text-gray-600">{agency.userCount}</td>
+                <td className="px-4 py-3 text-gray-600">{agency.agentCount}</td>
                 <td className="px-4 py-3 text-gray-600">{agency.shopCount}</td>
                 <td className="px-4 py-3">
                   <div className="flex items-center justify-end gap-2">

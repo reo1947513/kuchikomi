@@ -14,8 +14,7 @@ export async function GET(request: NextRequest) {
 
   const agencies = await prisma.agency.findMany({
     include: {
-      _count: { select: { users: true } },
-      users: { select: { _count: { select: { surveys: true } } } },
+      users: { select: { role: true } },
     },
     orderBy: { name: "asc" },
   });
@@ -25,8 +24,8 @@ export async function GET(request: NextRequest) {
       id: a.id,
       name: a.name,
       createdAt: a.createdAt,
-      userCount: a._count.users,
-      shopCount: a.users.reduce((sum, u) => sum + u._count.surveys, 0),
+      agentCount: a.users.filter((u) => u.role === "agent").length,
+      shopCount: a.users.filter((u) => u.role === "admin").length,
     }))
   );
 }
