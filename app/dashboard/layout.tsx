@@ -11,7 +11,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const session = verifyToken(token);
   if (!session) redirect("/login");
 
-  // super admin can visit dashboard pages (e.g. to edit a shop's survey settings)
+  // agent role is removed — redirect to login
+  if (session.role === "agent") redirect("/login");
+
   const isSuper = session.role === "super";
 
   return (

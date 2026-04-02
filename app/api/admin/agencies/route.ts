@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
 
   const agencies = await prisma.agency.findMany({
     include: {
+      _count: { select: { users: true } },
       users: { select: { role: true } },
     },
     orderBy: { name: "asc" },
@@ -24,7 +25,6 @@ export async function GET(request: NextRequest) {
       id: a.id,
       name: a.name,
       createdAt: a.createdAt,
-      agentCount: a.users.filter((u) => u.role === "agent").length,
       shopCount: a.users.filter((u) => u.role === "admin").length,
     }))
   );

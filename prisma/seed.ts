@@ -45,20 +45,6 @@ async function main() {
     },
   });
 
-  // Create agent
-  const agentPassword = await bcrypt.hash("agent1234", 10);
-  await prisma.user.upsert({
-    where: { loginId: "AG-000002" },
-    update: {},
-    create: {
-      loginId: "AG-000002",
-      password: agentPassword,
-      name: "営業担当",
-      role: "agent",
-      agencyId: agency.id,
-    },
-  });
-
   const DEFAULT_PROMPT = `以下のアンケート回答をもとに、Googleビジネスプロフィールに投稿する口コミ文章を作成してください。
 
 口調: {tone}
