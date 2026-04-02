@@ -62,6 +62,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
     promptTemplate?: string;
     googleBusinessUrl?: string;
     logoUrl?: string;
+    couponImageUrl?: string;
     couponEnabled?: boolean;
     maxRandomQuestions?: number;
     monthlyReviewLimit?: number;
@@ -84,6 +85,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
     promptTemplate,
     googleBusinessUrl,
     logoUrl,
+    couponImageUrl,
     couponEnabled,
     maxRandomQuestions,
     monthlyReviewLimit,
@@ -107,6 +109,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
       ...(promptTemplate !== undefined && { promptTemplate: promptTemplate.trim() || null }),
       ...(googleBusinessUrl !== undefined && { googleBusinessUrl: googleBusinessUrl.trim() || null }),
       ...(logoUrl !== undefined && { logoUrl: logoUrl.trim() || null }),
+      ...(couponImageUrl !== undefined && { couponImageUrl: couponImageUrl.trim() || null }),
       ...(couponEnabled !== undefined && { couponEnabled }),
       ...(maxRandomQuestions !== undefined && { maxRandomQuestions }),
       ...(monthlyReviewLimit !== undefined && { monthlyReviewLimit }),

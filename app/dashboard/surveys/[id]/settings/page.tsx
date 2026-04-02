@@ -41,6 +41,7 @@ type Survey = {
   monthlyReviewLimit: number;
   promptTemplate?: string | null;
   logoUrl?: string | null;
+  couponImageUrl?: string | null;
   couponEnabled: boolean;
   tones: Tone[];
   questions: Question[];
@@ -114,7 +115,14 @@ export default function SurveySettingsPage() {
 
   // ---- Logo/Coupon tab state ----
   const [logoUrl, setLogoUrl] = useState("");
+  const [couponImageUrl, setCouponImageUrl] = useState("");
   const [couponEnabled, setCouponEnabled] = useState(false);
+  const [logoDragging, setLogoDragging] = useState(false);
+  const [logoUploading, setLogoUploading] = useState(false);
+  const [logoUploadError, setLogoUploadError] = useState<string | null>(null);
+  const [couponDragging, setCouponDragging] = useState(false);
+  const [couponUploading, setCouponUploading] = useState(false);
+  const [couponUploadError, setCouponUploadError] = useState<string | null>(null);
 
   // ---- Fetch survey ----
   const fetchSurvey = useCallback(async () => {
@@ -139,6 +147,7 @@ export default function SurveySettingsPage() {
       );
       setQuestions(data.questions ?? []);
       setLogoUrl(data.logoUrl ?? "");
+      setCouponImageUrl(data.couponImageUrl ?? "");
       setCouponEnabled(data.couponEnabled ?? false);
     } catch (e) {
       setError(e instanceof Error ? e.message : "エラーが発生しました");
@@ -199,8 +208,44 @@ export default function SurveySettingsPage() {
   const saveLogoCoupon = () =>
     saveSurvey({
       logoUrl,
+      couponImageUrl,
       couponEnabled,
     });
+
+  // ---- Logo upload ----
+  const uploadLogoFile = async (file: File) => {
+    setLogoUploading(true);
+    setLogoUploadError(null);
+    const form = new FormData();
+    form.append("file", file);
+    try {
+      const res = await fetch("/api/uploads", { method: "POST", body: form });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "アップロード失敗");
+      setLogoUrl(data.url);
+    } catch (e) {
+      setLogoUploadError(e instanceof Error ? e.message : "アップロード失敗");
+    } finally {
+      setLogoUploading(false);
+    }
+  };
+
+  const uploadCouponFile = async (file: File) => {
+    setCouponUploading(true);
+    setCouponUploadError(null);
+    const form = new FormData();
+    form.append("file", file);
+    try {
+      const res = await fetch("/api/uploads", { method: "POST", body: form });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "アップロード失敗");
+      setCouponImageUrl(data.url);
+    } catch (e) {
+      setCouponUploadError(e instanceof Error ? e.message : "アップロード失敗");
+    } finally {
+      setCouponUploading(false);
+    }
+  };
 
   // ---- Tone helpers ----
   const addTone = () =>
@@ -722,22 +767,59 @@ export default function SurveySettingsPage() {
         {/* ===== Tab: ロゴ・クーポン ===== */}
         {activeTab === "logo" && (
           <div className="bg-white rounded-xl shadow p-6 space-y-5">
-            <Field label="ロゴURL">
-              <p className="text-xs text-gray-400 mb-1">推奨サイズ 200x50px</p>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">ロゴ画像</label>
+              <p className="text-xs text-gray-400 mb-2">推奨サイズ 200x50px / JPEG・PNG・WebP・GIF・SVG / 5MBまで</p>
+              {/* Drop zone */}
+              <div
+                onDragOver={(e) => { e.preventDefault(); setLogoDragging(true); }}
+                onDragLeave={() => setLogoDragging(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setLogoDragging(false);
+                  const file = e.dataTransfer.files[0];
+                  if (file) uploadLogoFile(file);
+                }}
+                onClick={() => document.getElementById("logo-file-input")?.click()}
+                className={`flex flex-col items-center justify-center gap-2 border-2 border-dashed rounded-xl p-8 cursor-pointer transition-colors ${
+                  logoDragging ? "border-[#F5C518] bg-yellow-50" : "border-gray-300 bg-gray-50 hover:border-[#F5C518] hover:bg-yellow-50"
+                }`}
+              >
+                {logoUploading ? (
+                  <span className="text-sm text-gray-500">アップロード中...</span>
+                ) : logoUrl ? (
+                  <>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={logoUrl} alt="ロゴプレビュー" className="h-14 object-contain" />
+                    <span className="text-xs text-gray-400">クリックまたはドラッグで変更</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span className="text-sm text-gray-500">クリックまたはドラッグ&ドロップで画像をアップロード</span>
+                  </>
+                )}
+              </div>
               <input
-                type="text"
-                value={logoUrl}
-                onChange={(e) => setLogoUrl(e.target.value)}
-                placeholder="https://example.com/logo.png"
-                className={inputCls}
+                id="logo-file-input"
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml"
+                className="hidden"
+                onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadLogoFile(f); }}
               />
+              {logoUploadError && <p className="text-xs text-red-500 mt-1">{logoUploadError}</p>}
               {logoUrl && (
-                <div className="mt-2 p-3 border border-gray-200 rounded-lg bg-gray-50 inline-block">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={logoUrl} alt="ロゴプレビュー" className="h-12 object-contain" />
-                </div>
+                <button
+                  type="button"
+                  onClick={() => { setLogoUrl(""); setLogoUploadError(null); }}
+                  className="mt-2 text-xs text-red-500 hover:text-red-700 underline"
+                >
+                  画像を削除
+                </button>
               )}
-            </Field>
+            </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">クーポン有効化</label>
@@ -754,8 +836,62 @@ export default function SurveySettingsPage() {
                 </span>
               </label>
               <p className="text-xs text-gray-400 mt-1">
-                クーポンON時、アンケート完了後にロゴ画像がクーポンとして表示されます
+                クーポンON時、アンケート完了後にクーポン画像が表示されます
               </p>
+            </div>
+
+            {/* Coupon image upload */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">クーポン画像</label>
+              <p className="text-xs text-gray-400 mb-2">推奨サイズ 384x192px / JPEG・PNG・WebP・GIF / 2MBまで</p>
+              <div
+                onDragOver={(e) => { e.preventDefault(); setCouponDragging(true); }}
+                onDragLeave={() => setCouponDragging(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setCouponDragging(false);
+                  const file = e.dataTransfer.files[0];
+                  if (file) uploadCouponFile(file);
+                }}
+                onClick={() => document.getElementById("coupon-file-input")?.click()}
+                className={`flex flex-col items-center justify-center gap-2 border-2 border-dashed rounded-xl p-8 cursor-pointer transition-colors ${
+                  couponDragging ? "border-[#F5C518] bg-yellow-50" : "border-gray-300 bg-gray-50 hover:border-[#F5C518] hover:bg-yellow-50"
+                }`}
+              >
+                {couponUploading ? (
+                  <span className="text-sm text-gray-500">アップロード中...</span>
+                ) : couponImageUrl ? (
+                  <>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={couponImageUrl} alt="クーポン画像プレビュー" className="max-h-32 object-contain rounded" />
+                    <span className="text-xs text-gray-400">クリックまたはドラッグで変更</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                    </svg>
+                    <span className="text-sm text-gray-500">クリックまたはドラッグ&ドロップでクーポン画像をアップロード</span>
+                  </>
+                )}
+              </div>
+              <input
+                id="coupon-file-input"
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                className="hidden"
+                onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadCouponFile(f); }}
+              />
+              {couponUploadError && <p className="text-xs text-red-500 mt-1">{couponUploadError}</p>}
+              {couponImageUrl && (
+                <button
+                  type="button"
+                  onClick={() => { setCouponImageUrl(""); setCouponUploadError(null); }}
+                  className="mt-2 text-xs text-red-500 hover:text-red-700 underline"
+                >
+                  画像を削除
+                </button>
+              )}
             </div>
 
             <div>

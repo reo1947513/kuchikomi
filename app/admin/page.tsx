@@ -45,16 +45,19 @@ export default function SuperAdminDashboard() {
 
   if (!stats) return null;
 
-  const maxCount = Math.max(...stats.monthlyReviews.map((m) => m.count), 1);
+  const monthlyReviews = stats.monthlyReviews ?? [];
+  const industryDistribution = stats.industryDistribution ?? [];
+
+  const maxCount = Math.max(...monthlyReviews.map((m: { count: number }) => m.count), 1);
   const yMax = Math.ceil(maxCount / Math.pow(10, Math.floor(Math.log10(maxCount || 1)))) *
     Math.pow(10, Math.floor(Math.log10(maxCount || 1)));
   const safeYMax = yMax > 0 ? yMax : 10;
 
-  const totalIndustry = stats.industryDistribution.reduce((s, d) => s + d.count, 0) || 1;
+  const totalIndustry = industryDistribution.reduce((s, d) => s + d.count, 0) || 1;
 
   const chartW = 520;
   const chartH = 200;
-  const barCount = stats.monthlyReviews.length || 1;
+  const barCount = monthlyReviews.length || 1;
   const slotW = chartW / barCount;
   const barW = Math.max(20, slotW * 0.55);
 
@@ -121,7 +124,7 @@ export default function SuperAdminDashboard() {
               );
             })}
             {/* Bars */}
-            {stats.monthlyReviews.map((m, i) => {
+            {monthlyReviews.map((m, i) => {
               const ratio = m.count / safeYMax;
               const bh = ratio * chartH;
               const bx = 45 + i * slotW + (slotW - barW) / 2;
@@ -151,14 +154,14 @@ export default function SuperAdminDashboard() {
           </div>
           <div className="flex items-center gap-6 mt-2">
             <svg viewBox="0 0 200 200" className="w-44 h-44 shrink-0">
-              {stats.industryDistribution.length === 0 ? (
+              {industryDistribution.length === 0 ? (
                 <circle cx={100} cy={100} r={80} fill="#F3F4F6" />
-              ) : stats.industryDistribution.length === 1 ? (
+              ) : industryDistribution.length === 1 ? (
                 <circle cx={100} cy={100} r={80} fill={PIE_COLORS[0]} />
               ) : (
                 (() => {
                   let cum = 0;
-                  return stats.industryDistribution.map((d, i) => {
+                  return industryDistribution.map((d, i) => {
                     const angle = (d.count / totalIndustry) * 360;
                     const path = slicePath(100, 100, 80, cum, cum + angle);
                     cum += angle;
@@ -176,7 +179,7 @@ export default function SuperAdminDashboard() {
               )}
             </svg>
             <div className="space-y-2">
-              {stats.industryDistribution.map((d, i) => (
+              {industryDistribution.map((d, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <div
                     className="w-3 h-3 rounded-sm shrink-0"
@@ -185,7 +188,7 @@ export default function SuperAdminDashboard() {
                   <span className="text-xs text-gray-600">{d.industry}</span>
                 </div>
               ))}
-              {stats.industryDistribution.length === 0 && (
+              {industryDistribution.length === 0 && (
                 <p className="text-xs text-gray-400">データなし</p>
               )}
             </div>

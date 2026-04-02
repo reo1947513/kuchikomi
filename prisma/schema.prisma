@@ -49,6 +49,7 @@ model Survey {
   promptTemplate      String?  // AIプロンプトテンプレート ({tone}, {keywords}, {formattedResponses})
   googleBusinessUrl   String?
   logoUrl             String?
+  couponImageUrl      String?
   couponEnabled       Boolean  @default(false)
   maxRandomQuestions  Int      @default(0) // 0 = 全質問表示
   isActive            Boolean  @default(true)
