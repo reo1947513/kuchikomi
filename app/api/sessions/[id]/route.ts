@@ -13,6 +13,9 @@ export async function GET(
           id: true,
           completionMessage: true,
           googleBusinessUrl: true,
+          logoUrl: true,
+          couponImageUrl: true,
+          couponEnabled: true,
         },
       },
     },
@@ -33,5 +36,7 @@ export async function GET(
     surveyId: session.survey.id,
     completionMessage: session.survey.completionMessage ?? null,
     googleBusinessUrl: session.survey.googleBusinessUrl ?? null,
+    logoUrl: session.survey.logoUrl ?? null,
+    couponImageUrl: session.survey.couponEnabled ? (session.survey.couponImageUrl ?? null) : null,
   });
 }

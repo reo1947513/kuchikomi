@@ -9,6 +9,8 @@ interface ResultData {
   surveyId: string;
   completionMessage: string | null;
   googleBusinessUrl: string | null;
+  logoUrl: string | null;
+  couponImageUrl: string | null;
 }
 
 export default function ResultPage({
@@ -99,18 +101,22 @@ export default function ResultPage({
 
         {/* Heading */}
         <div className="flex items-center gap-3">
-          <div
-            className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow"
-            style={{ backgroundColor: "#F5C518" }}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" className="w-5 h-5">
-              <path
-                fillRule="evenodd"
-                d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </div>
+          {data.logoUrl ? (
+            <img src={data.logoUrl} alt="logo" className="w-10 h-10 rounded-full object-cover flex-shrink-0 shadow" />
+          ) : (
+            <div
+              className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow"
+              style={{ backgroundColor: "#F5C518" }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" className="w-5 h-5">
+                <path
+                  fillRule="evenodd"
+                  d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+          )}
           <h1 className="text-xl font-bold text-gray-900">クチコミ文章が完成しました！</h1>
         </div>
 
@@ -183,6 +189,19 @@ export default function ResultPage({
         <p className="text-xs text-gray-400 text-center leading-relaxed px-2">
           ※ この口コミ文章はAIが生成したものです。内容を確認・編集してから投稿してください。
         </p>
+
+        {/* Coupon image */}
+        {data.couponImageUrl && (
+          <div className="rounded-2xl overflow-hidden shadow-sm border border-yellow-200">
+            <div className="px-4 py-2 flex items-center gap-2" style={{ backgroundColor: "#F5C518" }}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-gray-800">
+                <path d="M9.375 3a1.875 1.875 0 0 0 0 3.75h1.875v4.5H3.375A1.875 1.875 0 0 1 1.5 9.375v-.75a1.875 1.875 0 0 1 1.875-1.875h.375m0 0V3A1.875 1.875 0 0 1 5.625 3h5.25A1.875 1.875 0 0 1 12.75 4.875V6.75m0 0h-3.375m3.375 0h.375a1.875 1.875 0 0 1 1.875 1.875v.75c0 1.036-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 0 1 1.5 9.375v-.75m12 4.5v5.625a1.875 1.875 0 0 1-1.875 1.875H5.625a1.875 1.875 0 0 1-1.875-1.875V13.5h10.5Z" />
+              </svg>
+              <span className="text-sm font-bold text-gray-900">クーポン</span>
+            </div>
+            <img src={data.couponImageUrl} alt="coupon" className="w-full object-contain" />
+          </div>
+        )}
 
         {/* CTA buttons */}
         <div className="space-y-3">
