@@ -10,19 +10,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const session = verifyToken(token);
   if (!session) redirect("/login");
-  if (session.role === "super") redirect("/admin");
+
+  // super admin can visit dashboard pages (e.g. to edit a shop's survey settings)
+  const isSuper = session.role === "super";
 
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-[#F5C518] shadow-sm sticky top-0 z-20">
         <div className="max-w-4xl mx-auto px-6 h-14 flex items-center justify-between">
           <span className="text-lg font-black text-gray-900 tracking-tight">クチコミPlus</span>
-          <a href="/api/auth/logout" className="text-sm text-gray-700 hover:text-gray-900 underline">
-            ログアウト
-          </a>
+          {isSuper ? (
+            <a href="/admin" className="text-sm text-gray-700 hover:text-gray-900 underline">
+              ← 管理パネルに戻る
+            </a>
+          ) : (
+            <a href="/api/auth/logout" className="text-sm text-gray-700 hover:text-gray-900 underline">
+              ログアウト
+            </a>
+          )}
         </div>
       </header>
-      <DashboardNav />
+      {!isSuper && <DashboardNav />}
       <main className="max-w-4xl mx-auto px-6 py-8">{children}</main>
     </div>
   );
