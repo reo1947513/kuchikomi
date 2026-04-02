@@ -1,0 +1,19 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /home/user/kuchikomi && FILE=$(jq -r '.tool_input.file_path // \"\"'); echo \"$FILE\" | grep -qE '\\.(ts|tsx)$' || exit 0; OUTPUT=$(npm test 2>&1); CODE=$?; if [ $CODE -ne 0 ]; then echo \"{\\\"systemMessage\\\": \\\"テスト失敗:\\n$OUTPUT\\\"}\"; fi",
+            "statusMessage": "テストエンジニアが確認中...",
+            "async": true,
+            "asyncRewake": false,
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  }
+}
