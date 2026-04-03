@@ -19,6 +19,8 @@ type Contact = {
 export default function ContactsPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<Contact | null>(null);
 
   useEffect(() => {
@@ -54,9 +56,39 @@ export default function ContactsPage() {
     return "bg-red-50 border-red-300 text-red-700";
   };
 
+  const filtered = contacts.filter((c) => {
+    if (!search) return true;
+    const s = search.toLowerCase();
+    return (
+      c.companyName.toLowerCase().includes(s) ||
+      c.lastName.toLowerCase().includes(s) ||
+      c.firstName.toLowerCase().includes(s) ||
+      c.email.toLowerCase().includes(s) ||
+      c.phone.includes(s) ||
+      c.category.toLowerCase().includes(s) ||
+      (c.status || "").toLowerCase().includes(s)
+    );
+  });
+
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">お問い合わせ管理</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-gray-900">お問い合わせ管理</h1>
+        <form onSubmit={(e) => { e.preventDefault(); setSearch(searchInput); }} className="flex items-center gap-2">
+          <input
+            type="text"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder="会社名・名前・メールで検索"
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 w-56"
+          />
+          <button type="submit" className="p-2 bg-violet-500 rounded-lg hover:bg-violet-600 transition-colors">
+            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
+        </form>
+      </div>
 
       {loading ? (
         <div className="text-center py-12 text-gray-400 text-sm">読み込み中...</div>
@@ -80,7 +112,7 @@ export default function ContactsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {contacts.map((c) => (
+              {filtered.map((c) => (
                 <tr key={c.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{formatDate(c.createdAt)}</td>
                   <td className="px-4 py-3">
