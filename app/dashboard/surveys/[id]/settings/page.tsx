@@ -498,7 +498,7 @@ export default function SurveySettingsPage() {
         {/* Survey URL & QR Code */}
         <div className="bg-white rounded-xl shadow-sm p-5 mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">アンケートURL</label>
-          <div className="flex gap-2 mb-3">
+          <div className="flex flex-wrap gap-2 mb-3">
             <input type="text" value={surveyUrl} readOnly className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm bg-gray-50 text-gray-600 select-all" />
             <button type="button" onClick={handleCopyUrl} className="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap">{copying ? "コピー済み!" : "コピー"}</button>
             <button type="button" onClick={generateQR} disabled={qrGenerating} className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap disabled:opacity-50">{qrGenerating ? "生成中..." : "QRコード作成"}</button>
