@@ -408,24 +408,6 @@ export default function SurveySettingsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Top bar */}
-      <header className="bg-gradient-to-r from-cyan-500 to-violet-500 shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link href="/dashboard" className="text-xl font-black text-gray-900 tracking-tight">
-            クチコミPlus
-          </Link>
-          <Link
-            href="/dashboard"
-            className="flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:text-gray-900"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            ダッシュボードへ戻る
-          </Link>
-        </div>
-      </header>
-
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>
