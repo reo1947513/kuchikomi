@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
 
   if (!survey.isActive) {
     return NextResponse.json({ error: "Survey is not active" }, { status: 403 });
+  }
 
   // Check owner contract status
   const owner = await prisma.user.findUnique({
@@ -47,7 +48,6 @@ export async function POST(request: NextRequest) {
   });
   if (owner && !owner.noContractLimit && owner.contractEnd && new Date() > new Date(owner.contractEnd)) {
     return NextResponse.json({ error: "このアンケートは現在ご利用いただけません" }, { status: 403 });
-  }
   }
 
   const session = await prisma.reviewSession.create({
