@@ -116,9 +116,6 @@ export default function SurveySettingsPage() {
   const [useGrouping, setUseGrouping] = useState(false);
   const [groupName, setGroupName] = useState("");
   const [groupQuestions, setGroupQuestions] = useState<{text:string;type:"choice"|"text";choices:Choice[]}[]>([{text:"",type:"text",choices:[]}]);
-  const [useGrouping, setUseGrouping] = useState(false);
-  const [groupName, setGroupName] = useState("");
-  const [groupQuestions, setGroupQuestions] = useState<{text:string;type:"choice"|"text";choices:Choice[]}[]>([{text:"",type:"text",choices:[]}]);
 
   // ---- Logo/Coupon tab state ----
   const [logoUrl, setLogoUrl] = useState("");
