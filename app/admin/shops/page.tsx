@@ -270,6 +270,7 @@ export default function ShopsPage() {
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50">
               <th className="text-left px-4 py-3 font-semibold text-gray-700">名前</th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-700">アクセス回数</th>
               <th className="text-left px-4 py-3 font-semibold text-gray-700">住所</th>
               <th className="text-left px-4 py-3 font-semibold text-gray-700">代理店</th>
               <th className="text-right px-4 py-3 font-semibold text-gray-700">操作</th>
@@ -288,6 +289,7 @@ export default function ShopsPage() {
                   <div className="font-medium text-gray-900">{shop.shopName ?? shop.name}</div>
                   <div className="text-xs text-gray-400">{shop.loginId}</div>
                 </td>
+                <td className="px-4 py-3 text-sm text-gray-700 font-medium">{shop.sessionCount ?? 0}回</td>
                 <td className="px-4 py-3 text-gray-600 max-w-xs truncate">{shop.address ?? "—"}</td>
                 <td className="px-4 py-3 text-gray-600">{shop.agencyName ?? "—"}</td>
                 <td className="px-4 py-3">
