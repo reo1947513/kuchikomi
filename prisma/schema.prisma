@@ -54,6 +54,7 @@ model Survey {
   logoUrl             String?
   couponImageUrl      String?
   couponEnabled       Boolean  @default(false)
+  couponExpiry        String?
   themeMainColor      String?
   themeUserColor      String?
   themeTextColor      String?

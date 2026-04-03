@@ -15,6 +15,7 @@ export async function GET(
           googleBusinessUrl: true,
           logoUrl: true,
           couponImageUrl: true,
+          couponExpiry: true,
           couponEnabled: true,
         },
       },

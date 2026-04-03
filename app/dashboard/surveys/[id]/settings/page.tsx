@@ -44,6 +44,7 @@ type Survey = {
   logoUrl?: string | null;
   couponImageUrl?: string | null;
   couponEnabled: boolean;
+  couponExpiry?: string | null;
   themeMainColor?: string | null;
   themeUserColor?: string | null;
   themeTextColor?: string | null;
@@ -138,6 +139,7 @@ export default function SurveySettingsPage() {
   const [logoUrl, setLogoUrl] = useState("");
   const [couponImageUrl, setCouponImageUrl] = useState("");
   const [couponEnabled, setCouponEnabled] = useState(false);
+  const [couponExpiry, setCouponExpiry] = useState("");
   const [themeMainColor, setThemeMainColor] = useState("#06B6D4");
   const [themeUserColor, setThemeUserColor] = useState("#8B5CF6");
   const [themeTextColor, setThemeTextColor] = useState("#FFFFFF");
@@ -177,6 +179,7 @@ export default function SurveySettingsPage() {
       setLogoUrl(data.logoUrl ?? "");
       setCouponImageUrl(data.couponImageUrl ?? "");
       setCouponEnabled(data.couponEnabled ?? false);
+      setCouponExpiry(data.couponExpiry ?? "");
       setThemeMainColor(data.themeMainColor ?? "#06B6D4");
       setThemeUserColor(data.themeUserColor ?? "#8B5CF6");
       setThemeTextColor(data.themeTextColor ?? "#FFFFFF");
@@ -241,6 +244,7 @@ export default function SurveySettingsPage() {
       logoUrl,
       couponImageUrl,
       couponEnabled,
+      couponExpiry: couponExpiry || null,
       themeMainColor,
       themeUserColor,
       themeTextColor,
@@ -1104,6 +1108,17 @@ export default function SurveySettingsPage() {
                   画像を削除
                 </button>
               )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">クーポン有効期限</label>
+              <input
+                type="date"
+                value={couponExpiry}
+                onChange={(e) => setCouponExpiry(e.target.value)}
+                className={inputCls}
+              />
+              <p className="text-xs text-gray-400 mt-1">設定すると結果ページのクーポン画像の下に有効期限が表示されます</p>
             </div>
 
             <div className="pt-2 flex justify-end">
