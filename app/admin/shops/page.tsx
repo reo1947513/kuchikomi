@@ -311,6 +311,7 @@ export default function ShopsPage() {
                   })() : (
                     <span className="text-gray-400">未設定</span>
                   )}
+                </td>
                 <td className="px-4 py-3 text-gray-600 max-w-xs truncate">{shop.address ?? "—"}</td>
                 <td className="px-4 py-3 text-gray-600">{shop.agencyName ?? "—"}</td>
                 <td className="px-4 py-3">
@@ -327,6 +328,7 @@ export default function ShopsPage() {
                         アンケート
                       </button>
                     )}
+                </td>
                     <button
                       onClick={() => openEdit(shop)}
                       className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white transition-colors"
