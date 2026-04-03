@@ -36,12 +36,14 @@ type EditForm = {
   contractStart: string;
   contractEnd: string;
   noContractLimit: boolean;
+  staffName: string;
 };
 
 const emptyEdit = (): EditForm => ({
   shopName: "", address: "", googleBusinessUrl: "", industry: "",
   agencyId: "", monthlyReviewLimit: 100, email: "", password: "",
   contractStart: "", contractEnd: "", noContractLimit: false,
+  staffName: "",
 });
 
 export default function ShopsPage() {
@@ -70,6 +72,7 @@ export default function ShopsPage() {
     shopName: "", email: "", loginId: "", password: "",
     address: "", industry: "", agencyId: "", monthlyReviewLimit: 100,
     contractStart: "", contractEnd: "", noContractLimit: false,
+  staffName: "",
   });
   const [addError, setAddError] = useState<string | null>(null);
   const [addSubmitting, setAddSubmitting] = useState(false);
@@ -122,6 +125,7 @@ export default function ShopsPage() {
       contractStart: shop.contractStart ? new Date(shop.contractStart).toISOString().split("T")[0] : "",
       contractEnd: shop.contractEnd ? new Date(shop.contractEnd).toISOString().split("T")[0] : "",
       noContractLimit: shop.noContractLimit ?? false,
+      staffName: shop.name ?? "",
       agencyId: shop.agencyId ?? "",
       monthlyReviewLimit: shop.monthlyReviewLimit,
       email: "",
@@ -145,6 +149,7 @@ export default function ShopsPage() {
         contractStart: form.contractStart || null,
         contractEnd: form.contractEnd || null,
         noContractLimit: form.noContractLimit,
+        name: form.staffName.trim() || undefined,
         agencyId: form.agencyId || null,
         monthlyReviewLimit: form.monthlyReviewLimit,
       };
@@ -191,7 +196,7 @@ export default function ShopsPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: addForm.shopName.trim(),
+          name: addForm.staffName.trim() || addForm.shopName.trim(),
           shopName: addForm.shopName.trim(),
           email: addForm.email.trim() || null,
           loginId: addForm.loginId.trim(),
@@ -210,7 +215,7 @@ export default function ShopsPage() {
         throw new Error(d.error ?? "登録に失敗しました");
       }
       setAddOpen(false);
-      setAddForm({ shopName: "", email: "", loginId: "", password: "", address: "", industry: "", agencyId: "", monthlyReviewLimit: 100, contractStart: "", contractEnd: "", noContractLimit: false });
+      setAddForm({ shopName: "", email: "", loginId: "", password: "", address: "", industry: "", agencyId: "", monthlyReviewLimit: 100, contractStart: "", contractEnd: "", noContractLimit: false, staffName: "" });
       fetchShops();
     } catch (e) {
       setAddError(e instanceof Error ? e.message : "エラー");
@@ -269,7 +274,8 @@ export default function ShopsPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50">
-              <th className="text-left px-4 py-3 font-semibold text-gray-700">名前</th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-700">顧客名</th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-700">担当者名</th>
               <th className="text-left px-4 py-3 font-semibold text-gray-700">アクセス回数</th>
               <th className="text-left px-4 py-3 font-semibold text-gray-700">契約残日数</th>
               <th className="text-left px-4 py-3 font-semibold text-gray-700">住所</th>
@@ -288,6 +294,8 @@ export default function ShopsPage() {
               <tr key={shop.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-4 py-3">
                   <div className="font-medium text-gray-900">{shop.shopName ?? shop.name}</div>
+                </td>
+                <td className="px-4 py-3 text-sm text-gray-600">{shop.name}
                   <div className="text-xs text-gray-400">{shop.loginId}</div>
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-700 font-medium">{shop.sessionCount ?? 0}回</td>
@@ -426,6 +434,10 @@ export default function ShopsPage() {
                   </div>
                 )}
                 <input type="number" min={0} value={form.monthlyReviewLimit} onChange={(e) => setForm({ ...form, monthlyReviewLimit: Number(e.target.value) })} className={inputCls} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">担当者名</label>
+                <input type="text" value={form.staffName ?? ""} onChange={(e) => setForm({ ...form, staffName: e.target.value })} className={inputCls} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">新しいメールアドレス（変更する場合）</label>
