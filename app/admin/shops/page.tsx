@@ -18,6 +18,9 @@ type Shop = {
   firstSurveyId?: string | null;
   googleBusinessUrl?: string | null;
   monthlyReviewLimit: number;
+  contractStart?: string | null;
+  contractEnd?: string | null;
+  noContractLimit?: boolean;
 };
 
 type EditForm = {
@@ -29,11 +32,15 @@ type EditForm = {
   monthlyReviewLimit: number;
   email: string;
   password: string;
+  contractStart: string;
+  contractEnd: string;
+  noContractLimit: boolean;
 };
 
 const emptyEdit = (): EditForm => ({
   shopName: "", address: "", googleBusinessUrl: "", industry: "",
   agencyId: "", monthlyReviewLimit: 100, email: "", password: "",
+  contractStart: "", contractEnd: "", noContractLimit: false,
 });
 
 export default function ShopsPage() {
@@ -61,6 +68,7 @@ export default function ShopsPage() {
   const [addForm, setAddForm] = useState({
     shopName: "", email: "", loginId: "", password: "",
     address: "", industry: "", agencyId: "", monthlyReviewLimit: 100,
+    contractStart: "", contractEnd: "", noContractLimit: false,
   });
   const [addError, setAddError] = useState<string | null>(null);
   const [addSubmitting, setAddSubmitting] = useState(false);
@@ -110,6 +118,9 @@ export default function ShopsPage() {
       address: shop.address ?? "",
       googleBusinessUrl: shop.googleBusinessUrl ?? "",
       industry: shop.industry ?? "",
+      contractStart: shop.contractStart ? new Date(shop.contractStart).toISOString().split("T")[0] : "",
+      contractEnd: shop.contractEnd ? new Date(shop.contractEnd).toISOString().split("T")[0] : "",
+      noContractLimit: shop.noContractLimit ?? false,
       agencyId: shop.agencyId ?? "",
       monthlyReviewLimit: shop.monthlyReviewLimit,
       email: "",
@@ -130,6 +141,9 @@ export default function ShopsPage() {
         address: form.address.trim(),
         googleBusinessUrl: form.googleBusinessUrl.trim(),
         industry: form.industry,
+        contractStart: form.contractStart || null,
+        contractEnd: form.contractEnd || null,
+        noContractLimit: form.noContractLimit,
         agencyId: form.agencyId || null,
         monthlyReviewLimit: form.monthlyReviewLimit,
       };
@@ -183,6 +197,9 @@ export default function ShopsPage() {
           password: addForm.password.trim(),
           address: addForm.address.trim() || null,
           industry: addForm.industry || null,
+          contractStart: addForm.contractStart || undefined,
+          contractEnd: addForm.contractEnd || undefined,
+          noContractLimit: addForm.noContractLimit,
           agencyId: addForm.agencyId || null,
           monthlyReviewLimit: addForm.monthlyReviewLimit,
         }),
@@ -192,7 +209,7 @@ export default function ShopsPage() {
         throw new Error(d.error ?? "登録に失敗しました");
       }
       setAddOpen(false);
-      setAddForm({ shopName: "", email: "", loginId: "", password: "", address: "", industry: "", agencyId: "", monthlyReviewLimit: 100 });
+      setAddForm({ shopName: "", email: "", loginId: "", password: "", address: "", industry: "", agencyId: "", monthlyReviewLimit: 100, contractStart: "", contractEnd: "", noContractLimit: false });
       fetchShops();
     } catch (e) {
       setAddError(e instanceof Error ? e.message : "エラー");
