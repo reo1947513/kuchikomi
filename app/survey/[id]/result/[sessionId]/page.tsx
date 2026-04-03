@@ -76,7 +76,7 @@ export default function ResultPage({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#FFFBEB" }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#F5F3FF" }}>
         <div
           className="w-10 h-10 border-4 border-t-transparent rounded-full animate-spin"
           style={{ borderColor: "#8B5CF6", borderTopColor: "transparent" }}
@@ -87,7 +87,7 @@ export default function ResultPage({
 
   if (error || !data) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6" style={{ backgroundColor: "#FFFBEB" }}>
+      <div className="min-h-screen flex items-center justify-center p-6" style={{ backgroundColor: "#F5F3FF" }}>
         <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-red-700 text-sm max-w-sm w-full text-center">
           {error ?? "エラーが発生しました"}
         </div>
@@ -96,7 +96,7 @@ export default function ResultPage({
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#FFFBEB" }}>
+    <div className="min-h-screen" style={{ backgroundColor: "#F5F3FF" }}>
       <div className="max-w-lg mx-auto px-4 py-10 space-y-5">
 
         {/* Heading */}

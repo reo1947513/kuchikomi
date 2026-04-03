@@ -12,7 +12,7 @@ export default function ChatMessage({ type, message }: ChatMessageProps) {
         {/* Bot avatar */}
         <div
           className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center shadow-sm"
-          style={{ backgroundColor: "#F5C518" }}
+          style={{ backgroundColor: "#06B6D4" }}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -41,7 +41,7 @@ export default function ChatMessage({ type, message }: ChatMessageProps) {
     <div className="flex justify-end mb-4">
       <div
         className="max-w-xs md:max-w-md lg:max-w-lg px-4 py-3 rounded-2xl rounded-tr-sm shadow-sm text-sm leading-relaxed text-gray-800"
-        style={{ backgroundColor: "#FDE68A" }}
+        style={{ backgroundColor: "#EDE9FE" }}
       >
         {message}
       </div>

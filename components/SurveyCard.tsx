@@ -128,7 +128,7 @@ export default function SurveyCard({ survey, onDeleted }: SurveyCardProps) {
       <div className="flex flex-wrap gap-2 pt-1 border-t border-gray-100">
         <button
           onClick={() => router.push(`/dashboard/surveys/${survey.id}/edit`)}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg bg-[#F5C518] hover:bg-[#D4A017] text-gray-900 transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white transition-colors"
         >
           <svg
             className="w-4 h-4"

@@ -62,7 +62,7 @@ export default function SharePage({ params }: { params: { id: string } }) {
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-center px-4"
-      style={{ backgroundColor: "#FFFBEB" }}
+      style={{ backgroundColor: "#F5F3FF" }}
     >
       {/* Header */}
       <div className="w-full max-w-md mb-6">
@@ -140,7 +140,7 @@ export default function SharePage({ params }: { params: { id: string } }) {
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
                 アンケートURL
               </p>
-              <div className="flex items-center justify-center bg-white border-2 border-dashed border-yellow-300 rounded-xl py-8 px-4 mb-3">
+              <div className="flex items-center justify-center bg-white border-2 border-dashed border-violet-300 rounded-xl py-8 px-4 mb-3">
                 <div className="text-center">
                   {/* QR placeholder visual */}
                   <div className="inline-flex items-center justify-center w-24 h-24 mb-3 rounded-lg bg-gray-50 border border-gray-200">

@@ -268,7 +268,7 @@ export default function SurveyPage({
   return (
     <div
       className="min-h-screen flex flex-col"
-      style={{ backgroundColor: "#FFFBEB" }}
+      style={{ backgroundColor: "#F5F3FF" }}
     >
       {/* Top bar */}
       <header className="sticky top-0 z-10 bg-white shadow-sm">
@@ -375,7 +375,7 @@ export default function SurveyPage({
               <p className="text-xs text-gray-500 mb-4">別タブで結果ページが開きます。</p>
               <button
                 onClick={() => window.open(`/survey/${surveyId}/result/${phase.sessionId}`, "_blank")}
-                className="w-full py-3 px-4 rounded-xl text-gray-900 text-sm font-bold shadow transition-opacity hover:opacity-90 mb-3"
+                className="w-full py-3 px-4 rounded-xl text-white text-sm font-bold shadow transition-opacity hover:opacity-90 mb-3"
                 style={{ backgroundColor: "#8B5CF6" }}
               >
                 結果を開く
