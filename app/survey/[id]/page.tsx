@@ -28,6 +28,7 @@ interface Survey {
   logoUrl: string | null;
   themeMainColor: string | null;
   themeUserColor: string | null;
+  closingMessage: string | null;
   themeTextColor: string | null;
   questions: Question[];
 }
@@ -198,7 +199,7 @@ export default function SurveyPage({
       // All questions answered — generate review
       const thankMsg: Message = {
         role: "bot",
-        text: "ありがとうございました！",
+        text: data.survey.closingMessage || "ありがとうございました！",
       };
       setMessages((prev) => [...prev, userMsg, thankMsg]);
       setPhase({ type: "generating" });
