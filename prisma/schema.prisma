@@ -129,3 +129,16 @@ model Answer {
   textValue  String?
   createdAt  DateTime      @default(now())
 }
+
+model Contact {
+  id             String   @id @default(cuid())
+  category       String
+  contractStatus String
+  companyName    String
+  lastName       String
+  firstName      String
+  email          String
+  phone          String
+  content        String
+  createdAt      DateTime @default(now())
+}
