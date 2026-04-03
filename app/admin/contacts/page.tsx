@@ -38,7 +38,7 @@ export default function ContactsPage() {
 
   const updateStatus = async (id: string, status: string) => {
     try {
-      const res = await fetch(\`/api/admin/contacts/\${id}\`, {
+      const res = await fetch(`/api/admin/contacts/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
@@ -128,7 +128,7 @@ export default function ContactsPage() {
                     <select
                       value={c.status || "未対応"}
                       onChange={(e) => updateStatus(c.id, e.target.value)}
-                      className={\`text-xs font-medium rounded-lg border px-2 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-violet-400 \${statusColor(c.status || "未対応")}\`}
+                      className={`text-xs font-medium rounded-lg border px-2 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-violet-400 ${statusColor(c.status || "未対応")}`}
                     >
                       <option value="未対応">未対応</option>
                       <option value="対応中">対応中</option>
