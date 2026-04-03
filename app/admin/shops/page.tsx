@@ -296,7 +296,7 @@ export default function ShopsPage() {
                   <div className="font-medium text-gray-900">{shop.shopName ?? shop.name}</div>
                   <div className="text-xs text-gray-400">{shop.loginId ?? ""}</div>
                 </td>
-                <td className="px-4 py-3 text-sm text-gray-600">{shop.name}</div>
+                <td className="px-4 py-3 text-sm text-gray-600">{shop.name}</td>
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-700 font-medium">{shop.sessionCount ?? 0}回</td>
                 <td className="px-4 py-3 text-sm">
