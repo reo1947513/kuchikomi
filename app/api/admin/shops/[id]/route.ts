@@ -189,6 +189,7 @@ export async function DELETE(request: NextRequest, { params }: Params) {
   await prisma.reviewSession.deleteMany({ where: { id: { in: sessionIds } } });
   await prisma.choice.deleteMany({ where: { questionId: { in: questionIds } } });
   await prisma.question.deleteMany({ where: { id: { in: questionIds } } });
+  await prisma.advice.deleteMany({ where: { surveyId: { in: surveyIds } } });
   await prisma.tone.deleteMany({ where: { surveyId: { in: surveyIds } } });
   await prisma.survey.deleteMany({ where: { id: { in: surveyIds } } });
   await prisma.user.delete({ where: { id: params.id } });
