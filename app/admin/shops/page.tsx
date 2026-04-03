@@ -395,6 +395,18 @@ export default function ShopsPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">月間レビュー生成制限</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">契約期間</label>
+                <label className="flex items-center gap-2 mb-2 cursor-pointer">
+                  <input type="checkbox" checked={form.noContractLimit} onChange={(e) => setForm({ ...form, noContractLimit: e.target.checked })} className="rounded border-gray-300 text-violet-500 focus:ring-violet-400" />
+                  <span className="text-sm text-gray-700">設定なし（無期限）</span>
+                </label>
+                {!form.noContractLimit && (
+                  <div className="flex gap-2 mb-4">
+                    <input type="date" value={form.contractStart} onChange={(e) => setForm({ ...form, contractStart: e.target.value })} className={inputCls} />
+                    <span className="self-center text-gray-400">〜</span>
+                    <input type="date" value={form.contractEnd} onChange={(e) => setForm({ ...form, contractEnd: e.target.value })} className={inputCls} />
+                  </div>
+                )}
                 <input type="number" min={0} value={form.monthlyReviewLimit} onChange={(e) => setForm({ ...form, monthlyReviewLimit: Number(e.target.value) })} className={inputCls} />
               </div>
               <div>
@@ -489,6 +501,18 @@ export default function ShopsPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">月間レビュー制限</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">契約期間</label>
+                <label className="flex items-center gap-2 mb-2 cursor-pointer">
+                  <input type="checkbox" checked={addForm.noContractLimit} onChange={(e) => setAddForm({ ...addForm, noContractLimit: e.target.checked })} className="rounded border-gray-300 text-violet-500 focus:ring-violet-400" />
+                  <span className="text-sm text-gray-700">設定なし（無期限）</span>
+                </label>
+                {!addForm.noContractLimit && (
+                  <div className="flex gap-2 mb-4">
+                    <input type="date" value={addForm.contractStart} onChange={(e) => setAddForm({ ...addForm, contractStart: e.target.value })} className={inputCls} />
+                    <span className="self-center text-gray-400">〜</span>
+                    <input type="date" value={addForm.contractEnd} onChange={(e) => setAddForm({ ...addForm, contractEnd: e.target.value })} className={inputCls} />
+                  </div>
+                )}
                 <input type="number" min={0} value={addForm.monthlyReviewLimit} onChange={(e) => setAddForm({ ...addForm, monthlyReviewLimit: Number(e.target.value) })} className={inputCls} />
               </div>
               <div className="flex justify-end pt-2">
