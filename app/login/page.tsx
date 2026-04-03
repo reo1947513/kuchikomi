@@ -47,15 +47,15 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-b from-yellow-200 to-yellow-300 px-4">
+    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-500 to-violet-500 px-4">
       <div className="bg-white rounded-2xl shadow-lg w-full max-w-md px-8 py-10">
         {/* Logo & App Name */}
         <div className="flex flex-col items-center mb-8">
           <img src="/logo.png" alt="クチコミPlus" className="h-28 w-auto mb-3" />
-          <h1 className="text-2xl font-bold text-gray-800 tracking-tight">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent tracking-tight">
             クチコミPlus
           </h1>
-          <p className="text-sm text-gray-500 mt-1">アカウントにログイン</p>
+          <p className="text-sm text-slate-400 mt-1">アカウントにログイン</p>
         </div>
 
         {/* Form */}
@@ -73,7 +73,7 @@ export default function LoginPage() {
               type="text"
               autoComplete="username"
               placeholder="example@example.com または AG-XXXXXX"
-              className={`w-full rounded-lg border px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition ${
+              className={`w-full rounded-lg border px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition ${
                 errors.identifier ? "border-red-400" : "border-gray-300"
               }`}
               {...register("identifier", {
@@ -99,7 +99,7 @@ export default function LoginPage() {
                 type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
                 placeholder="パスワードを入力"
-                className={`w-full rounded-lg border px-4 py-2.5 pr-11 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition ${
+                className={`w-full rounded-lg border px-4 py-2.5 pr-11 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition ${
                   errors.password ? "border-red-400" : "border-gray-300"
                 }`}
                 {...register("password", {
@@ -168,7 +168,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full rounded-lg bg-yellow-400 hover:bg-yellow-500 active:bg-yellow-600 text-gray-800 font-semibold py-2.5 text-sm transition disabled:opacity-60 disabled:cursor-not-allowed shadow-sm"
+            className="w-full rounded-lg bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 active:from-cyan-700 active:to-violet-700 text-white font-semibold py-2.5 text-sm transition disabled:opacity-60 disabled:cursor-not-allowed shadow-sm"
           >
             {isSubmitting ? "ログイン中..." : "ログイン"}
           </button>
