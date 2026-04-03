@@ -116,6 +116,9 @@ export default function SurveySettingsPage() {
   const [useGrouping, setUseGrouping] = useState(false);
   const [groupName, setGroupName] = useState("");
   const [groupQuestions, setGroupQuestions] = useState<{text:string;type:"choice"|"text";choices:Choice[]}[]>([{text:"",type:"text",choices:[]}]);
+  const [useGrouping, setUseGrouping] = useState(false);
+  const [groupName, setGroupName] = useState("");
+  const [groupQuestions, setGroupQuestions] = useState<{text:string;type:"choice"|"text";choices:Choice[]}[]>([{text:"",type:"text",choices:[]}]);
 
   // ---- Logo/Coupon tab state ----
   const [logoUrl, setLogoUrl] = useState("");
@@ -669,6 +672,7 @@ export default function SurveySettingsPage() {
                       >
                         {q.type === "choice" ? "選択式" : "テキスト"}
                       </span>
+                      {q.groupName && (<span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-cyan-100 text-cyan-700">{q.groupName}</span>)}
                     </div>
                     <label className="flex items-center gap-1.5 mt-1.5 cursor-pointer select-none">
                       <input
@@ -703,6 +707,51 @@ export default function SurveySettingsPage() {
             {showAddQuestion ? (
               <div className="bg-white rounded-xl shadow p-5 space-y-3 border border-violet-500/50">
                 <h3 className="text-sm font-semibold text-gray-800">質問を追加</h3>
+                <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <input type="checkbox" checked={useGrouping} onChange={(e) => setUseGrouping(e.target.checked)} className="rounded border-gray-300 text-violet-500 focus:ring-violet-400" />
+                  <span className="text-sm text-gray-700">グルーピングランダム質問設定を行う</span>
+                </label>
+                {useGrouping ? (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">グループ名</label>
+                      <input type="text" value={groupName} onChange={(e) => setGroupName(e.target.value)} placeholder="グループ名を入力してください" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-2">質問（複数入力できます）</label>
+                      <div className="space-y-3">
+                        {groupQuestions.map((gq, gi) => (
+                          <div key={gi} className="border border-gray-200 rounded-lg p-3 space-y-2">
+                            <div className="flex gap-2">
+                              <textarea value={gq.text} onChange={(e) => setGroupQuestions((prev) => prev.map((q, i) => i === gi ? { ...q, text: e.target.value } : q))} placeholder={`質問文 ${gi + 1}`} className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent resize-none" rows={2} />
+                              {groupQuestions.length > 1 && (
+                                <button type="button" onClick={() => setGroupQuestions((prev) => prev.filter((_, i) => i !== gi))} className="shrink-0 text-gray-300 hover:text-red-400 transition-colors self-start mt-1">
+                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                </button>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs text-gray-500">質問の種類:</span>
+                              <select value={gq.type} onChange={(e) => setGroupQuestions((prev) => prev.map((q, i) => i === gi ? { ...q, type: e.target.value as "choice" | "text" } : q))} className="border border-gray-300 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-violet-400 bg-white">
+                                <option value="text">記述式</option>
+                                <option value="choice">選択式</option>
+                              </select>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <button type="button" onClick={() => setGroupQuestions((prev) => [...prev, { text: "", type: "text", choices: [] }])} className="flex items-center gap-1 text-xs text-gray-500 hover:text-violet-500 transition-colors mt-2">
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                        質問を追加
+                      </button>
+                    </div>
+                    <div className="flex gap-2 pt-1">
+                      <button type="button" onClick={handleAddQuestion} disabled={!groupName.trim() || groupQuestions.every((gq) => !gq.text.trim())} className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50">追加</button>
+                      <button type="button" onClick={() => { setShowAddQuestion(false); setUseGrouping(false); }} className="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50 transition-colors">キャンセル</button>
+                    </div>
+                  </div>
+                ) : (
+                <>
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1">質問文</label>
                   <input
@@ -825,6 +874,8 @@ export default function SurveySettingsPage() {
                     キャンセル
                   </button>
                 </div>
+                </>
+                )}
               </div>
             ) : (
               <button

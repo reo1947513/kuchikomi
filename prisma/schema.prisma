@@ -81,6 +81,7 @@ model Question {
   order     Int
   type      String   @default("choice") // "choice" | "text"
   isRandom  Boolean  @default(false)
+  groupName String?
   surveyId  String
   survey    Survey   @relation(fields: [surveyId], references: [id], onDelete: Cascade)
   choices   Choice[]
