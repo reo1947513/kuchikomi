@@ -101,8 +101,9 @@ export default function SurveySettingsPage() {
   const params = useParams();
   const surveyId = params.id as string;
 
-  const [activeTab, setActiveTab] = useState<Tab>("basic");
+  const [activeTab, setActiveTab] = useState<Tab>("logo");
   const [loading, setLoading] = useState(true);
+  const [userRole, setUserRole] = useState<string>("");
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -146,6 +147,10 @@ export default function SurveySettingsPage() {
   const [couponDragging, setCouponDragging] = useState(false);
   const [couponUploading, setCouponUploading] = useState(false);
   const [couponUploadError, setCouponUploadError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/auth/me").then(r => r.json()).then(d => setUserRole(d.role ?? "")).catch(() => {});
+  }, []);
 
   // ---- Fetch survey ----
   const fetchSurvey = useCallback(async () => {
@@ -425,9 +430,11 @@ export default function SurveySettingsPage() {
   }
 
   const tabs: { key: Tab; label: string }[] = [
-    { key: "basic", label: "基本設定" },
-    { key: "ai", label: "AI設定" },
-    { key: "questions", label: "質問管理" },
+    ...(userRole === "super" ? [
+      { key: "basic" as Tab, label: "基本設定" },
+      { key: "ai" as Tab, label: "AI設定" },
+      { key: "questions" as Tab, label: "質問管理" },
+    ] : []),
     { key: "logo", label: "ロゴ・クーポン" },
     { key: "color", label: "カラー設定" },
   ];
