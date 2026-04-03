@@ -17,6 +17,8 @@ export async function GET(request: NextRequest) {
   const search = searchParams.get("search") ?? "";
   const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
   const limit = Math.min(50, parseInt(searchParams.get("limit") ?? "20", 10));
+  const sortKey = searchParams.get("sortKey") ?? "";
+  const sortDir = searchParams.get("sortDir") === "desc" ? "desc" : "asc";
 
   const where = {
     role: "admin" as const,
@@ -29,6 +31,77 @@ export async function GET(request: NextRequest) {
         }
       : {}),
   };
+
+  // Determine orderBy based on sortKey
+  // For sessionCount and contractDays we need to sort after fetching
+  const needsPostSort = sortKey === "sessionCount" || sortKey === "contractDays";
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let orderBy: any = { createdAt: "desc" };
+  if (sortKey === "shopName") orderBy = { shopName: sortDir };
+  else if (sortKey === "name") orderBy = { name: sortDir };
+  else if (sortKey === "contractDays") orderBy = { contractEnd: sortDir };
+
+  if (needsPostSort) {
+    // Fetch all matching records, sort in memory, then paginate
+    const [total, allShops] = await Promise.all([
+      prisma.user.count({ where }),
+      prisma.user.findMany({
+        where,
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          loginId: true,
+          shopName: true,
+          address: true,
+          industry: true,
+          agencyId: true,
+          contractStart: true,
+          contractEnd: true,
+          noContractLimit: true,
+          agency: { select: { id: true, name: true } },
+          createdAt: true,
+          surveys: {
+            select: { id: true, googleBusinessUrl: true, monthlyReviewLimit: true, _count: { select: { sessions: true } } },
+            orderBy: { createdAt: "asc" as const },
+            take: 1,
+          },
+          _count: { select: { surveys: true } },
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+    ]);
+
+    const mapped = allShops.map((s) => ({
+      ...s,
+      firstSurveyId: s.surveys[0]?.id ?? null,
+      googleBusinessUrl: s.surveys[0]?.googleBusinessUrl ?? null,
+      monthlyReviewLimit: s.surveys[0]?.monthlyReviewLimit ?? 100,
+      sessionCount: s.surveys.reduce((sum: number, sv: { _count: { sessions: number } }) => sum + sv._count.sessions, 0),
+      surveys: undefined,
+    }));
+
+    const dir = sortDir === "asc" ? 1 : -1;
+    if (sortKey === "sessionCount") {
+      mapped.sort((a, b) => (a.sessionCount - b.sessionCount) * dir);
+    } else if (sortKey === "contractDays") {
+      const getDays = (s: typeof mapped[0]) => {
+        if (s.noContractLimit) return 999999;
+        if (!s.contractEnd) return -1;
+        return Math.ceil((new Date(s.contractEnd).getTime() - Date.now()) / 86400000);
+      };
+      mapped.sort((a, b) => (getDays(a) - getDays(b)) * dir);
+    }
+
+    const paginated = mapped.slice((page - 1) * limit, page * limit);
+
+    return NextResponse.json({
+      shops: paginated,
+      total,
+      page,
+      totalPages: Math.max(1, Math.ceil(total / limit)),
+    });
+  }
 
   const [total, shops] = await Promise.all([
     prisma.user.count({ where }),
@@ -50,12 +123,12 @@ export async function GET(request: NextRequest) {
         createdAt: true,
         surveys: {
           select: { id: true, googleBusinessUrl: true, monthlyReviewLimit: true, _count: { select: { sessions: true } } },
-          orderBy: { createdAt: "asc" },
+          orderBy: { createdAt: "asc" as const },
           take: 1,
         },
         _count: { select: { surveys: true } },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy,
       skip: (page - 1) * limit,
       take: limit,
     }),
