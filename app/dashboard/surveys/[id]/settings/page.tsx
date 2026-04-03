@@ -44,11 +44,27 @@ type Survey = {
   logoUrl?: string | null;
   couponImageUrl?: string | null;
   couponEnabled: boolean;
+  themeMainColor?: string | null;
+  themeUserColor?: string | null;
+  themeTextColor?: string | null;
   tones: Tone[];
   questions: Question[];
 };
 
-type Tab = "basic" | "ai" | "questions" | "logo";
+type Tab = "basic" | "ai" | "questions" | "logo" | "color";
+
+const COLOR_THEMES = [
+  { name: "\u30c7\u30d5\u30a9\u30eb\u30c8", main: "#F2B705", user: "#F28705", text: "#262626" },
+  { name: "\u30b7\u30f3\u30d7\u30eb\u30db\u30ef\u30a4\u30c8", main: "#FFFFFF", user: "#E5E7EB", text: "#374151" },
+  { name: "\u30b7\u30f3\u30d7\u30eb\u30b0\u30ec\u30fc", main: "#6B7280", user: "#9CA3AF", text: "#FFFFFF" },
+  { name: "\u30b7\u30f3\u30d7\u30eb\u30d6\u30e9\u30c3\u30af", main: "#1F2937", user: "#374151", text: "#FFFFFF" },
+  { name: "\u30b7\u30f3\u30d7\u30eb\u30df\u30f3\u30c8", main: "#10B981", user: "#34D399", text: "#FFFFFF" },
+  { name: "\u30d6\u30eb\u30fc\u7cfb", main: "#2563EB", user: "#3B82F6", text: "#FFFFFF" },
+  { name: "\u30ec\u30c3\u30c9\u7cfb", main: "#DC2626", user: "#EF4444", text: "#FFFFFF" },
+  { name: "\u30d1\u30fc\u30d7\u30eb\u7cfb", main: "#7C3AED", user: "#8B5CF6", text: "#FFFFFF" },
+  { name: "\u30aa\u30ec\u30f3\u30b8\u7cfb", main: "#EA580C", user: "#F97316", text: "#FFFFFF" },
+  { name: "\u30c6\u30a3\u30fc\u30eb\u7cfb", main: "#0D9488", user: "#14B8A6", text: "#FFFFFF" },
+];
 
 const DEFAULT_PROMPT_TEMPLATE = `以下のアンケート回答をもとに、Googleビジネスプロフィールに投稿する口コミ文章を作成してください。
 
@@ -121,6 +137,9 @@ export default function SurveySettingsPage() {
   const [logoUrl, setLogoUrl] = useState("");
   const [couponImageUrl, setCouponImageUrl] = useState("");
   const [couponEnabled, setCouponEnabled] = useState(false);
+  const [themeMainColor, setThemeMainColor] = useState("#F2B705");
+  const [themeUserColor, setThemeUserColor] = useState("#F28705");
+  const [themeTextColor, setThemeTextColor] = useState("#262626");
   const [logoDragging, setLogoDragging] = useState(false);
   const [logoUploading, setLogoUploading] = useState(false);
   const [logoUploadError, setLogoUploadError] = useState<string | null>(null);
@@ -153,6 +172,9 @@ export default function SurveySettingsPage() {
       setLogoUrl(data.logoUrl ?? "");
       setCouponImageUrl(data.couponImageUrl ?? "");
       setCouponEnabled(data.couponEnabled ?? false);
+      setThemeMainColor(data.themeMainColor ?? "#F2B705");
+      setThemeUserColor(data.themeUserColor ?? "#F28705");
+      setThemeTextColor(data.themeTextColor ?? "#262626");
     } catch (e) {
       setError(e instanceof Error ? e.message : "エラーが発生しました");
     } finally {
@@ -214,6 +236,9 @@ export default function SurveySettingsPage() {
       logoUrl,
       couponImageUrl,
       couponEnabled,
+      themeMainColor,
+      themeUserColor,
+      themeTextColor,
     });
 
   // ---- Logo upload ----
@@ -1040,6 +1065,78 @@ export default function SurveySettingsPage() {
             </div>
 
             <div className="pt-2 flex justify-end">
+              <SaveButton onClick={saveLogoCoupon} saving={saving} />
+            </div>
+          </div>
+        )}
+
+        {activeTab === "color" && (
+          <div className="space-y-6">
+            <div className="bg-white rounded-xl shadow p-6">
+              <h3 className="text-sm font-bold text-gray-800 mb-1">カラーテーマを選択</h3>
+              <p className="text-xs text-gray-400 mb-4">テンプレートを選択すると、関連するカラーが自動的に設定されます</p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                {COLOR_THEMES.map((theme) => {
+                  const isSel = themeMainColor === theme.main && themeUserColor === theme.user && themeTextColor === theme.text;
+                  return (
+                    <button key={theme.name} type="button" onClick={() => { setThemeMainColor(theme.main); setThemeUserColor(theme.user); setThemeTextColor(theme.text); }} className={`relative border-2 rounded-xl p-3 text-center transition-colors ${isSel ? "border-violet-500" : "border-gray-200 hover:border-gray-300"}`}>
+                      {isSel && (<div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-violet-500 flex items-center justify-center"><svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg></div>)}
+                      <div className="h-8 rounded-md mb-2" style={{ backgroundColor: theme.main }} />
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium text-white" style={{ backgroundColor: theme.user }}>サンプル</span>
+                      <p className="text-xs text-gray-600 mt-2">{theme.name}</p>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="bg-white rounded-xl shadow p-6">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">メインカラー</label>
+                  <div className="flex items-center gap-2">
+                    <input type="color" value={themeMainColor} onChange={(e) => setThemeMainColor(e.target.value)} className="w-10 h-10 rounded border border-gray-200 cursor-pointer" />
+                    <input type="text" value={themeMainColor} onChange={(e) => setThemeMainColor(e.target.value)} className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-violet-400" />
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">ヘッダー、ボタン等</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">ユーザーカラー</label>
+                  <div className="flex items-center gap-2">
+                    <input type="color" value={themeUserColor} onChange={(e) => setThemeUserColor(e.target.value)} className="w-10 h-10 rounded border border-gray-200 cursor-pointer" />
+                    <input type="text" value={themeUserColor} onChange={(e) => setThemeUserColor(e.target.value)} className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-violet-400" />
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">ユーザーメッセージの背景と強調テキスト</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">テキストカラー</label>
+                  <div className="flex items-center gap-2">
+                    <input type="color" value={themeTextColor} onChange={(e) => setThemeTextColor(e.target.value)} className="w-10 h-10 rounded border border-gray-200 cursor-pointer" />
+                    <input type="text" value={themeTextColor} onChange={(e) => setThemeTextColor(e.target.value)} className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-violet-400" />
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">テキスト</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl shadow p-6">
+              <h3 className="text-sm font-bold text-gray-800 mb-4">カラープレビュー</h3>
+              <div className="border border-gray-200 rounded-xl overflow-hidden">
+                <div className="px-4 py-3 font-bold text-sm" style={{ backgroundColor: themeMainColor, color: themeTextColor }}>アンケートヘッダー（メインカラー）</div>
+                <div className="p-4 space-y-3 bg-gray-50">
+                  <div className="flex items-start gap-2">
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: themeMainColor }}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" className="w-4 h-4"><path d="M4.913 2.658c2.075-.27 4.19-.408 6.337-.408 2.147 0 4.262.139 6.337.408 1.922.25 3.291 1.861 3.405 3.727a4.403 4.403 0 0 0-1.032-.211 50.89 50.89 0 0 0-8.42 0c-2.358.196-4.04 2.19-4.04 4.434v4.286a4.47 4.47 0 0 0 2.433 3.984L7.28 21.53A.75.75 0 0 1 6 21v-2.234a4.75 4.75 0 0 1-1.661-1.57 4.668 4.668 0 0 1-.752-2.584V6.386c.114-1.866 1.483-3.478 3.405-3.727Z" /></svg></div>
+                    <div className="bg-white rounded-2xl rounded-tl-sm px-3 py-2 text-sm shadow-sm" style={{ color: themeTextColor }}>AIメッセージです。次の質問に回答してください。</div>
+                  </div>
+                  <div className="flex justify-end">
+                    <div className="rounded-2xl rounded-tr-sm px-3 py-2 text-sm shadow-sm" style={{ backgroundColor: themeUserColor, color: themeTextColor }}>ユーザー回答</div>
+                  </div>
+                </div>
+                <div className="p-4 border-t border-gray-200 bg-white">
+                  <p className="text-xs text-gray-400 mb-2">アンケート送信エリア</p>
+                  <div className="py-2.5 rounded-lg text-center text-sm font-bold" style={{ backgroundColor: themeMainColor, color: themeTextColor }}>アンケートを送信</div>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end">
               <SaveButton onClick={saveLogoCoupon} saving={saving} />
             </div>
           </div>

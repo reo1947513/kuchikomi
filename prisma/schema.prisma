@@ -51,6 +51,9 @@ model Survey {
   logoUrl             String?
   couponImageUrl      String?
   couponEnabled       Boolean  @default(false)
+  themeMainColor      String?
+  themeUserColor      String?
+  themeTextColor      String?
   maxRandomQuestions  Int      @default(0) // 0 = 全質問表示
   isActive            Boolean  @default(true)
   monthlyReviewLimit  Int      @default(100)

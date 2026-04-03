@@ -26,6 +26,9 @@ interface Survey {
   description: string | null;
   googleBusinessUrl: string | null;
   logoUrl: string | null;
+  themeMainColor: string | null;
+  themeUserColor: string | null;
+  themeTextColor: string | null;
   questions: Question[];
 }
 
@@ -144,6 +147,9 @@ export default function SurveyPage({
   }, [surveyId]);
 
   const questions = session?.survey.questions ?? [];
+  const mainColor = session?.survey.themeMainColor || "#8B5CF6";
+  const userColor = session?.survey.themeUserColor || "#8B5CF6";
+  const textColor = session?.survey.themeTextColor || "#FFFFFF";
   const totalQuestions = questions.length;
 
   async function submitAnswer(
@@ -317,7 +323,7 @@ export default function SurveyPage({
               className="h-full rounded-full transition-all duration-500"
               style={{
                 width: `${progressPercent}%`,
-                backgroundColor: "#8B5CF6",
+                backgroundColor: mainColor,
               }}
             />
           </div>
@@ -330,7 +336,7 @@ export default function SurveyPage({
           <div className="flex items-center justify-center py-20">
             <div
               className="w-8 h-8 border-4 border-t-transparent rounded-full animate-spin"
-              style={{ borderColor: "#8B5CF6", borderTopColor: "transparent" }}
+              style={{ borderColor: mainColor, borderTopColor: "transparent" }}
             />
           </div>
         )}
@@ -343,7 +349,7 @@ export default function SurveyPage({
 
         {/* Messages */}
         {messages.map((msg, i) => (
-          <ChatMessage key={i} type={msg.role} message={msg.text} />
+          <ChatMessage key={i} type={msg.role} message={msg.text} mainColor={mainColor} userColor={userColor} />
         ))}
 
         {/* Generating spinner */}
@@ -351,7 +357,7 @@ export default function SurveyPage({
           <div className="flex items-start gap-2 mb-4">
             <div
               className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center shadow-sm"
-              style={{ backgroundColor: "#8B5CF6" }}
+              style={{ backgroundColor: mainColor }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -366,15 +372,15 @@ export default function SurveyPage({
             <div className="flex items-center gap-1 px-4 py-3 bg-white rounded-2xl rounded-tl-sm shadow-sm">
               <span
                 className="w-2 h-2 rounded-full animate-bounce"
-                style={{ backgroundColor: "#8B5CF6", animationDelay: "0ms" }}
+                style={{ backgroundColor: mainColor, animationDelay: "0ms" }}
               />
               <span
                 className="w-2 h-2 rounded-full animate-bounce"
-                style={{ backgroundColor: "#8B5CF6", animationDelay: "150ms" }}
+                style={{ backgroundColor: mainColor, animationDelay: "150ms" }}
               />
               <span
                 className="w-2 h-2 rounded-full animate-bounce"
-                style={{ backgroundColor: "#8B5CF6", animationDelay: "300ms" }}
+                style={{ backgroundColor: mainColor, animationDelay: "300ms" }}
               />
             </div>
           </div>
@@ -386,7 +392,7 @@ export default function SurveyPage({
             <div className="bg-white rounded-2xl shadow-md p-5 border border-violet-200 text-center">
               <div
                 className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3"
-                style={{ backgroundColor: "#8B5CF6" }}
+                style={{ backgroundColor: mainColor }}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" className="w-6 h-6">
                   <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clipRule="evenodd" />
@@ -397,7 +403,7 @@ export default function SurveyPage({
               <button
                 onClick={() => window.open(`/survey/${surveyId}/result/${phase.sessionId}`, "_blank")}
                 className="w-full py-3 px-4 rounded-xl text-white text-sm font-bold shadow transition-opacity hover:opacity-90 mb-3"
-                style={{ backgroundColor: "#8B5CF6" }}
+                style={{ backgroundColor: mainColor }}
               >
                 結果を開く
               </button>
@@ -430,7 +436,7 @@ export default function SurveyPage({
                       submitAnswer(phase.questionIndex, choice.id, undefined)
                     }
                     className="w-full text-left px-4 py-3 rounded-xl text-sm text-gray-800 font-medium border-2 transition-colors bg-white hover:bg-violet-50"
-                    style={{ borderColor: "#8B5CF6" }}
+                    style={{ borderColor: mainColor }}
                   >
                     {choice.text}
                   </button>
@@ -444,7 +450,7 @@ export default function SurveyPage({
                   className="flex-1 resize-none rounded-xl border border-gray-300 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:border-transparent"
                   style={
                     {
-                      "--tw-ring-color": "#8B5CF6",
+                      "--tw-ring-color": mainColor,
                     } as React.CSSProperties
                   }
                   rows={2}
@@ -462,7 +468,7 @@ export default function SurveyPage({
                   onClick={handleTextSubmit}
                   disabled={textInput.trim() === ""}
                   className="flex-shrink-0 w-10 h-10 self-end rounded-xl flex items-center justify-center text-white transition-opacity disabled:opacity-40"
-                  style={{ backgroundColor: "#8B5CF6" }}
+                  style={{ backgroundColor: mainColor }}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

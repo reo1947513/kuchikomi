@@ -3,16 +3,18 @@
 interface ChatMessageProps {
   type: "bot" | "user";
   message: string;
+  mainColor?: string;
+  userColor?: string;
 }
 
-export default function ChatMessage({ type, message }: ChatMessageProps) {
+export default function ChatMessage({ type, message, mainColor = "#06B6D4", userColor = "#EDE9FE" }: ChatMessageProps) {
   if (type === "bot") {
     return (
       <div className="flex items-start gap-2 mb-4">
         {/* Bot avatar */}
         <div
           className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center shadow-sm"
-          style={{ backgroundColor: "#06B6D4" }}
+          style={{ backgroundColor: mainColor }}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -41,7 +43,7 @@ export default function ChatMessage({ type, message }: ChatMessageProps) {
     <div className="flex justify-end mb-4">
       <div
         className="max-w-xs md:max-w-md lg:max-w-lg px-4 py-3 rounded-2xl rounded-tr-sm shadow-sm text-sm leading-relaxed text-gray-800"
-        style={{ backgroundColor: "#EDE9FE" }}
+        style={{ backgroundColor: userColor }}
       >
         {message}
       </div>
