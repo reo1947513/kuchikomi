@@ -105,7 +105,7 @@ export default function AgenciesPage() {
         <h1 className="text-2xl font-bold text-gray-900">代理店管理</h1>
         <button
           onClick={openAdd}
-          className="flex items-center gap-2 px-4 py-2 bg-[#F5C518] hover:bg-[#D4A017] text-gray-900 font-semibold rounded-xl shadow transition-colors text-sm"
+          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white font-semibold rounded-xl shadow transition-colors text-sm"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -123,9 +123,9 @@ export default function AgenciesPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="代理店名で検索"
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] w-48"
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 w-48"
           />
-          <button className="p-2 bg-[#F5C518] rounded-lg hover:bg-[#D4A017] transition-colors">
+          <button className="p-2 bg-violet-500 rounded-lg hover:bg-violet-600 transition-colors">
             <svg className="w-4 h-4 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
@@ -160,7 +160,7 @@ export default function AgenciesPage() {
                   <div className="flex items-center justify-end gap-2">
                     <button
                       onClick={() => openEdit(agency)}
-                      className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-[#F5C518] hover:bg-[#D4A017] text-gray-900 transition-colors"
+                      className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white transition-colors"
                     >
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -189,7 +189,7 @@ export default function AgenciesPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40" onClick={() => setModalOpen(false)} />
           <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm">
-            <div className="bg-[#F5C518] rounded-t-2xl px-5 py-4 flex items-center justify-between">
+            <div className="bg-violet-500 rounded-t-2xl px-5 py-4 flex items-center justify-between">
               <h2 className="text-base font-bold text-gray-900">
                 {editingAgency ? "代理店編集" : "新規代理店登録"}
               </h2>
@@ -212,7 +212,7 @@ export default function AgenciesPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="例：コネスト"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent"
                 />
               </div>
               <div className="flex justify-end gap-3 pt-2">
@@ -226,7 +226,7 @@ export default function AgenciesPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-6 py-2 bg-[#F5C518] hover:bg-[#D4A017] text-gray-900 font-semibold rounded-xl shadow transition-colors disabled:opacity-60 text-sm"
+                  className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white font-semibold rounded-xl shadow transition-colors disabled:opacity-60 text-sm"
                 >
                   {submitting ? "保存中..." : editingAgency ? "更新" : "登録"}
                 </button>

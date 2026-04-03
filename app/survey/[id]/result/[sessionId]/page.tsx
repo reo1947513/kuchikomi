@@ -79,7 +79,7 @@ export default function ResultPage({
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#FFFBEB" }}>
         <div
           className="w-10 h-10 border-4 border-t-transparent rounded-full animate-spin"
-          style={{ borderColor: "#F5C518", borderTopColor: "transparent" }}
+          style={{ borderColor: "#8B5CF6", borderTopColor: "transparent" }}
         />
       </div>
     );
@@ -106,7 +106,7 @@ export default function ResultPage({
           ) : (
             <div
               className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow"
-              style={{ backgroundColor: "#F5C518" }}
+              style={{ backgroundColor: "#8B5CF6" }}
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" className="w-5 h-5">
                 <path
@@ -122,8 +122,8 @@ export default function ResultPage({
 
         {/* Shop message */}
         {data.completionMessage && (
-          <div className="rounded-2xl overflow-hidden shadow-sm border border-yellow-200">
-            <div className="px-4 py-2 flex items-center gap-2" style={{ backgroundColor: "#F5C518" }}>
+          <div className="rounded-2xl overflow-hidden shadow-sm border border-violet-200">
+            <div className="px-4 py-2 flex items-center gap-2" style={{ backgroundColor: "#8B5CF6" }}>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-gray-800">
                 <path
                   fillRule="evenodd"
@@ -133,7 +133,7 @@ export default function ResultPage({
               </svg>
               <span className="text-sm font-bold text-gray-900">ショップからのメッセージ</span>
             </div>
-            <div className="bg-yellow-50 px-4 py-4">
+            <div className="bg-violet-50 px-4 py-4">
               <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">{data.completionMessage}</p>
               <p className="text-xs text-gray-500 mt-3">{formattedTime}</p>
             </div>
@@ -155,7 +155,7 @@ export default function ResultPage({
 
           <textarea
             className="w-full min-h-[140px] resize-y rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:border-transparent leading-relaxed"
-            style={{ "--tw-ring-color": "#F5C518" } as React.CSSProperties}
+            style={{ "--tw-ring-color": "#8B5CF6" } as React.CSSProperties}
             value={reviewText}
             onChange={(e) => setReviewText(e.target.value)}
           />
@@ -192,8 +192,8 @@ export default function ResultPage({
 
         {/* Coupon image */}
         {data.couponImageUrl && (
-          <div className="rounded-2xl overflow-hidden shadow-sm border border-yellow-200">
-            <div className="px-4 py-2 flex items-center gap-2" style={{ backgroundColor: "#F5C518" }}>
+          <div className="rounded-2xl overflow-hidden shadow-sm border border-violet-200">
+            <div className="px-4 py-2 flex items-center gap-2" style={{ backgroundColor: "#8B5CF6" }}>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-gray-800">
                 <path d="M9.375 3a1.875 1.875 0 0 0 0 3.75h1.875v4.5H3.375A1.875 1.875 0 0 1 1.5 9.375v-.75a1.875 1.875 0 0 1 1.875-1.875h.375m0 0V3A1.875 1.875 0 0 1 5.625 3h5.25A1.875 1.875 0 0 1 12.75 4.875V6.75m0 0h-3.375m3.375 0h.375a1.875 1.875 0 0 1 1.875 1.875v.75c0 1.036-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 0 1 1.5 9.375v-.75m12 4.5v5.625a1.875 1.875 0 0 1-1.875 1.875H5.625a1.875 1.875 0 0 1-1.875-1.875V13.5h10.5Z" />
               </svg>
@@ -209,7 +209,7 @@ export default function ResultPage({
             <button
               onClick={() => handleGooglePost(data.googleBusinessUrl!)}
               className="flex items-center justify-center gap-2 w-full py-3.5 px-4 rounded-xl text-gray-900 text-sm font-bold shadow transition-opacity hover:opacity-90"
-              style={{ backgroundColor: "#F5C518" }}
+              style={{ backgroundColor: "#8B5CF6" }}
             >
               <svg viewBox="0 0 24 24" className="w-5 h-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>

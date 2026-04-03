@@ -75,7 +75,7 @@ function LineChart({ data }: { data: MonthlyCount[] }) {
   return (
     <div className="bg-white rounded-2xl shadow-sm p-6">
       <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
-        <svg className="w-4 h-4 text-[#F5C518]" fill="currentColor" viewBox="0 0 20 20">
+        <svg className="w-4 h-4 text-violet-500" fill="currentColor" viewBox="0 0 20 20">
           <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
         </svg>
         月毎の回答件数
@@ -131,19 +131,19 @@ function AdviceSection({ initialCount, initialList }: { initialCount: number; in
     <div className="bg-white rounded-2xl shadow-sm p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2">
-          <span className="text-[#F5C518]">💡</span> AI改善アドバイス
+          <span className="text-violet-500">💡</span> AI改善アドバイス
         </h3>
         <span className="text-xs text-gray-500">今月あと{remaining}回</span>
       </div>
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <span className="text-xs text-gray-600">参考期間:</span>
         <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#F5C518]" />
+          className="border border-gray-300 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-violet-400" />
         <span className="text-xs text-gray-400">〜</span>
         <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#F5C518]" />
+          className="border border-gray-300 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-violet-400" />
         <button onClick={generate} disabled={generating || remaining <= 0}
-          className="px-4 py-1.5 bg-[#F5C518] hover:bg-[#D4A017] text-gray-900 text-xs font-semibold rounded-lg transition-colors disabled:opacity-50">
+          className="px-4 py-1.5 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white text-xs font-semibold rounded-lg transition-colors disabled:opacity-50">
           {generating ? "生成中..." : "アドバイスを生成"}
         </button>
       </div>
@@ -155,7 +155,7 @@ function AdviceSection({ initialCount, initialList }: { initialCount: number; in
       ) : (
         <div className="space-y-3">
           {list.map((a) => (
-            <div key={a.id} className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+            <div key={a.id} className="bg-violet-50 border border-violet-200 rounded-xl p-4">
               <p className="text-xs text-gray-400 mb-2">
                 {a.dateFrom && a.dateTo ? `${a.dateFrom} 〜 ${a.dateTo} | ` : ""}
                 {new Date(a.createdAt).toLocaleDateString("ja-JP")}
@@ -191,15 +191,15 @@ function RecentSessions({ sessions, shopName }: { sessions: Session[]; shopName:
     <div>
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <select value={sort} onChange={(e) => setSort(e.target.value as "newest" | "oldest")}
-          className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] bg-white">
+          className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 bg-white">
           <option value="newest">新しい順</option>
           <option value="oldest">古い順</option>
         </select>
         <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518]" />
+          className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400" />
         <span className="text-sm text-gray-400">〜</span>
         <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518]" />
+          className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400" />
       </div>
       {sorted.length === 0 ? (
         <p className="text-sm text-gray-400 text-center py-8">回答データがありません</p>
@@ -214,12 +214,12 @@ function RecentSessions({ sessions, shopName }: { sessions: Session[]; shopName:
                 <p className="text-xs text-gray-400 mt-0.5">回答日時: {dateStr}</p>
                 {s.reviewText && (
                   <button onClick={() => setExpanded(expanded === s.id ? null : s.id)}
-                    className="mt-2 text-xs font-medium text-[#D4A017] hover:text-[#F5C518] underline">
+                    className="mt-2 text-xs font-medium text-violet-600 hover:text-violet-500 underline">
                     関連する口コミ: 1件
                   </button>
                 )}
                 {expanded === s.id && s.reviewText && (
-                  <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-xs text-gray-700 whitespace-pre-line">
+                  <div className="mt-2 p-3 bg-violet-50 border border-violet-200 rounded-lg text-xs text-gray-700 whitespace-pre-line">
                     {s.reviewText}
                   </div>
                 )}
@@ -261,7 +261,7 @@ export default function DashboardPage() {
           <CircularProgress limit={data.survey.monthlyReviewLimit} count={data.survey.monthlyReviewCount} />
           <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm p-6">
             <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <svg className="w-4 h-4 text-[#F5C518]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
               設問リスト
@@ -270,7 +270,7 @@ export default function DashboardPage() {
               {data.survey.questions.map((q, i) => (
                 <div key={q.id} className="border border-gray-100 rounded-xl p-3">
                   <div className="flex items-start gap-2">
-                    <span className="text-xs font-bold text-[#D4A017] shrink-0 pt-0.5">Q{i + 1}</span>
+                    <span className="text-xs font-bold text-violet-600 shrink-0 pt-0.5">Q{i + 1}</span>
                     <div className="min-w-0">
                       <p className="text-sm text-gray-800">{q.text}</p>
                       <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
@@ -296,7 +296,7 @@ export default function DashboardPage() {
         <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
           <p className="text-gray-400 text-sm mb-4">アンケートがまだ作成されていません</p>
           <a href="/dashboard/surveys/new"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-[#F5C518] hover:bg-[#D4A017] text-gray-900 font-semibold rounded-xl shadow text-sm">
+            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white font-semibold rounded-xl shadow text-sm">
             + 新規作成
           </a>
         </div>

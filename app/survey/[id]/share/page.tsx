@@ -90,7 +90,7 @@ export default function SharePage({ params }: { params: { id: string } }) {
         <div className="flex items-center justify-center py-20">
           <div
             className="w-8 h-8 border-4 border-t-transparent rounded-full animate-spin"
-            style={{ borderColor: "#F5C518", borderTopColor: "transparent" }}
+            style={{ borderColor: "#8B5CF6", borderTopColor: "transparent" }}
           />
         </div>
       )}
@@ -104,12 +104,12 @@ export default function SharePage({ params }: { params: { id: string } }) {
       {survey && (
         <div className="w-full max-w-md">
           {/* Card */}
-          <div className="bg-white rounded-2xl shadow-md p-6 border border-yellow-100">
+          <div className="bg-white rounded-2xl shadow-md p-6 border border-violet-100">
             {/* Avatar + title */}
             <div className="flex items-center gap-3 mb-5">
               <div
                 className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
-                style={{ backgroundColor: "#F5C518" }}
+                style={{ backgroundColor: "#8B5CF6" }}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -179,7 +179,7 @@ export default function SharePage({ params }: { params: { id: string } }) {
                 style={{
                   backgroundColor: copied ? "#D1FAE5" : "#FEF9C3",
                   color: copied ? "#065F46" : "#78350F",
-                  border: `1.5px solid ${copied ? "#6EE7B7" : "#F5C518"}`,
+                  border: `1.5px solid ${copied ? "#6EE7B7" : "#8B5CF6"}`,
                 }}
               >
                 {copied ? (
@@ -220,7 +220,7 @@ export default function SharePage({ params }: { params: { id: string } }) {
               <Link
                 href={`/survey/${surveyId}`}
                 className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-90"
-                style={{ backgroundColor: "#F5C518" }}
+                style={{ backgroundColor: "#8B5CF6" }}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

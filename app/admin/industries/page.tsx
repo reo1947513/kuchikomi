@@ -94,7 +94,7 @@ export default function IndustriesPage() {
         </div>
         <button
           onClick={openAdd}
-          className="flex items-center gap-2 px-4 py-2 bg-[#F5C518] hover:bg-[#D4A017] text-gray-900 font-semibold rounded-xl shadow transition-colors text-sm"
+          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white font-semibold rounded-xl shadow transition-colors text-sm"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -127,7 +127,7 @@ export default function IndustriesPage() {
                   <div className="flex items-center justify-end gap-2">
                     <button
                       onClick={() => openEdit(industry)}
-                      className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-[#F5C518] hover:bg-[#D4A017] text-gray-900 transition-colors"
+                      className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white transition-colors"
                     >
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -155,7 +155,7 @@ export default function IndustriesPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40" onClick={() => setModalOpen(false)} />
           <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm">
-            <div className="bg-[#F5C518] rounded-t-2xl px-5 py-4 flex items-center justify-between">
+            <div className="bg-violet-500 rounded-t-2xl px-5 py-4 flex items-center justify-between">
               <h2 className="text-base font-bold text-gray-900">
                 {editingIndustry ? "業種編集" : "業種追加"}
               </h2>
@@ -178,7 +178,7 @@ export default function IndustriesPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="例：飲食店"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent"
                 />
               </div>
               <div className="flex justify-end gap-3 pt-2">
@@ -192,7 +192,7 @@ export default function IndustriesPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-6 py-2 bg-[#F5C518] hover:bg-[#D4A017] text-gray-900 font-semibold rounded-xl shadow transition-colors disabled:opacity-60 text-sm"
+                  className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white font-semibold rounded-xl shadow transition-colors disabled:opacity-60 text-sm"
                 >
                   {submitting ? "保存中..." : editingIndustry ? "更新" : "追加"}
                 </button>

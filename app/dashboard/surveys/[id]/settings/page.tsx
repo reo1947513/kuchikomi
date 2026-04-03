@@ -355,7 +355,7 @@ export default function SurveySettingsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Top bar */}
-      <header className="bg-[#F5C518] shadow-sm">
+      <header className="bg-gradient-to-r from-cyan-500 to-violet-500 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/dashboard" className="text-xl font-black text-gray-900 tracking-tight">
             クチコミPlus
@@ -414,7 +414,7 @@ export default function SurveySettingsPage() {
                 onClick={() => setActiveTab(tab.key)}
                 className={`px-5 py-3 text-sm font-medium transition-colors border-b-2 -mb-px ${
                   activeTab === tab.key
-                    ? "border-[#F5C518] text-gray-900"
+                    ? "border-violet-500 text-gray-900"
                     : "border-transparent text-gray-500 hover:text-gray-700"
                 }`}
               >
@@ -494,7 +494,7 @@ export default function SurveySettingsPage() {
                     name="isActive"
                     checked={isActive}
                     onChange={() => setIsActive(true)}
-                    className="text-[#F5C518] focus:ring-[#F5C518]"
+                    className="text-violet-500 focus:ring-violet-400"
                   />
                   <span className="text-sm text-gray-700">公開中</span>
                 </label>
@@ -504,7 +504,7 @@ export default function SurveySettingsPage() {
                     name="isActive"
                     checked={!isActive}
                     onChange={() => setIsActive(false)}
-                    className="text-[#F5C518] focus:ring-[#F5C518]"
+                    className="text-violet-500 focus:ring-violet-400"
                   />
                   <span className="text-sm text-gray-700">非公開</span>
                 </label>
@@ -559,7 +559,7 @@ export default function SurveySettingsPage() {
               <button
                 type="button"
                 onClick={addTone}
-                className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#D4A017] transition-colors mt-2"
+                className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-violet-600 transition-colors mt-2"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -601,7 +601,7 @@ export default function SurveySettingsPage() {
                         type="checkbox"
                         checked={q.isRandom}
                         onChange={(e) => toggleQuestionRandom(q.id, e.target.checked)}
-                        className="rounded border-gray-300 text-[#F5C518] focus:ring-[#F5C518]"
+                        className="rounded border-gray-300 text-violet-500 focus:ring-violet-400"
                       />
                       <span className="text-xs text-gray-500">ランダム表示</span>
                     </label>
@@ -627,7 +627,7 @@ export default function SurveySettingsPage() {
 
             {/* Add question inline form */}
             {showAddQuestion ? (
-              <div className="bg-white rounded-xl shadow p-5 space-y-3 border border-[#F5C518]/50">
+              <div className="bg-white rounded-xl shadow p-5 space-y-3 border border-violet-500/50">
                 <h3 className="text-sm font-semibold text-gray-800">質問を追加</h3>
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1">質問文</label>
@@ -650,7 +650,7 @@ export default function SurveySettingsPage() {
                           value={t}
                           checked={newQType === t}
                           onChange={() => setNewQType(t)}
-                          className="text-[#F5C518] focus:ring-[#F5C518]"
+                          className="text-violet-500 focus:ring-violet-400"
                         />
                         <span className="text-sm text-gray-700">
                           {t === "choice" ? "選択式" : "テキスト入力"}
@@ -664,7 +664,7 @@ export default function SurveySettingsPage() {
                     type="checkbox"
                     checked={newQIsRandom}
                     onChange={(e) => setNewQIsRandom(e.target.checked)}
-                    className="rounded border-gray-300 text-[#F5C518] focus:ring-[#F5C518]"
+                    className="rounded border-gray-300 text-violet-500 focus:ring-violet-400"
                   />
                   <span className="text-sm text-gray-700">ランダム表示</span>
                 </label>
@@ -682,7 +682,7 @@ export default function SurveySettingsPage() {
                             )
                           }
                           placeholder={`選択肢 ${ci + 1}`}
-                          className="flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent"
+                          className="flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent"
                         />
                         <select
                           value={c.score}
@@ -693,7 +693,7 @@ export default function SurveySettingsPage() {
                               )
                             )
                           }
-                          className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent bg-white"
+                          className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent bg-white"
                         >
                           <option value={2}>+2</option>
                           <option value={1}>+1</option>
@@ -725,7 +725,7 @@ export default function SurveySettingsPage() {
                           { text: "", order: prev.length, score: 0 },
                         ])
                       }
-                      className="flex items-center gap-1 text-xs text-gray-500 hover:text-[#D4A017] transition-colors"
+                      className="flex items-center gap-1 text-xs text-gray-500 hover:text-violet-600 transition-colors"
                     >
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -739,7 +739,7 @@ export default function SurveySettingsPage() {
                     type="button"
                     onClick={handleAddQuestion}
                     disabled={!newQText.trim()}
-                    className="px-4 py-2 bg-[#F5C518] hover:bg-[#D4A017] text-gray-900 text-sm font-semibold rounded-lg transition-colors disabled:opacity-50"
+                    className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50"
                   >
                     追加
                   </button>
@@ -756,7 +756,7 @@ export default function SurveySettingsPage() {
               <button
                 type="button"
                 onClick={() => setShowAddQuestion(true)}
-                className="w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:border-[#F5C518] hover:text-gray-700 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
+                className="w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:border-violet-400 hover:text-gray-700 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -770,7 +770,7 @@ export default function SurveySettingsPage() {
                 type="button"
                 onClick={handleSaveQuestions}
                 disabled={questionsSaving}
-                className="px-6 py-2.5 bg-[#F5C518] hover:bg-[#D4A017] text-gray-900 font-semibold rounded-xl shadow transition-colors disabled:opacity-60 text-sm"
+                className="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white font-semibold rounded-xl shadow transition-colors disabled:opacity-60 text-sm"
               >
                 {questionsSaving ? "保存中..." : "保存"}
               </button>
@@ -796,7 +796,7 @@ export default function SurveySettingsPage() {
                 }}
                 onClick={() => document.getElementById("logo-file-input")?.click()}
                 className={`flex flex-col items-center justify-center gap-2 border-2 border-dashed rounded-xl p-8 cursor-pointer transition-colors ${
-                  logoDragging ? "border-[#F5C518] bg-yellow-50" : "border-gray-300 bg-gray-50 hover:border-[#F5C518] hover:bg-yellow-50"
+                  logoDragging ? "border-violet-400 bg-violet-50" : "border-gray-300 bg-gray-50 hover:border-violet-400 hover:bg-violet-50"
                 }`}
               >
                 {logoUploading ? (
@@ -844,7 +844,7 @@ export default function SurveySettingsPage() {
                   checked={couponEnabled}
                   onChange={(e) => setCouponEnabled(e.target.checked)}
                 />
-                <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-[#F5C518] transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5" />
+                <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-violet-500 transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5" />
                 <span className="ml-3 text-sm text-gray-700">
                   {couponEnabled ? "有効" : "無効"}
                 </span>
@@ -869,7 +869,7 @@ export default function SurveySettingsPage() {
                 }}
                 onClick={() => document.getElementById("coupon-file-input")?.click()}
                 className={`flex flex-col items-center justify-center gap-2 border-2 border-dashed rounded-xl p-8 cursor-pointer transition-colors ${
-                  couponDragging ? "border-[#F5C518] bg-yellow-50" : "border-gray-300 bg-gray-50 hover:border-[#F5C518] hover:bg-yellow-50"
+                  couponDragging ? "border-violet-400 bg-violet-50" : "border-gray-300 bg-gray-50 hover:border-violet-400 hover:bg-violet-50"
                 }`}
               >
                 {couponUploading ? (
@@ -939,9 +939,9 @@ export default function SurveySettingsPage() {
 
 // ---- Helper components ----
 const inputCls =
-  "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent";
+  "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent";
 const textareaCls =
-  "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent resize-none";
+  "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent resize-none";
 
 function Field({
   label,
@@ -969,7 +969,7 @@ function SaveButton({ onClick, saving }: { onClick: () => void; saving: boolean 
       type="button"
       onClick={onClick}
       disabled={saving}
-      className="px-6 py-2.5 bg-[#F5C518] hover:bg-[#D4A017] text-gray-900 font-semibold rounded-xl shadow transition-colors disabled:opacity-60 text-sm"
+      className="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white font-semibold rounded-xl shadow transition-colors disabled:opacity-60 text-sm"
     >
       {saving ? "保存中..." : "保存"}
     </button>

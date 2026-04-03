@@ -18,15 +18,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-[#F5C518] shadow-sm sticky top-0 z-20">
+      <header className="bg-gradient-to-r from-cyan-500 to-violet-500 shadow-sm sticky top-0 z-20">
         <div className="max-w-4xl mx-auto px-6 h-14 flex items-center justify-between">
-          <span className="text-lg font-black text-gray-900 tracking-tight">クチコミPlus</span>
+          <span className="text-lg font-black text-white tracking-tight">クチコミPlus</span>
           {isSuper ? (
-            <a href="/admin" className="text-sm text-gray-700 hover:text-gray-900 underline">
+            <a href="/admin" className="text-sm text-white/80 hover:text-white underline">
               ← 管理パネルに戻る
             </a>
           ) : (
-            <a href="/api/auth/logout" className="text-sm text-gray-700 hover:text-gray-900 underline">
+            <a href="/api/auth/logout" className="text-sm text-white/80 hover:text-white underline">
               ログアウト
             </a>
           )}

@@ -100,7 +100,7 @@ export default function SettingsPage() {
   };
 
   const inputCls =
-    "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent";
+    "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent";
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -152,7 +152,7 @@ export default function SettingsPage() {
                 type="button"
                 onClick={handleSaveProfile}
                 disabled={saving}
-                className="px-6 py-2 bg-[#F5C518] hover:bg-[#D4A017] text-gray-900 font-semibold rounded-xl shadow transition-colors disabled:opacity-60 text-sm"
+                className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white font-semibold rounded-xl shadow transition-colors disabled:opacity-60 text-sm"
               >
                 {saving ? "保存中..." : "保存"}
               </button>
@@ -178,7 +178,7 @@ export default function SettingsPage() {
                 type="button"
                 onClick={handleChangePassword}
                 disabled={saving}
-                className="px-6 py-2 bg-[#F5C518] hover:bg-[#D4A017] text-gray-900 font-semibold rounded-xl shadow transition-colors disabled:opacity-60 text-sm"
+                className="px-6 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white font-semibold rounded-xl shadow transition-colors disabled:opacity-60 text-sm"
               >
                 {saving ? "変更中..." : "パスワード変更"}
               </button>

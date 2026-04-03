@@ -250,7 +250,7 @@ export default function EditSurveyPage() {
         </p>
         <Link
           href="/dashboard"
-          className="px-4 py-2 bg-[#F5C518] hover:bg-[#D4A017] text-gray-900 font-semibold rounded-xl text-sm"
+          className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white font-semibold rounded-xl text-sm"
         >
           ダッシュボードへ戻る
         </Link>
@@ -261,7 +261,7 @@ export default function EditSurveyPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Top bar */}
-      <header className="bg-[#F5C518] shadow-sm">
+      <header className="bg-gradient-to-r from-cyan-500 to-violet-500 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link
             href="/dashboard"
@@ -322,7 +322,7 @@ export default function EditSurveyPage() {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="例：サービス満足度アンケート"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent"
               />
             </div>
 
@@ -335,7 +335,7 @@ export default function EditSurveyPage() {
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
                 placeholder="アンケートの説明を入力してください（任意）"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent resize-none"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent resize-none"
               />
             </div>
 
@@ -348,7 +348,7 @@ export default function EditSurveyPage() {
                 value={googleBusinessUrl}
                 onChange={(e) => setGoogleBusinessUrl(e.target.value)}
                 placeholder="https://maps.google.com/..."
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent"
               />
             </div>
 
@@ -364,7 +364,7 @@ export default function EditSurveyPage() {
                     name="isActive"
                     checked={isActive}
                     onChange={() => setIsActive(true)}
-                    className="text-[#F5C518] focus:ring-[#F5C518]"
+                    className="text-violet-500 focus:ring-violet-400"
                   />
                   <span className="text-sm text-gray-700">公開中</span>
                 </label>
@@ -374,7 +374,7 @@ export default function EditSurveyPage() {
                     name="isActive"
                     checked={!isActive}
                     onChange={() => setIsActive(false)}
-                    className="text-[#F5C518] focus:ring-[#F5C518]"
+                    className="text-violet-500 focus:ring-violet-400"
                   />
                   <span className="text-sm text-gray-700">非公開</span>
                 </label>
@@ -407,7 +407,7 @@ export default function EditSurveyPage() {
             <button
               type="button"
               onClick={addQuestion}
-              className="w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:border-[#F5C518] hover:text-gray-700 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
+              className="w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:border-violet-400 hover:text-gray-700 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
             >
               <svg
                 className="w-5 h-5"
@@ -437,7 +437,7 @@ export default function EditSurveyPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="px-6 py-2.5 bg-[#F5C518] hover:bg-[#D4A017] text-gray-900 font-semibold rounded-xl shadow transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-sm"
+              className="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white font-semibold rounded-xl shadow transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-sm"
             >
               {submitting ? "保存中..." : "変更を保存"}
             </button>
@@ -474,7 +474,7 @@ function QuestionBlock({
     <div className="bg-white rounded-xl shadow p-5 space-y-4 border border-gray-100">
       {/* Question header */}
       <div className="flex items-center justify-between">
-        <span className="text-sm font-semibold text-[#D4A017] bg-[#F5C518]/20 px-2.5 py-0.5 rounded-full">
+        <span className="text-sm font-semibold text-violet-600 bg-violet-500/20 px-2.5 py-0.5 rounded-full">
           質問 {index + 1}
         </span>
         {canRemove && (
@@ -511,7 +511,7 @@ function QuestionBlock({
           value={question.text}
           onChange={(e) => onUpdate({ text: e.target.value })}
           placeholder="例：スタッフの対応はいかがでしたか？"
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent"
         />
       </div>
 
@@ -528,7 +528,7 @@ function QuestionBlock({
               value="choice"
               checked={question.type === "choice"}
               onChange={() => onUpdate({ type: "choice" })}
-              className="text-[#F5C518] focus:ring-[#F5C518]"
+              className="text-violet-500 focus:ring-violet-400"
             />
             <span className="text-sm text-gray-700">選択式</span>
           </label>
@@ -539,7 +539,7 @@ function QuestionBlock({
               value="text"
               checked={question.type === "text"}
               onChange={() => onUpdate({ type: "text" })}
-              className="text-[#F5C518] focus:ring-[#F5C518]"
+              className="text-violet-500 focus:ring-violet-400"
             />
             <span className="text-sm text-gray-700">テキスト入力</span>
           </label>
@@ -561,7 +561,7 @@ function QuestionBlock({
                   onUpdateChoice(cIdx, { text: e.target.value })
                 }
                 placeholder={`選択肢 ${cIdx + 1}`}
-                className="flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent"
+                className="flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent"
               />
               <div className="flex items-center gap-1.5 shrink-0">
                 <label className="text-xs text-gray-500 whitespace-nowrap">
@@ -572,7 +572,7 @@ function QuestionBlock({
                   onChange={(e) =>
                     onUpdateChoice(cIdx, { score: Number(e.target.value) })
                   }
-                  className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#F5C518] focus:border-transparent bg-white"
+                  className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent bg-white"
                 >
                   <option value={2}>+2（非常に満足）</option>
                   <option value={1}>+1（満足）</option>
@@ -606,7 +606,7 @@ function QuestionBlock({
           <button
             type="button"
             onClick={onAddChoice}
-            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#D4A017] transition-colors mt-1"
+            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-violet-600 transition-colors mt-1"
           >
             <svg
               className="w-4 h-4"
