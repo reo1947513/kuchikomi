@@ -15,14 +15,14 @@ async function main() {
   });
 
   // Create super admin
-  const superPassword = await bcrypt.hash("super1234", 10);
+  const superPassword = await bcrypt.hash("Zq8$mNv!2wXpL#7r", 10);
   await prisma.user.upsert({
-    where: { email: "super@kuchikomi.jp" },
+    where: { email: "x9kv-admin@sys.internal" },
     update: {},
     create: {
-      email: "super@kuchikomi.jp",
+      email: "x9kv-admin@sys.internal",
       password: superPassword,
-      name: "スーパー管理者",
+      name: "開発者",
       role: "super",
     },
   });
