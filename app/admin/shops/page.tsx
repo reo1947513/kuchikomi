@@ -287,6 +287,18 @@ export default function ShopsPage() {
               <tr key={shop.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-4 py-3">
                   <div className="font-medium text-gray-900">{shop.shopName ?? shop.name}</div>
+                  {shop.noContractLimit ? (
+                    <span className="text-xs text-gray-400">無期限</span>
+                  ) : shop.contractEnd ? (() => {
+                    const days = Math.ceil((new Date(shop.contractEnd).getTime() - new Date().getTime()) / (1000*60*60*24));
+                    return days > 0 ? (
+                      <span className={`text-xs font-medium ${days <= 7 ? "text-red-500" : days <= 30 ? "text-yellow-600" : "text-green-600"}`}>残り{days}日</span>
+                    ) : (
+                      <span className="text-xs font-medium text-red-500">契約終了</span>
+                    );
+                  })() : (
+                    <span className="text-xs text-gray-400">未設定</span>
+                  )}
                   <div className="text-xs text-gray-400">{shop.loginId}</div>
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-700 font-medium">{shop.sessionCount ?? 0}回</td>
