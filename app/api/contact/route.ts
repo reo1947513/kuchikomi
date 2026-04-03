@@ -23,6 +23,6 @@ export async function POST(request: NextRequest) {
     if (e instanceof z.ZodError) {
       return NextResponse.json({ error: "入力内容に不備があります", details: e.errors }, { status: 400 });
     }
-    return NextResponse.json({ error: "送信に失敗しました" }, { status: 500 });
+    console.error("Contact API error:", e); return NextResponse.json({ error: "送信に失敗しました" }, { status: 500 });
   }
 }
