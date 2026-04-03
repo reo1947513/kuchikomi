@@ -22,6 +22,9 @@ export async function GET(request: NextRequest) {
         address: true,
         industry: true,
         role: true,
+        contractStart: true,
+        contractEnd: true,
+        noContractLimit: true,
         createdAt: true,
       },
     });

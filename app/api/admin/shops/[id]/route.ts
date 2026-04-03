@@ -26,6 +26,9 @@ export async function GET(request: NextRequest, { params }: Params) {
       address: true,
       industry: true,
       agencyId: true,
+      contractStart: true,
+      contractEnd: true,
+      noContractLimit: true,
       agency: { select: { id: true, name: true } },
       createdAt: true,
       updatedAt: true,
@@ -77,6 +80,9 @@ export async function PUT(request: NextRequest, { params }: Params) {
     agencyId?: string;
     googleBusinessUrl?: string;
     monthlyReviewLimit?: number;
+    contractStart?: string | null;
+    contractEnd?: string | null;
+    noContractLimit?: boolean;
   };
 
   try {
@@ -85,7 +91,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { name, email, loginId, password, shopName, address, industry, agencyId, googleBusinessUrl, monthlyReviewLimit } = body;
+  const { name, email, loginId, password, shopName, address, industry, agencyId, googleBusinessUrl, monthlyReviewLimit, contractStart, contractEnd, noContractLimit } = body;
 
   const updateData: Record<string, unknown> = {};
   if (name !== undefined) updateData.name = name.trim();
@@ -95,6 +101,9 @@ export async function PUT(request: NextRequest, { params }: Params) {
   if (address !== undefined) updateData.address = address.trim() || null;
   if (industry !== undefined) updateData.industry = industry.trim() || null;
   if (agencyId !== undefined) updateData.agencyId = agencyId || null;
+  if (contractStart !== undefined) updateData.contractStart = contractStart ? new Date(contractStart) : null;
+  if (contractEnd !== undefined) updateData.contractEnd = contractEnd ? new Date(contractEnd) : null;
+  if (noContractLimit !== undefined) updateData.noContractLimit = noContractLimit;
   if (password && password.length > 0) {
     updateData.password = await bcrypt.hash(password, 10);
   }

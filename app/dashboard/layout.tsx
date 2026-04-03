@@ -2,8 +2,10 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { verifyToken } from "@/lib/auth";
 import DashboardNav from "./DashboardNav";
+import ExpiredNav from "./ExpiredNav";
+import { prisma } from "@/lib/db";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = cookies();
   const token = cookieStore.get("auth_token")?.value;
   if (!token) redirect("/login");
@@ -15,6 +17,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   if (session.role === "agent") redirect("/login");
 
   const isSuper = session.role === "super";
+
+  let isExpired = false;
+  if (!isSuper) {
+    const user = await prisma.user.findUnique({
+      where: { id: session.userId },
+      select: { contractEnd: true, noContractLimit: true },
+    });
+    if (user && !user.noContractLimit && user.contractEnd) {
+      isExpired = new Date() > new Date(user.contractEnd);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -32,7 +45,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           )}
         </div>
       </header>
-      {!isSuper && <DashboardNav />}
+      {!isSuper && (isExpired ? <ExpiredNav /> : <DashboardNav />)}
       <main className="max-w-4xl mx-auto px-6 py-8">{children}</main>
       <footer className="text-center text-xs text-gray-400 py-6">
         © 2026 クチコミPlus. All Rights Reserved.

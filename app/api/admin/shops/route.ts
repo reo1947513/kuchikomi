@@ -43,6 +43,9 @@ export async function GET(request: NextRequest) {
         address: true,
         industry: true,
         agencyId: true,
+        contractStart: true,
+        contractEnd: true,
+        noContractLimit: true,
         agency: { select: { id: true, name: true } },
         createdAt: true,
         surveys: {
@@ -92,6 +95,9 @@ export async function POST(request: NextRequest) {
     industry?: string;
     agencyId?: string;
     monthlyReviewLimit?: number;
+    contractStart?: string;
+    contractEnd?: string;
+    noContractLimit?: boolean;
   };
 
   try {
@@ -110,6 +116,9 @@ export async function POST(request: NextRequest) {
     industry,
     agencyId,
     monthlyReviewLimit,
+    contractStart,
+    contractEnd,
+    noContractLimit,
   } = body;
 
   if (!name || typeof name !== "string" || name.trim() === "") {
@@ -133,6 +142,9 @@ export async function POST(request: NextRequest) {
       address: address?.trim() ?? null,
       industry: industry?.trim() ?? null,
       agencyId: agencyId ?? null,
+      contractStart: contractStart ? new Date(contractStart) : null,
+      contractEnd: contractEnd ? new Date(contractEnd) : null,
+      noContractLimit: noContractLimit ?? false,
       surveys: monthlyReviewLimit !== undefined
         ? {
             create: [
