@@ -51,11 +51,7 @@ export default function LoginPage() {
       <div className="bg-white rounded-2xl shadow-lg w-full max-w-md px-8 py-10">
         {/* Logo & App Name */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 rounded-full bg-yellow-300 flex items-center justify-center mb-3 shadow-md">
-            <span className="text-3xl" role="img" aria-label="star">
-              ⭐
-            </span>
-          </div>
+          <img src="/logo.png" alt="クチコミPlus" className="w-16 h-16 mb-3" />
           <h1 className="text-2xl font-bold text-gray-800 tracking-tight">
             クチコミPlus
           </h1>
