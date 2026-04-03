@@ -21,6 +21,8 @@ export default function ContactsPage() {
   const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
+  const [sortKey, setSortKey] = useState<string | null>(null);
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [selected, setSelected] = useState<Contact | null>(null);
 
   useEffect(() => {
@@ -56,7 +58,25 @@ export default function ContactsPage() {
     return "bg-red-50 border-red-300 text-red-700";
   };
 
-  const filtered = contacts.filter((c) => {
+  const toggleSort = (key: string) => {
+    if (sortKey === key) {
+      setSortDir(sortDir === "asc" ? "desc" : "asc");
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  };
+
+  const sorted = [...contacts].sort((a, b) => {
+    if (!sortKey) return 0;
+    const dir = sortDir === "asc" ? 1 : -1;
+    if (sortKey === "createdAt") return (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) * dir;
+    const va = ((a as any)[sortKey] || "").toLowerCase();
+    const vb = ((b as any)[sortKey] || "").toLowerCase();
+    return va > vb ? dir : va < vb ? -dir : 0;
+  });
+
+  const filtered = sorted.filter((c) => {
     if (!search) return true;
     const s = search.toLowerCase();
     return (
@@ -101,13 +121,13 @@ export default function ContactsPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="text-left px-4 py-3 font-medium text-gray-600">日時</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">項目</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">契約状況</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">会社名 / 店舗名</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">名前</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">メール</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">対応状況</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-600 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("createdAt")}>日時{sortKey === "createdAt" && (sortDir === "asc" ? " \u25B2" : " \u25BC")}</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-600 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("category")}>項目{sortKey === "category" && (sortDir === "asc" ? " \u25B2" : " \u25BC")}</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-600 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("contractStatus")}>契約状況{sortKey === "contractStatus" && (sortDir === "asc" ? " \u25B2" : " \u25BC")}</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-600 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("companyName")}>会社名 / 店舗名{sortKey === "companyName" && (sortDir === "asc" ? " \u25B2" : " \u25BC")}</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-600 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("lastName")}>名前{sortKey === "lastName" && (sortDir === "asc" ? " \u25B2" : " \u25BC")}</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-600 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("email")}>メール{sortKey === "email" && (sortDir === "asc" ? " \u25B2" : " \u25BC")}</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-600 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("status")}>対応状況{sortKey === "status" && (sortDir === "asc" ? " \u25B2" : " \u25BC")}</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-600"></th>
               </tr>
             </thead>
