@@ -429,6 +429,7 @@ export default function SurveySettingsPage() {
     { key: "ai", label: "AI設定" },
     { key: "questions", label: "質問管理" },
     { key: "logo", label: "ロゴ・クーポン" },
+    { key: "color", label: "カラー設定" },
   ];
 
   return (
