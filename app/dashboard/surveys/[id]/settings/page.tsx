@@ -403,8 +403,30 @@ export default function SurveySettingsPage() {
     }
   };
 
-  // ---- Copy URL ----
+  // ---- Copy URL & QR ----
   const [copying, setCopying] = useState(false);
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+  const [qrGenerating, setQrGenerating] = useState(false);
+
+  const generateQR = async () => {
+    setQrGenerating(true);
+    try {
+      const size = 300;
+      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(surveyUrl)}&format=png`;
+      const res = await fetch(qrApiUrl);
+      const blob = await res.blob();
+      setQrDataUrl(URL.createObjectURL(blob));
+    } catch { alert("QRコードの生成に失敗しました"); }
+    finally { setQrGenerating(false); }
+  };
+
+  const downloadQR = () => {
+    if (!qrDataUrl) return;
+    const a = document.createElement("a");
+    a.href = qrDataUrl;
+    a.download = `survey-qr-${surveyId}.png`;
+    a.click();
+  };
   const surveyUrl =
     typeof window !== "undefined"
       ? `${window.location.origin}/survey/${surveyId}`
@@ -472,6 +494,25 @@ export default function SurveySettingsPage() {
             {saveMsg}
           </div>
         )}
+
+        {/* Survey URL & QR Code */}
+        <div className="bg-white rounded-xl shadow-sm p-5 mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">アンケートURL</label>
+          <div className="flex gap-2 mb-3">
+            <input type="text" value={surveyUrl} readOnly className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm bg-gray-50 text-gray-600 select-all" />
+            <button type="button" onClick={handleCopyUrl} className="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap">{copying ? "コピー済み!" : "コピー"}</button>
+            <button type="button" onClick={generateQR} disabled={qrGenerating} className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap disabled:opacity-50">{qrGenerating ? "生成中..." : "QRコード作成"}</button>
+          </div>
+          {qrDataUrl && (
+            <div className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
+              <img src={qrDataUrl} alt="QR Code" className="w-32 h-32 rounded" />
+              <div>
+                <p className="text-sm text-gray-600 mb-2">QRコードが生成されました</p>
+                <button type="button" onClick={downloadQR} className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white text-sm font-medium rounded-lg transition-colors">ダウンロード</button>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Tabs */}
         <div className="border-b border-gray-200 mb-6">
@@ -1051,25 +1092,6 @@ export default function SurveySettingsPage() {
                   画像を削除
                 </button>
               )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">アンケートURL</label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={surveyUrl}
-                  readOnly
-                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm bg-gray-50 text-gray-600 select-all"
-                />
-                <button
-                  type="button"
-                  onClick={handleCopyUrl}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap"
-                >
-                  {copying ? "コピー済み!" : "コピー"}
-                </button>
-              </div>
             </div>
 
             <div className="pt-2 flex justify-end">
