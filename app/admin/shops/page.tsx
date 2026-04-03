@@ -271,6 +271,7 @@ export default function ShopsPage() {
             <tr className="border-b border-gray-200 bg-gray-50">
               <th className="text-left px-4 py-3 font-semibold text-gray-700">名前</th>
               <th className="text-left px-4 py-3 font-semibold text-gray-700">アクセス回数</th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-700">契約残日数</th>
               <th className="text-left px-4 py-3 font-semibold text-gray-700">住所</th>
               <th className="text-left px-4 py-3 font-semibold text-gray-700">代理店</th>
               <th className="text-right px-4 py-3 font-semibold text-gray-700">操作</th>
@@ -287,21 +288,23 @@ export default function ShopsPage() {
               <tr key={shop.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-4 py-3">
                   <div className="font-medium text-gray-900">{shop.shopName ?? shop.name}</div>
-                  {shop.noContractLimit ? (
-                    <span className="text-xs text-gray-400">無期限</span>
-                  ) : shop.contractEnd ? (() => {
-                    const days = Math.ceil((new Date(shop.contractEnd).getTime() - new Date().getTime()) / (1000*60*60*24));
-                    return days > 0 ? (
-                      <span className={`text-xs font-medium ${days <= 7 ? "text-red-500" : days <= 30 ? "text-yellow-600" : "text-green-600"}`}>残り{days}日</span>
-                    ) : (
-                      <span className="text-xs font-medium text-red-500">契約終了</span>
-                    );
-                  })() : (
-                    <span className="text-xs text-gray-400">未設定</span>
-                  )}
                   <div className="text-xs text-gray-400">{shop.loginId}</div>
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-700 font-medium">{shop.sessionCount ?? 0}回</td>
+                <td className="px-4 py-3 text-sm">
+                  {shop.noContractLimit ? (
+                    <span className="text-gray-400">無期限</span>
+                  ) : shop.contractEnd ? (() => {
+                    const days = Math.ceil((new Date(shop.contractEnd).getTime() - new Date().getTime()) / (1000*60*60*24));
+                    return days > 0 ? (
+                      <span className={`font-medium ${days <= 7 ? "text-red-500" : days <= 30 ? "text-yellow-600" : "text-green-600"}`}>残り{days}日</span>
+                    ) : (
+                      <span className="font-medium text-red-500">契約終了</span>
+                    );
+                  })() : (
+                    <span className="text-gray-400">未設定</span>
+                  )}
+                </td>
                 <td className="px-4 py-3 text-gray-600 max-w-xs truncate">{shop.address ?? "—"}</td>
                 <td className="px-4 py-3 text-gray-600">{shop.agencyName ?? "—"}</td>
                 <td className="px-4 py-3">
