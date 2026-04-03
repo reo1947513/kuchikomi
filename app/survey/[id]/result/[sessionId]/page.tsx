@@ -198,7 +198,7 @@ export default function ResultPage({
               </svg>
               <span className="text-sm font-bold text-white">クーポン</span>
             </div>
-            <img src={data.couponImageUrl} alt="coupon" className="w-full object-contain" />
+            <img src={data.couponImageUrl} alt="coupon" className="w-full object-contain pointer-events-none select-none" draggable={false} onContextMenu={(e) => e.preventDefault()} />
           </div>
         )}
 
