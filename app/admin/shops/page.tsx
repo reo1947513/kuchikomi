@@ -295,6 +295,7 @@ export default function ShopsPage() {
                 <td className="px-4 py-3">
                   <div className="font-medium text-gray-900">{shop.shopName ?? shop.name}</div>
                   <div className="text-xs text-gray-400">{shop.loginId ?? ""}</div>
+                </td>
                 <td className="px-4 py-3 text-sm text-gray-600">{shop.name}</td>
                 <td className="px-4 py-3 text-sm text-gray-700 font-medium">{shop.sessionCount ?? 0}回</td>
                 <td className="px-4 py-3 text-sm">
@@ -345,6 +346,7 @@ export default function ShopsPage() {
                       削除
                     </button>
                   </div>
+                </td>
               </tr>
             ))}
           </tbody>
