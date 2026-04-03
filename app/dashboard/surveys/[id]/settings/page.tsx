@@ -555,9 +555,17 @@ export default function SurveySettingsPage() {
         {/* ===== Tab: AI設定 ===== */}
         {activeTab === "ai" && (
           <div className="bg-white rounded-xl shadow p-6 space-y-4">
-            <Field label="AIプロンプトテンプレート">
+            {/* 固定プロンプト表示 */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">固定部分（編集不可）</label>
+              <div className="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-600 font-mono whitespace-pre-line">
+                {`アンケート回答：\n{formattedResponses}\n\nこの情報を基に、魅力的な口コミを生成してください。`}
+              </div>
+            </div>
+
+            <Field label="AIプロンプトテンプレート（カスタム部分）">
               <p className="text-xs text-gray-400 mb-1">
-                変数: &#123;tone&#125;, &#123;keywords&#125;, &#123;formattedResponses&#125;
+                変数: &#123;tone&#125;, &#123;keywords&#125;
               </p>
               <textarea
                 value={promptTemplate}
