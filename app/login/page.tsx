@@ -47,7 +47,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cyan-500 to-violet-500 px-4">
+    <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-cyan-500 to-violet-500 px-4">
       <div className="bg-white rounded-2xl shadow-lg w-full max-w-md px-8 py-10">
         {/* Logo & App Name */}
         <div className="flex flex-col items-center mb-8">
