@@ -130,13 +130,25 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "password is required" }, { status: 400 });
   }
 
+  // Auto-generate loginId if not provided
+  let finalLoginId = loginId?.trim() || null;
+  if (!finalLoginId) {
+    const lastUser = await prisma.user.findFirst({
+      where: { loginId: { startsWith: "AG-" } },
+      orderBy: { loginId: "desc" },
+      select: { loginId: true },
+    });
+    const lastNum = lastUser?.loginId ? parseInt(lastUser.loginId.replace("AG-", ""), 10) : 0;
+    finalLoginId = "AG-" + String(lastNum + 1).padStart(6, "0");
+  }
+
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await prisma.user.create({
     data: {
       name: name.trim(),
       email: email?.trim() ?? null,
-      loginId: loginId?.trim() ?? null,
+      loginId: finalLoginId,
       password: hashedPassword,
       role: "admin",
       shopName: shopName?.trim() ?? null,
