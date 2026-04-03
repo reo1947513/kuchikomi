@@ -31,7 +31,6 @@ type EditForm = {
   password: string;
 };
 
-const INDUSTRIES = ["飲食店", "美容・サロン", "医療・クリニック", "整体・マッサージ", "その他"];
 const emptyEdit = (): EditForm => ({
   shopName: "", address: "", googleBusinessUrl: "", industry: "",
   agencyId: "", monthlyReviewLimit: 100, email: "", password: "",
@@ -48,6 +47,7 @@ export default function ShopsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [agencies, setAgencies] = useState<Agency[]>([]);
+  const [industries, setIndustries] = useState<string[]>([]);
 
   // Modal
   const [modalOpen, setModalOpen] = useState(false);
@@ -69,6 +69,10 @@ export default function ShopsPage() {
     fetch("/api/admin/agencies")
       .then((r) => r.json())
       .then((data) => setAgencies(Array.isArray(data) ? data : []))
+      .catch(() => {});
+    fetch("/api/admin/industries")
+      .then((r) => r.json())
+      .then((data) => setIndustries(Array.isArray(data) ? data.map((d) => d.name) : []))
       .catch(() => {});
   }, []);
 
@@ -362,7 +366,7 @@ export default function ShopsPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">業種</label>
                 <select value={form.industry} onChange={(e) => setForm({ ...form, industry: e.target.value })} className={inputCls}>
                   <option value="">選択してください</option>
-                  {INDUSTRIES.map((i) => <option key={i} value={i}>{i}</option>)}
+                  {industries.map((i) => <option key={i} value={i}>{i}</option>)}
                 </select>
               </div>
               <div>
@@ -456,7 +460,7 @@ export default function ShopsPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">業種</label>
                 <select value={addForm.industry} onChange={(e) => setAddForm({ ...addForm, industry: e.target.value })} className={inputCls}>
                   <option value="">選択してください</option>
-                  {INDUSTRIES.map((i) => <option key={i} value={i}>{i}</option>)}
+                  {industries.map((i) => <option key={i} value={i}>{i}</option>)}
                 </select>
               </div>
               <div>
