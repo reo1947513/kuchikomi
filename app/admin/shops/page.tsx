@@ -295,9 +295,8 @@ export default function ShopsPage() {
                 <td className="px-4 py-3">
                   <div className="font-medium text-gray-900">{shop.shopName ?? shop.name}</div>
                   <div className="text-xs text-gray-400">{shop.loginId ?? ""}</div>
-                </td>
                 <td className="px-4 py-3 text-sm text-gray-600">{shop.name}</td>
-                </td>
+                <td className="px-4 py-3 text-sm text-gray-700 font-medium">{shop.sessionCount ?? 0}回</td>
                 <td className="px-4 py-3 text-sm">
                   {shop.noContractLimit ? (
                     <span className="text-gray-400">無期限</span>
@@ -311,7 +310,6 @@ export default function ShopsPage() {
                   })() : (
                     <span className="text-gray-400">未設定</span>
                   )}
-                </td>
                 <td className="px-4 py-3 text-gray-600 max-w-xs truncate">{shop.address ?? "—"}</td>
                 <td className="px-4 py-3 text-gray-600">{shop.agencyName ?? "—"}</td>
                 <td className="px-4 py-3">
@@ -347,7 +345,6 @@ export default function ShopsPage() {
                       削除
                     </button>
                   </div>
-                </td>
               </tr>
             ))}
           </tbody>
