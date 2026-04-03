@@ -37,10 +37,15 @@ export default function ContactPage() {
 
   const touch = (field: string) => setTouched((p) => ({ ...p, [field]: true }));
 
-  const isValid = category && contractStatus && companyName && lastName && firstName && email && phone1 && phone2 && phone3 && content;
+  const isEmailValid = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  const isPhonePartValid = (v: string) => /^\d+$/.test(v);
+
+  const isValid = category && contractStatus && companyName && lastName && firstName && isEmailValid(email) && isPhonePartValid(phone1) && isPhonePartValid(phone2) && isPhonePartValid(phone3) && content;
 
   const validCls = (field: string, value: string) => {
     if (!touched[field] || !value) return "border-gray-300";
+    if (field === "email") return isEmailValid(value) ? "border-green-500 ring-1 ring-green-500" : "border-red-400 ring-1 ring-red-400";
+    if (field === "phone1" || field === "phone2" || field === "phone3") return isPhonePartValid(value) ? "border-green-500 ring-1 ring-green-500" : "border-red-400 ring-1 ring-red-400";
     return "border-green-500 ring-1 ring-green-500";
   };
 
@@ -181,17 +186,17 @@ export default function ContactPage() {
             <label className="block text-sm font-bold text-gray-800 mb-1">メールアドレス<RequiredBadge /></label>
             <div className="relative">
               <input type="email" placeholder="info@example.com" value={email} onChange={(e) => setEmail(e.target.value)} onBlur={() => touch("email")} className={`w-full border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 ${validCls("email", email)}`} />
-              {touched.email && email && <CheckIcon />}
+              {touched.email && email && isEmailValid(email) && <CheckIcon />}
             </div>
           </div>
           <div>
             <label className="block text-sm font-bold text-gray-800 mb-1">連絡先<RequiredBadge /></label>
             <div className="flex items-center gap-2">
-              <input type="text" placeholder="090" value={phone1} onChange={(e) => setPhone1(e.target.value)} onBlur={() => touch("phone1")} className={`w-20 border rounded-lg px-3 py-2.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-violet-400 ${validCls("phone1", phone1)}`} />
+              <input type="tel" inputMode="numeric" placeholder="090" value={phone1} onChange={(e) => { const v = e.target.value.replace(/\D/g, ""); setPhone1(v); }} onBlur={() => touch("phone1")} className={`w-20 border rounded-lg px-3 py-2.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-violet-400 ${validCls("phone1", phone1)}`} />
               <span className="text-gray-400">-</span>
-              <input type="text" placeholder="0000" value={phone2} onChange={(e) => setPhone2(e.target.value)} onBlur={() => touch("phone2")} className={`w-24 border rounded-lg px-3 py-2.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-violet-400 ${validCls("phone2", phone2)}`} />
+              <input type="tel" inputMode="numeric" placeholder="0000" value={phone2} onChange={(e) => { const v = e.target.value.replace(/\D/g, ""); setPhone2(v); }} onBlur={() => touch("phone2")} className={`w-24 border rounded-lg px-3 py-2.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-violet-400 ${validCls("phone2", phone2)}`} />
               <span className="text-gray-400">-</span>
-              <input type="text" placeholder="0000" value={phone3} onChange={(e) => setPhone3(e.target.value)} onBlur={() => touch("phone3")} className={`w-24 border rounded-lg px-3 py-2.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-violet-400 ${validCls("phone3", phone3)}`} />
+              <input type="tel" inputMode="numeric" placeholder="0000" value={phone3} onChange={(e) => { const v = e.target.value.replace(/\D/g, ""); setPhone3(v); }} onBlur={() => touch("phone3")} className={`w-24 border rounded-lg px-3 py-2.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-violet-400 ${validCls("phone3", phone3)}`} />
             </div>
           </div>
           <div>
