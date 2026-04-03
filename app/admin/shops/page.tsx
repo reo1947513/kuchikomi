@@ -518,7 +518,7 @@ export default function ShopsPage() {
                 { label: "ログインID（自動割り当て）", key: "loginId", type: "text", required: false, placeholder: "自動で割り当てられます", readOnly: true },
                 { label: "パスワード", key: "password", type: "password", required: true },
                 { label: "住所", key: "address", type: "text", required: false },
-              ].map(({ label, key, type, required, placeholder }) => (
+              ].map(({ label, key, type, required, placeholder, readOnly }: any) => (
                 <div key={key}>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     {label}{required && <span className="text-red-500 ml-1">*</span>}
@@ -527,7 +527,7 @@ export default function ShopsPage() {
                     type={type}
                     value={(addForm as Record<string, unknown>)[key] as string}
                     onChange={(e) => setAddForm({ ...addForm, [key]: e.target.value })}
-                    placeholder={placeholder}
+                    placeholder={placeholder} readOnly={readOnly} disabled={readOnly}
                     className={inputCls}
                   />
                 </div>
