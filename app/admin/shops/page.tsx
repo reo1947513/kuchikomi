@@ -213,7 +213,7 @@ export default function ShopsPage() {
     e.preventDefault();
     setAddError(null);
     if (!addForm.shopName.trim()) { setAddError("ショップ名を入力してください"); return; }
-    if (!addForm.loginId.trim()) { setAddError("ログインIDを入力してください"); return; }
+    // loginId is auto-generated
     if (!addForm.password.trim()) { setAddError("パスワードを入力してください"); return; }
     setAddSubmitting(true);
     try {
@@ -515,7 +515,7 @@ export default function ShopsPage() {
               {[
                 { label: "ショップ名", key: "shopName", type: "text", required: true },
                 { label: "メールアドレス", key: "email", type: "email", required: false },
-                { label: "ログインID", key: "loginId", type: "text", required: true, placeholder: "AG-XXXXXX" },
+                { label: "ログインID（自動割り当て）", key: "loginId", type: "text", required: false, placeholder: "自動で割り当てられます", readOnly: true },
                 { label: "パスワード", key: "password", type: "password", required: true },
                 { label: "住所", key: "address", type: "text", required: false },
               ].map(({ label, key, type, required, placeholder }) => (
