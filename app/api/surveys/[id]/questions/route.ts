@@ -8,6 +8,8 @@ type QuestionInput = {
   text: string;
   order: number;
   type: "choice" | "text";
+  isRandom?: boolean;
+  groupName?: string | null;
   choices?: Array<{ text: string; order: number; score: number }>;
 };
 
@@ -38,7 +40,7 @@ export async function POST(request: NextRequest, { params }: Params) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { text, order, type, choices = [] } = body;
+  const { text, order, type, isRandom, groupName, choices = [] } = body;
 
   if (!text || typeof text !== "string" || text.trim() === "") {
     return NextResponse.json({ error: "質問文は必須です" }, { status: 400 });
@@ -49,6 +51,8 @@ export async function POST(request: NextRequest, { params }: Params) {
       text: text.trim(),
       order: order ?? 0,
       type: type ?? "choice",
+      isRandom: isRandom ?? false,
+      groupName: groupName ?? null,
       surveyId: params.id,
       choices: {
         create: choices.map((c) => ({
@@ -99,6 +103,8 @@ export async function PUT(request: NextRequest, { params }: Params) {
             text: q.text,
             order: q.order,
             type: q.type ?? "choice",
+            isRandom: q.isRandom ?? false,
+            groupName: q.groupName ?? null,
             surveyId: params.id,
             choices: {
               create: (q.choices ?? []).map((c) => ({

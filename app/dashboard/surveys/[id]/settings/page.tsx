@@ -25,6 +25,7 @@ type Question = {
   type: "choice" | "text";
   order: number;
   isRandom: boolean;
+  groupName: string | null;
   choices: Choice[];
 };
 
@@ -112,6 +113,9 @@ export default function SurveySettingsPage() {
   const [newQIsRandom, setNewQIsRandom] = useState(false);
   const [newQChoices, setNewQChoices] = useState<Choice[]>(DEFAULT_CHOICES.map((c) => ({ ...c })));
   const [questionsSaving, setQuestionsSaving] = useState(false);
+  const [useGrouping, setUseGrouping] = useState(false);
+  const [groupName, setGroupName] = useState("");
+  const [groupQuestions, setGroupQuestions] = useState<{text:string;type:"choice"|"text";choices:Choice[]}[]>([{text:"",type:"text",choices:[]}]);
 
   // ---- Logo/Coupon tab state ----
   const [logoUrl, setLogoUrl] = useState("");
@@ -323,6 +327,26 @@ export default function SurveySettingsPage() {
   };
 
   const handleAddQuestion = async () => {
+    if (useGrouping) {
+      if (!groupName.trim()) { alert("\u30b0\u30eb\u30fc\u30d7\u540d\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044"); return; }
+      const validQs = groupQuestions.filter((gq) => gq.text.trim());
+      if (validQs.length === 0) { alert("\u8cea\u554f\u30921\u3064\u4ee5\u4e0a\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044"); return; }
+      try {
+        const added = [];
+        for (let i = 0; i < validQs.length; i++) {
+          const gq = validQs[i];
+          const res = await fetch(`/api/surveys/${surveyId}/questions`, {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: gq.text.trim(), type: gq.type, isRandom: true, groupName: groupName.trim(), order: questions.length + i, choices: gq.type === "choice" ? gq.choices : [] }),
+          });
+          if (!res.ok) throw new Error("\u8ffd\u52a0\u306b\u5931\u6557\u3057\u307e\u3057\u305f");
+          added.push(await res.json());
+        }
+        setQuestions((prev) => [...prev, ...added]);
+        setShowAddQuestion(false); setUseGrouping(false); setGroupName(""); setGroupQuestions([{text:"",type:"text",choices:[]}]);
+      } catch (e) { alert(e instanceof Error ? e.message : "\u30a8\u30e9\u30fc"); }
+      return;
+    }
     if (!newQText.trim()) return;
     try {
       const res = await fetch(`/api/surveys/${surveyId}/questions`, {

@@ -16,6 +16,7 @@ interface Question {
   text: string;
   order: number;
   type: "choice" | "text";
+  groupName: string | null;
   choices: Choice[];
 }
 
@@ -84,6 +85,26 @@ export default function SurveyPage({
         }
 
         const data: Session = await res.json();
+
+        // Group random: pick one question per group
+        const allQuestions = data.survey.questions;
+        const grouped = new Map<string, Question[]>();
+        const finalQuestions: Question[] = [];
+        for (const q of allQuestions) {
+          if (q.groupName) {
+            if (!grouped.has(q.groupName)) grouped.set(q.groupName, []);
+            grouped.get(q.groupName)!.push(q);
+          } else {
+            finalQuestions.push(q);
+          }
+        }
+        grouped.forEach((groupQs) => {
+          const picked = groupQs[Math.floor(Math.random() * groupQs.length)];
+          finalQuestions.push(picked);
+        });
+        finalQuestions.sort((a, b) => a.order - b.order);
+        data.survey.questions = finalQuestions;
+
         setSession(data);
 
         const questions = data.survey.questions;
