@@ -146,5 +146,6 @@ model Contact {
   email          String
   phone          String
   content        String
+  status         String   @default("未対応")
   createdAt      DateTime @default(now())
 }

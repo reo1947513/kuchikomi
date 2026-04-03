@@ -12,6 +12,7 @@ type Contact = {
   email: string;
   phone: string;
   content: string;
+  status: string;
   createdAt: string;
 };
 
@@ -31,6 +32,26 @@ export default function ContactsPage() {
   const formatDate = (d: string) => {
     const date = new Date(d);
     return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+  };
+
+  const updateStatus = async (id: string, status: string) => {
+    try {
+      const res = await fetch(\`/api/admin/contacts/\${id}\`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      if (res.ok) {
+        setContacts((prev) => prev.map((c) => c.id === id ? { ...c, status } : c));
+        if (selected && selected.id === id) setSelected({ ...selected, status });
+      }
+    } catch {}
+  };
+
+  const statusColor = (s: string) => {
+    if (s === "対応済み") return "bg-green-50 border-green-300 text-green-700";
+    if (s === "対応中") return "bg-yellow-50 border-yellow-300 text-yellow-700";
+    return "bg-red-50 border-red-300 text-red-700";
   };
 
   return (
@@ -54,6 +75,7 @@ export default function ContactsPage() {
                 <th className="text-left px-4 py-3 font-medium text-gray-600">会社名 / 店舗名</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-600">名前</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-600">メール</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-600">対応状況</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-600"></th>
               </tr>
             </thead>
@@ -70,6 +92,17 @@ export default function ContactsPage() {
                   <td className="px-4 py-3 text-gray-800">{c.companyName}</td>
                   <td className="px-4 py-3 text-gray-800">{c.lastName} {c.firstName}</td>
                   <td className="px-4 py-3 text-gray-500">{c.email}</td>
+                  <td className="px-4 py-3">
+                    <select
+                      value={c.status || "未対応"}
+                      onChange={(e) => updateStatus(c.id, e.target.value)}
+                      className={\`text-xs font-medium rounded-lg border px-2 py-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-violet-400 \${statusColor(c.status || "未対応")}\`}
+                    >
+                      <option value="未対応">未対応</option>
+                      <option value="対応中">対応中</option>
+                      <option value="対応済み">対応済み</option>
+                    </select>
+                  </td>
                   <td className="px-4 py-3">
                     <button onClick={() => setSelected(c)} className="text-violet-500 hover:text-violet-700 text-xs font-medium">詳細</button>
                   </td>
@@ -99,6 +132,7 @@ export default function ContactsPage() {
                   ["名前", `${selected.lastName} ${selected.firstName}`],
                   ["メールアドレス", selected.email],
                   ["連絡先", selected.phone],
+                  ["対応状況", selected.status || "未対応"],
                 ].map(([label, value]) => (
                   <div key={label} className="flex py-3">
                     <span className="w-36 shrink-0 text-sm font-medium text-gray-500">{label}</span>
