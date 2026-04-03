@@ -54,7 +54,7 @@ type Survey = {
 type Tab = "basic" | "ai" | "questions" | "logo" | "color";
 
 const COLOR_THEMES = [
-  { name: "\u30c7\u30d5\u30a9\u30eb\u30c8", main: "#F2B705", user: "#F28705", text: "#262626" },
+  { name: "\u30c7\u30d5\u30a9\u30eb\u30c8", main: "#06B6D4", user: "#8B5CF6", text: "#FFFFFF" },
   { name: "\u30b7\u30f3\u30d7\u30eb\u30db\u30ef\u30a4\u30c8", main: "#FFFFFF", user: "#E5E7EB", text: "#374151" },
   { name: "\u30b7\u30f3\u30d7\u30eb\u30b0\u30ec\u30fc", main: "#6B7280", user: "#9CA3AF", text: "#FFFFFF" },
   { name: "\u30b7\u30f3\u30d7\u30eb\u30d6\u30e9\u30c3\u30af", main: "#1F2937", user: "#374151", text: "#FFFFFF" },
@@ -137,9 +137,9 @@ export default function SurveySettingsPage() {
   const [logoUrl, setLogoUrl] = useState("");
   const [couponImageUrl, setCouponImageUrl] = useState("");
   const [couponEnabled, setCouponEnabled] = useState(false);
-  const [themeMainColor, setThemeMainColor] = useState("#F2B705");
-  const [themeUserColor, setThemeUserColor] = useState("#F28705");
-  const [themeTextColor, setThemeTextColor] = useState("#262626");
+  const [themeMainColor, setThemeMainColor] = useState("#06B6D4");
+  const [themeUserColor, setThemeUserColor] = useState("#8B5CF6");
+  const [themeTextColor, setThemeTextColor] = useState("#FFFFFF");
   const [logoDragging, setLogoDragging] = useState(false);
   const [logoUploading, setLogoUploading] = useState(false);
   const [logoUploadError, setLogoUploadError] = useState<string | null>(null);
@@ -172,9 +172,9 @@ export default function SurveySettingsPage() {
       setLogoUrl(data.logoUrl ?? "");
       setCouponImageUrl(data.couponImageUrl ?? "");
       setCouponEnabled(data.couponEnabled ?? false);
-      setThemeMainColor(data.themeMainColor ?? "#F2B705");
-      setThemeUserColor(data.themeUserColor ?? "#F28705");
-      setThemeTextColor(data.themeTextColor ?? "#262626");
+      setThemeMainColor(data.themeMainColor ?? "#06B6D4");
+      setThemeUserColor(data.themeUserColor ?? "#8B5CF6");
+      setThemeTextColor(data.themeTextColor ?? "#FFFFFF");
     } catch (e) {
       setError(e instanceof Error ? e.message : "エラーが発生しました");
     } finally {
