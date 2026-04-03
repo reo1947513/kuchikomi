@@ -793,11 +793,23 @@ export default function SurveySettingsPage() {
                             </div>
                             <div className="flex items-center gap-2">
                               <span className="text-xs text-gray-500">質問の種類:</span>
-                              <select value={gq.type} onChange={(e) => setGroupQuestions((prev) => prev.map((q, i) => i === gi ? { ...q, type: e.target.value as "choice" | "text" } : q))} className="border border-gray-300 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-violet-400 bg-white">
+                              <select value={gq.type} onChange={(e) => setGroupQuestions((prev) => prev.map((q, i) => i === gi ? { ...q, type: e.target.value as "choice" | "text", choices: e.target.value === "choice" ? [{text:"非常に満足",order:0,score:2},{text:"満足",order:1,score:1},{text:"どちらとも言えない",order:2,score:0},{text:"やや不満",order:3,score:-1},{text:"不満",order:4,score:-2}] : [] } : q))} className="border border-gray-300 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-violet-400 bg-white">
                                 <option value="text">記述式</option>
                                 <option value="choice">選択式</option>
                               </select>
                             </div>
+                            {gq.type === "choice" && (
+                              <div className="space-y-1.5 mt-2">
+                                <label className="block text-xs font-medium text-gray-500">選択肢</label>
+                                {(gq.choices || []).map((ch, ci) => (
+                                  <div key={ci} className="flex items-center gap-2">
+                                    <input type="text" value={ch.text} onChange={(e) => setGroupQuestions((prev) => prev.map((q, i) => i === gi ? { ...q, choices: q.choices.map((c2, j) => j === ci ? { ...c2, text: e.target.value } : c2) } : q))} placeholder={`選択肢 ${ci + 1}`} className="flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400" />
+                                    <button type="button" onClick={() => setGroupQuestions((prev) => prev.map((q, i) => i === gi ? { ...q, choices: q.choices.filter((_, j) => j !== ci) } : q))} disabled={(gq.choices || []).length <= 1} className="text-gray-300 hover:text-red-400 disabled:opacity-30"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
+                                  </div>
+                                ))}
+                                <button type="button" onClick={() => setGroupQuestions((prev) => prev.map((q, i) => i === gi ? { ...q, choices: [...q.choices, { text: "", order: q.choices.length, score: 0 }] } : q))} className="flex items-center gap-1 text-xs text-gray-500 hover:text-violet-500 transition-colors"><svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>選択肢を追加</button>
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>
