@@ -55,6 +55,8 @@ export default function ShopsPage() {
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [loading, setLoading] = useState(true);
+  const [sortKey, setSortKey] = useState<string | null>(null);
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [error, setError] = useState<string | null>(null);
   const [agencies, setAgencies] = useState<Agency[]>([]);
   const [industries, setIndustries] = useState<string[]>([]);
@@ -87,6 +89,29 @@ export default function ShopsPage() {
       .then((data) => setIndustries(Array.isArray(data) ? data.map((d) => d.name) : []))
       .catch(() => {});
   }, []);
+
+  const toggleSort = (key: string) => {
+    if (sortKey === key) {
+      setSortDir(sortDir === "asc" ? "desc" : "asc");
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  };
+
+  const sortedShops = [...shops].sort((a, b) => {
+    if (!sortKey) return 0;
+    const dir = sortDir === "asc" ? 1 : -1;
+    if (sortKey === "shopName") return ((a.shopName ?? a.name) > (b.shopName ?? b.name) ? 1 : -1) * dir;
+    if (sortKey === "name") return (a.name > b.name ? 1 : -1) * dir;
+    if (sortKey === "sessionCount") return ((a.sessionCount ?? 0) - (b.sessionCount ?? 0)) * dir;
+    if (sortKey === "contractDays") {
+      const daysA = a.noContractLimit ? 99999 : a.contractEnd ? Math.ceil((new Date(a.contractEnd).getTime() - Date.now()) / 86400000) : -1;
+      const daysB = b.noContractLimit ? 99999 : b.contractEnd ? Math.ceil((new Date(b.contractEnd).getTime() - Date.now()) / 86400000) : -1;
+      return (daysA - daysB) * dir;
+    }
+    return 0;
+  });
 
   const fetchShops = useCallback(async () => {
     setLoading(true);
@@ -274,10 +299,10 @@ export default function ShopsPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50">
-              <th className="text-left px-4 py-3 font-semibold text-gray-700">顧客名</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700">担当者名</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700">アクセス回数</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700">契約残日数</th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-700 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("shopName")}>顧客名{sortKey === "shopName" && (sortDir === "asc" ? " ▲" : " ▼")}</th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-700 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("name")}>担当者名{sortKey === "name" && (sortDir === "asc" ? " ▲" : " ▼")}</th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-700 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("sessionCount")}>アクセス回数{sortKey === "sessionCount" && (sortDir === "asc" ? " ▲" : " ▼")}</th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-700 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("contractDays")}>契約残日数{sortKey === "contractDays" && (sortDir === "asc" ? " ▲" : " ▼")}</th>
               <th className="text-left px-4 py-3 font-semibold text-gray-700">住所</th>
               <th className="text-left px-4 py-3 font-semibold text-gray-700">代理店</th>
               <th className="text-right px-4 py-3 font-semibold text-gray-700">操作</th>
@@ -290,7 +315,7 @@ export default function ShopsPage() {
             {!loading && shops.length === 0 && (
               <tr><td colSpan={4} className="text-center py-12 text-gray-400">ショップが見つかりません</td></tr>
             )}
-            {!loading && shops.map((shop) => (
+            {!loading && sortedShops.map((shop) => (
               <tr key={shop.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-4 py-3">
                   <div className="font-medium text-gray-900">{shop.shopName ?? shop.name}</div>
