@@ -35,8 +35,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <div className="max-w-4xl mx-auto px-6 h-14 flex items-center justify-between">
           <span className="text-lg font-black text-white tracking-tight">クチコミPlus</span>
           {isSuper ? (
-            <a href="/admin" className="text-sm text-white/80 hover:text-white underline">
-              ← 管理パネルに戻る
+            <a href="/admin/shops" className="text-sm text-white/80 hover:text-white underline">
+              ← ショップ管理に戻る
             </a>
           ) : (
             <a href="/api/auth/logout" className="text-sm text-white/80 hover:text-white underline">
