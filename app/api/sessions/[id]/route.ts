@@ -17,6 +17,7 @@ export async function GET(
           couponImageUrl: true,
           couponExpiry: true,
           couponEnabled: true,
+          couponExpiry: true,
         },
       },
     },
@@ -39,5 +40,6 @@ export async function GET(
     googleBusinessUrl: session.survey.googleBusinessUrl ?? null,
     logoUrl: session.survey.logoUrl ?? null,
     couponImageUrl: session.survey.couponEnabled ? (session.survey.couponImageUrl ?? null) : null,
+    couponExpiry: session.survey.couponEnabled ? (session.survey.couponExpiry ?? null) : null,
   });
 }
