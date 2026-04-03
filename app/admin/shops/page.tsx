@@ -298,7 +298,6 @@ export default function ShopsPage() {
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-600">{shop.name}</td>
                 </td>
-                <td className="px-4 py-3 text-sm text-gray-700 font-medium">{shop.sessionCount ?? 0}回</td>
                 <td className="px-4 py-3 text-sm">
                   {shop.noContractLimit ? (
                     <span className="text-gray-400">無期限</span>
