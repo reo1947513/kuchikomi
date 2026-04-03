@@ -260,6 +260,36 @@ export default function SurveySettingsPage() {
     setQuestions((prev) => prev.map((q) => (q.id === id ? { ...q, isRandom: val } : q)));
   };
 
+  const [dragIdx, setDragIdx] = useState<number | null>(null);
+  const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
+
+  const handleDragStart = (idx: number) => {
+    setDragIdx(idx);
+  };
+  const handleDragOver = (e: React.DragEvent, idx: number) => {
+    e.preventDefault();
+    setDragOverIdx(idx);
+  };
+  const handleDrop = (idx: number) => {
+    if (dragIdx === null || dragIdx === idx) {
+      setDragIdx(null);
+      setDragOverIdx(null);
+      return;
+    }
+    setQuestions((prev) => {
+      const updated = [...prev];
+      const [moved] = updated.splice(dragIdx, 1);
+      updated.splice(idx, 0, moved);
+      return updated.map((q, i) => ({ ...q, order: i }));
+    });
+    setDragIdx(null);
+    setDragOverIdx(null);
+  };
+  const handleDragEnd = () => {
+    setDragIdx(null);
+    setDragOverIdx(null);
+  };
+
   const deleteQuestion = async (id: string) => {
     if (!confirm("この質問を削除しますか？")) return;
     try {
@@ -581,8 +611,28 @@ export default function SurveySettingsPage() {
               {questions.length === 0 && (
                 <p className="p-6 text-center text-sm text-gray-400">質問がありません</p>
               )}
-              {questions.map((q) => (
-                <div key={q.id} className="p-4 flex items-start gap-3">
+              {questions.map((q, idx) => (
+                <div
+                  key={q.id}
+                  draggable
+                  onDragStart={() => handleDragStart(idx)}
+                  onDragOver={(e) => handleDragOver(e, idx)}
+                  onDrop={() => handleDrop(idx)}
+                  onDragEnd={handleDragEnd}
+                  className={`p-4 flex items-start gap-3 transition-colors ${
+                    dragIdx === idx ? "opacity-40" : ""
+                  } ${dragOverIdx === idx && dragIdx !== idx ? "bg-violet-50" : ""}`}
+                >
+                  {/* Drag handle */}
+                  <button
+                    type="button"
+                    className="shrink-0 cursor-grab active:cursor-grabbing text-gray-300 hover:text-gray-500 mt-0.5"
+                    title="ドラッグして並べ替え"
+                  >
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M7 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM13 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7 8a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM13 8a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7 14a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM13 14a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" />
+                    </svg>
+                  </button>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-sm font-medium text-gray-800 truncate">{q.text}</span>
