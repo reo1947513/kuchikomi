@@ -22,6 +22,30 @@ type DashboardData = {
 };
 
 const ADVICE_LIMIT = 5;
+function ContractBanner() {
+  const [days, setDays] = useState<number | null>(null);
+  useEffect(() => {
+    fetch("/api/auth/me").then(r => r.json()).then(d => {
+      if (d.noContractLimit || !d.contractEnd) return;
+      const end = new Date(d.contractEnd);
+      const now = new Date();
+      const diff = Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      setDays(diff);
+    }).catch(() => {});
+  }, []);
+  if (days === null) return null;
+  const color = days <= 7 ? "bg-red-50 border-red-200 text-red-700" : days <= 30 ? "bg-yellow-50 border-yellow-200 text-yellow-700" : "bg-blue-50 border-blue-200 text-blue-700";
+  return (
+    <div className={`rounded-xl border p-4 mb-6 flex items-center gap-3 ${color}`}>
+      <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+      <div>
+        <p className="text-sm font-medium">{days > 0 ? `ご契約の残り日数: ${days}日` : "ご契約期間が終了しました"}</p>
+        {days <= 7 && days > 0 && <p className="text-xs mt-0.5">契約更新についてはお問い合わせください</p>}
+      </div>
+    </div>
+  );
+}
+
 
 // ---- Circular Progress ----
 function CircularProgress({ limit, count }: { limit: number; count: number }) {
@@ -254,6 +278,7 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
+      <ContractBanner />
       <h1 className="text-2xl font-bold text-gray-900">{shopName}</h1>
 
       {data.survey ? (
