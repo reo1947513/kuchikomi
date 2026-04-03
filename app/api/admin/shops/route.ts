@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
         agency: { select: { id: true, name: true } },
         createdAt: true,
         surveys: {
-          select: { id: true, googleBusinessUrl: true, monthlyReviewLimit: true },
+          select: { id: true, googleBusinessUrl: true, monthlyReviewLimit: true, _count: { select: { sessions: true } } },
           orderBy: { createdAt: "asc" },
           take: 1,
         },
@@ -67,6 +67,7 @@ export async function GET(request: NextRequest) {
       firstSurveyId: s.surveys[0]?.id ?? null,
       googleBusinessUrl: s.surveys[0]?.googleBusinessUrl ?? null,
       monthlyReviewLimit: s.surveys[0]?.monthlyReviewLimit ?? 100,
+      sessionCount: s.surveys.reduce((sum: number, sv: { _count: { sessions: number } }) => sum + sv._count.sessions, 0),
       surveys: undefined,
     })),
     total,

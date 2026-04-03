@@ -21,6 +21,7 @@ type Shop = {
   contractStart?: string | null;
   contractEnd?: string | null;
   noContractLimit?: boolean;
+  sessionCount?: number;
 };
 
 type EditForm = {
