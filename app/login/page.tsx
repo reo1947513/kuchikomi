@@ -174,6 +174,9 @@ export default function LoginPage() {
           </button>
         </form>
       </div>
+      <footer className="text-center text-xs text-white/60 mt-6">
+        © 2026 クチコミPlus. All Rights Reserved.
+      </footer>
     </main>
   );
 }

@@ -240,6 +240,9 @@ export default function SharePage({ params }: { params: { id: string } }) {
           </div>
         </div>
       )}
+      <footer className="text-center text-xs text-gray-400 py-6">
+        © 2026 クチコミPlus. All Rights Reserved.
+      </footer>
     </div>
   );
 }

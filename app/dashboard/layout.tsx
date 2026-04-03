@@ -34,6 +34,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </header>
       {!isSuper && <DashboardNav />}
       <main className="max-w-4xl mx-auto px-6 py-8">{children}</main>
+      <footer className="text-center text-xs text-gray-400 py-6">
+        © 2026 クチコミPlus. All Rights Reserved.
+      </footer>
     </div>
   );
 }

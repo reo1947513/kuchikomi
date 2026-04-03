@@ -28,6 +28,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </header>
       <AdminNav />
       <main className="max-w-7xl mx-auto px-6 py-8">{children}</main>
+      <footer className="text-center text-xs text-gray-400 py-6">
+        © 2026 クチコミPlus. All Rights Reserved.
+      </footer>
     </div>
   );
 }
