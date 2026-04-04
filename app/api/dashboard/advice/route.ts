@@ -1,13 +1,13 @@
 export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
+import { getSessionForRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import Anthropic from "@anthropic-ai/sdk";
 
 const MONTHLY_ADVICE_LIMIT = 5;
 
 export async function POST(request: NextRequest) {
-  const session = getSession();
+  const session = getSessionForRole("admin");
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const survey = await prisma.survey.findFirst({

@@ -15,7 +15,7 @@ const items = [
 export default function AdminNav() {
   const pathname = usePathname();
   return (
-    <div className="bg-white border-b border-gray-200">
+    <div className="bg-white border-b border-gray-200 sticky top-14 z-10">
       <div className="max-w-7xl mx-auto px-6 flex gap-0">
         {items.map((item) => (
           <Link

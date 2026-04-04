@@ -1,12 +1,12 @@
 export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
+import { getSessionForRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
 type Params = { params: { id: string } };
 
 export async function PUT(request: NextRequest, { params }: Params) {
-  const session = getSession();
+  const session = getSessionForRole("super");
   if (!session || session.role !== "super") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
@@ -31,7 +31,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
 }
 
 export async function DELETE(request: NextRequest, { params }: Params) {
-  const session = getSession();
+  const session = getSessionForRole("super");
   if (!session || session.role !== "super") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }

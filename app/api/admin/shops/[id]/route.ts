@@ -1,13 +1,13 @@
 export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
+import { getSessionForRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
 
 type Params = { params: { id: string } };
 
 export async function GET(request: NextRequest, { params }: Params) {
-  const session = getSession();
+  const session = getSessionForRole("super");
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest, { params }: Params) {
 }
 
 export async function PUT(request: NextRequest, { params }: Params) {
-  const session = getSession();
+  const session = getSessionForRole("super");
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -149,7 +149,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
 }
 
 export async function DELETE(request: NextRequest, { params }: Params) {
-  const session = getSession();
+  const session = getSessionForRole("super");
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

@@ -1,13 +1,13 @@
 export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
+import { getSessionForRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import Anthropic from "@anthropic-ai/sdk";
 
 const anthropic = new Anthropic();
 
 export async function GET() {
-  const session = getSession();
+  const session = getSessionForRole("admin");
   if (!session || session.role === "super") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
@@ -71,7 +71,7 @@ export async function GET() {
 }
 
 export async function POST() {
-  const session = getSession();
+  const session = getSessionForRole("admin");
   if (!session || session.role === "super") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
