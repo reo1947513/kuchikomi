@@ -24,24 +24,42 @@ export async function GET() {
   });
 
   if (!survey) {
-    return NextResponse.json({ user, survey: null, monthlyCounts: [], recentSessions: [], adviceCount: 0, adviceList: [] });
+    return NextResponse.json({
+      user, survey: null, monthlyCounts: [], recentSessions: [],
+      adviceCount: 0, adviceList: [],
+      lastMonthCount: 0, totalSessionCount: 0, totalAccessCount: 0,
+    });
   }
 
-  // Last 12 months of sessions
   const now = new Date();
   const startOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
   const twelveMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 11, 1);
 
+  // All sessions (completed) in last 12 months
   const allSessions = await prisma.reviewSession.findMany({
     where: { surveyId: survey.id, status: "completed", createdAt: { gte: twelveMonthsAgo } },
     select: { id: true, createdAt: true },
     orderBy: { createdAt: "asc" },
   });
 
-  // Monthly review count for THIS month (dynamic — never goes stale)
   const thisMonthCount = allSessions.filter((s) => new Date(s.createdAt) >= startOfThisMonth).length;
+  const lastMonthCount = allSessions.filter((s) => {
+    const d = new Date(s.createdAt);
+    return d >= startOfLastMonth && d < startOfThisMonth;
+  }).length;
 
-  // Build monthly counts for last 12 months
+  // Total completed sessions (all time)
+  const totalSessionCount = await prisma.reviewSession.count({
+    where: { surveyId: survey.id, status: "completed" },
+  });
+
+  // Total access count (all sessions including in_progress)
+  const totalAccessCount = await prisma.reviewSession.count({
+    where: { surveyId: survey.id },
+  });
+
+  // Monthly counts for chart
   const monthlyCounts: { label: string; count: number }[] = [];
   for (let i = 11; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
@@ -61,7 +79,7 @@ export async function GET() {
     take: 50,
   });
 
-  // AI advice this month
+  // AI advice
   const adviceCount = await prisma.advice.count({
     where: { surveyId: survey.id, createdAt: { gte: startOfThisMonth } },
   });
@@ -72,8 +90,11 @@ export async function GET() {
     select: { id: true, content: true, dateFrom: true, dateTo: true, createdAt: true },
   });
 
-  // Inject dynamic monthly count into survey (overrides stale DB field)
   const surveyWithCount = { ...survey, monthlyReviewCount: thisMonthCount };
 
-  return NextResponse.json({ user, survey: surveyWithCount, monthlyCounts, recentSessions, adviceCount, adviceList });
+  return NextResponse.json({
+    user, survey: surveyWithCount, monthlyCounts, recentSessions,
+    adviceCount, adviceList,
+    lastMonthCount, totalSessionCount, totalAccessCount,
+  });
 }
