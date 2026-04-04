@@ -370,10 +370,6 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {data.monthlyCounts.length > 0 && <LineChart data={data.monthlyCounts} />}
-
-      {data.survey && <AdviceSection initialCount={data.adviceCount} initialList={data.adviceList} />}
-
       {data.survey && <RecentSessions sessions={data.recentSessions} shopName={shopName} />}
     </div>
   );
