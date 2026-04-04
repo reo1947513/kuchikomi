@@ -708,6 +708,24 @@ export default function SurveySettingsPage() {
         {activeTab === "questions" && (
           <div className="space-y-4">
             <div className="bg-white rounded-xl shadow divide-y divide-gray-100">
+
+            {/* Random question count settings */}
+            <div className="bg-gray-50 rounded-xl p-5 space-y-3">
+              <label className="block text-sm font-semibold text-gray-700">ランダム質問表示数設定</label>
+              <p className="text-xs text-gray-500">ランダム対象の質問数: {questions.filter((q: any) => q.isRandom || q.groupName).length}件</p>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600">最小値</span>
+                  <input type="number" min={0} value={minRandomQuestions} onChange={(e) => setMinRandomQuestions(Number(e.target.value))} className="w-20 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-violet-400" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600">最大値</span>
+                  <input type="number" min={0} value={maxRandomQuestions} onChange={(e) => setMaxRandomQuestions(Number(e.target.value))} className="w-20 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-violet-400" />
+                </div>
+              </div>
+              <p className="text-xs text-gray-400">ランダム表示がONの質問とグルーピング質問から、指定した範囲の数だけランダムに表示します。0の場合は全件表示。</p>
+            </div>
+
               {questions.length === 0 && (
                 <p className="p-6 text-center text-sm text-gray-400">質問がありません</p>
               )}
