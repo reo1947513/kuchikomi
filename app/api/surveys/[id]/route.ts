@@ -99,7 +99,6 @@ export async function PUT(request: NextRequest, { params }: Params) {
     themeMainColor,
     themeUserColor,
     themeTextColor,
-    maxRandomQuestions,
     monthlyReviewLimit,
     isActive,
     tones,
