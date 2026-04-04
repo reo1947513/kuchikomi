@@ -50,6 +50,8 @@ type Survey = {
   minRandomQuestions?: number;
   maxRandomQuestions?: number;
   themeTextColor?: string | null;
+  selectedToneId?: string | null;
+  toneRandom?: boolean;
   tones: Tone[];
   questions: Question[];
 };
@@ -123,7 +125,9 @@ export default function SurveySettingsPage() {
 
   // ---- AI tab state ----
   const [promptTemplate, setPromptTemplate] = useState(DEFAULT_PROMPT_TEMPLATE);
-  const [tones, setTones] = useState<Array<{ localId: string; name: string; id?: string }>>([]);
+  const [selectedToneId, setSelectedToneId] = useState("");
+  const [toneRandom, setToneRandom] = useState(true);
+  const [tones, setTones]  = useState<Array<{ localId: string; name: string; id?: string }>>([]);
 
   // ---- Questions tab state ----
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -176,6 +180,8 @@ export default function SurveySettingsPage() {
       setMonthlyReviewLimit(data.monthlyReviewLimit ?? 100);
       setIsActive(data.isActive ?? true);
       setPromptTemplate(data.promptTemplate ?? DEFAULT_PROMPT_TEMPLATE);
+      setSelectedToneId(data.selectedToneId ?? "");
+      setToneRandom(data.toneRandom ?? true);
       setTones(
         (data.tones ?? []).map((t) => ({ localId: newLocalToneId(), name: t.name, id: t.id }))
       );
@@ -660,6 +666,26 @@ export default function SurveySettingsPage() {
                 className={`${textareaCls} font-mono`}
               />
             </Field>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">使用する口調</label>
+              <p className="text-xs text-gray-400 mb-2">固定の口調を使用するか、ランダムに選択するかを設定します。</p>
+              <select
+                value={selectedToneId}
+                onChange={(e) => setSelectedToneId(e.target.value)}
+                disabled={toneRandom}
+                className={`${inputCls} mb-2 ${toneRandom ? "opacity-50" : ""}`}
+              >
+                <option value="">口調を選択してください</option>
+                {tones.map((t) => (
+                  <option key={t.localId} value={t.id || t.localId}>{t.name}</option>
+                ))}
+              </select>
+              <label className="flex items-center gap-2 cursor-pointer select-none mb-4">
+                <input type="checkbox" checked={toneRandom} onChange={(e) => setToneRandom(e.target.checked)} className="rounded border-gray-300 text-violet-500 focus:ring-violet-400" />
+                <span className="text-sm text-gray-700">口調をランダムに選択する</span>
+              </label>
+            </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">口調リスト</label>

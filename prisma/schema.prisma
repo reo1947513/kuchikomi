@@ -49,6 +49,8 @@ model Survey {
   closingMessage      String?  // 終了挨拶文（お礼・再来店案内）
   completionMessage   String?  // レビュー確認メッセージ（口コミ投稿促進）
   keywords            String?  // キーワード（カンマ区切り）
+  selectedToneId      String?
+  toneRandom          Boolean  @default(true)
   promptTemplate      String?  // AIプロンプトテンプレート ({tone}, {keywords}, {formattedResponses})
   googleBusinessUrl   String?
   logoUrl             String?
