@@ -94,23 +94,22 @@ export default function SurveyPage({
 
         // Group random: pick one question per group
         const allQuestions = data.survey.questions;
-        const grouped = new Map<string, Question[]>();
-        const finalQuestions: Question[] = [];
+        const fixedQuestions: Question[] = [];
+        const randomPool: Question[] = [];
         for (const q of allQuestions) {
-          if (q.groupName) {
-            if (!grouped.has(q.groupName)) grouped.set(q.groupName, []);
-            grouped.get(q.groupName)!.push(q);
+          if (q.groupName || (q as any).isRandom) {
+            randomPool.push(q);
           } else {
-            finalQuestions.push(q);
+            fixedQuestions.push(q);
           }
         }
-        grouped.forEach((groupQs) => {
-          const minR = data.survey.minRandomQuestions || 1;
-          const maxR = data.survey.maxRandomQuestions || groupQs.length;
-          const count = Math.min(groupQs.length, Math.max(minR, Math.floor(Math.random() * (maxR - minR + 1)) + minR));
-          const shuffled = [...groupQs].sort(() => Math.random() - 0.5);
-          shuffled.slice(0, count).forEach((q) => finalQuestions.push(q));
-        });
+        // Pick min~max from random pool
+        const minR = data.survey.minRandomQuestions || 1;
+        const maxR = data.survey.maxRandomQuestions || randomPool.length;
+        const count = Math.min(randomPool.length, Math.max(minR, Math.floor(Math.random() * (maxR - minR + 1)) + minR));
+        const shuffled = [...randomPool].sort(() => Math.random() - 0.5);
+        const picked = shuffled.slice(0, count);
+        const finalQuestions = [...fixedQuestions, ...picked];
         finalQuestions.sort((a, b) => a.order - b.order);
         data.survey.questions = finalQuestions;
 

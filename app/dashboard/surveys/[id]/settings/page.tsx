@@ -776,6 +776,23 @@ export default function SurveySettingsPage() {
               ))}
             </div>
 
+            {/* Random question count settings */}
+            <div className="bg-gray-50 rounded-xl p-5 space-y-3">
+              <label className="block text-sm font-semibold text-gray-700">ランダム質問表示数設定</label>
+              <p className="text-xs text-gray-500">ランダム対象の質問数: {questions.filter((q: any) => q.isRandom || q.groupName).length}件</p>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600">最小値</span>
+                  <input type="number" min={0} value={minRandomQuestions} onChange={(e) => setMinRandomQuestions(Number(e.target.value))} className="w-20 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-violet-400" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600">最大値</span>
+                  <input type="number" min={0} value={maxRandomQuestions} onChange={(e) => setMaxRandomQuestions(Number(e.target.value))} className="w-20 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-violet-400" />
+                </div>
+              </div>
+              <p className="text-xs text-gray-400">ランダム表示がONの質問とグルーピング質問から、指定した範囲の数だけランダムに表示します。0の場合は全件表示。</p>
+            </div>
+
             {/* Add question inline form */}
             {showAddQuestion ? (
               <div className="bg-white rounded-xl shadow p-5 space-y-3 border border-violet-500/50">
@@ -784,21 +801,7 @@ export default function SurveySettingsPage() {
                   <input type="checkbox" checked={useGrouping} onChange={(e) => setUseGrouping(e.target.checked)} className="rounded border-gray-300 text-violet-500 focus:ring-violet-400" />
                   <span className="text-sm text-gray-700">グルーピングランダム質問設定を行う</span>
                 </label>
-                <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">ランダム質問表示数設定</label>
-                  <p className="text-xs text-gray-500">ランダム表示の質問数: {groupQuestions.length}</p>
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1">
-                      <span className="text-sm text-gray-600">最小値</span>
-                      <input type="number" min={0} max={groupQuestions.length} value={minRandomQuestions} onChange={(e) => setMinRandomQuestions(Number(e.target.value))} className="w-16 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-violet-400" />
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <span className="text-sm text-gray-600">最大値</span>
-                      <input type="number" min={0} max={groupQuestions.length} value={maxRandomQuestions} onChange={(e) => setMaxRandomQuestions(Number(e.target.value))} className="w-16 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-violet-400" />
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-400">ランダムに表示する質問数の範囲を設定してください。</p>
-                </div>
+
                 {useGrouping ? (
                   <div className="space-y-4">
                     <div>
