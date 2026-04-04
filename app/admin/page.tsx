@@ -50,6 +50,14 @@ function AnimatedNumber({ value, duration = 1200 }: { value: number; duration?: 
 export default function SuperAdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [tooltip, setTooltip] = useState<{ text: string; x: number; y: number } | null>(null);
+  const chartRef = useRef<HTMLDivElement>(null);
+
+  const showTooltip = (e: React.MouseEvent, text: string) => {
+    const rect = chartRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setTooltip({ text, x: e.clientX - rect.left, y: e.clientY - rect.top - 40 });
+  };
 
   useEffect(() => {
     fetch("/api/admin/stats")
@@ -139,7 +147,15 @@ export default function SuperAdminDashboard() {
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4 relative" ref={chartRef}>
+        {tooltip && (
+          <div
+            className="absolute z-50 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg shadow-lg pointer-events-none whitespace-nowrap"
+            style={{ left: tooltip.x, top: tooltip.y, transform: "translateX(-50%)" }}
+          >
+            {tooltip.text}
+          </div>
+        )}
         {/* Bar chart */}
         <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/50 p-6 anim-fade" style={{ animationDelay: "300ms" }}>
           <div className="flex items-center gap-2 mb-4">
@@ -170,10 +186,11 @@ export default function SuperAdminDashboard() {
               const bx = 45 + i * slotW + (slotW - barW) / 2;
               const by = chartH - bh;
               return (
-                <g key={m.month} className="cursor-pointer">
-                  <rect x={bx} y={by} width={barW} height={bh} fill="url(#barGrad)" rx={4} className="anim-bar" style={{ animationDelay: `${400 + i * 60}ms` }}>
-                    <title>{m.month}: {m.count}件</title>
-                  </rect>
+                <g key={m.month} className="cursor-pointer"
+                  onMouseMove={(e) => showTooltip(e, `${m.month}: ${m.count}件`)}
+                  onMouseLeave={() => setTooltip(null)}
+                >
+                  <rect x={bx} y={by} width={barW} height={bh} fill="url(#barGrad)" rx={4} className="anim-bar" style={{ animationDelay: `${400 + i * 60}ms` }} />
                   <text x={bx + barW / 2} y={chartH + 18} textAnchor="middle" fontSize={9} fill="#6B7280">
                     {m.month}
                   </text>
@@ -224,9 +241,9 @@ export default function SuperAdminDashboard() {
                         fill={PIE_COLORS[i % PIE_COLORS.length]}
                         stroke="white"
                         strokeWidth={2}
-                      >
-                        <title>{d.industry}: {d.count}件 ({pct}%)</title>
-                      </path>
+                        onMouseMove={(e) => showTooltip(e, `${d.industry}: ${d.count}件 (${pct}%)`)}
+                        onMouseLeave={() => setTooltip(null)}
+                      />
                     );
                   });
                 })()
