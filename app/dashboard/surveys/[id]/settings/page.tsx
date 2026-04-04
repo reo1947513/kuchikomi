@@ -799,8 +799,6 @@ export default function SurveySettingsPage() {
                   </div>
                   <p className="text-xs text-gray-400">ランダムに表示する質問数の範囲を設定してください。</p>
                 </div>
-                <label className="hidden"
-                </label>
                 {useGrouping ? (
                   <div className="space-y-4">
                     <div>
