@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const items = [
   { href: "/dashboard/surveys", label: "ダッシュボード" },
   { href: "/dashboard/survey-settings", label: "アンケート設定" },
+  { href: "/dashboard/faq", label: "Q&A" },
   { href: "/dashboard/contact", label: "お問い合わせ" },
 ];
 

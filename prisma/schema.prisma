@@ -153,3 +153,11 @@ model Contact {
   status         String   @default("未対応")
   createdAt      DateTime @default(now())
 }
+
+model Faq {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
