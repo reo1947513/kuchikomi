@@ -107,13 +107,6 @@ export default function SuperAdminDashboard() {
         .anim-pie { animation: pieRotate 0.7s ease-out forwards; transform-origin: center; opacity: 0; }
       `}</style>
 
-      {/* Welcome Card */}
-      <div className="rounded-2xl bg-gradient-to-r from-cyan-500 to-violet-500 p-6 text-white shadow-lg anim-fade">
-        <p className="text-sm opacity-90">管理者ダッシュボード</p>
-        <h1 className="text-2xl font-bold mt-1">クチコミPlus</h1>
-        <p className="text-sm opacity-80 mt-2">システム全体の状況を確認できます</p>
-      </div>
-
       {/* Stats cards */}
       <div className="grid grid-cols-2 gap-4">
         <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/50 p-6 anim-fade" style={{ animationDelay: "100ms" }}>
