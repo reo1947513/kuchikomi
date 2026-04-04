@@ -368,18 +368,18 @@ export default function SurveyPage({
       {(phase.type === "questioning" || phase.type === "text_input") && (
         <div
           className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg"
-          style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+          style={{ paddingBottom: "env(safe-area-inset-bottom)", maxHeight: "45vh" }}
         >
-          <div className="max-w-lg mx-auto px-4 py-3">
+          <div className="max-w-lg mx-auto px-4 py-3 overflow-y-auto" style={{ maxHeight: "calc(45vh - env(safe-area-inset-bottom, 0px))" }}>
             {phase.type === "questioning" && (
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-1.5">
                 {questions[phase.questionIndex]?.choices.map((choice) => (
                   <button
                     key={choice.id}
                     onClick={() =>
                       submitAnswer(phase.questionIndex, choice.id, undefined)
                     }
-                    className="w-full text-left px-4 py-3 rounded-xl text-sm text-gray-800 font-medium border-2 transition-colors bg-white hover:bg-violet-50"
+                    className="w-full text-left px-4 py-2.5 rounded-xl text-sm text-gray-800 font-medium border-2 transition-colors bg-white hover:bg-violet-50"
                     style={{ borderColor: mainColor }}
                   >
                     {choice.text}
