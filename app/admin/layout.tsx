@@ -1,15 +1,11 @@
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { verifyToken } from "@/lib/auth";
+import { getSession } from "@/lib/auth";
 import AdminNav from "./AdminNav";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const cookieStore = cookies();
-  const token = cookieStore.get("auth_token")?.value;
-  if (!token) redirect("/login");
-
-  const session = verifyToken(token);
-  if (!session || session.role !== "super") redirect("/dashboard");
+  const session = getSession();
+  if (!session) redirect("/login");
+  if (session.role !== "super") redirect("/dashboard");
 
   return (
     <div className="min-h-screen bg-slate-50">

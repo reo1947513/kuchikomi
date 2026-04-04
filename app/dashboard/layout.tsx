@@ -1,16 +1,11 @@
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { verifyToken } from "@/lib/auth";
+import { getSession } from "@/lib/auth";
 import DashboardNav from "./DashboardNav";
 import ExpiredNav from "./ExpiredNav";
 import { prisma } from "@/lib/db";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const cookieStore = cookies();
-  const token = cookieStore.get("auth_token")?.value;
-  if (!token) redirect("/login");
-
-  const session = verifyToken(token);
+  const session = getSession();
   if (!session) redirect("/login");
 
   // agent role is removed — redirect to login
