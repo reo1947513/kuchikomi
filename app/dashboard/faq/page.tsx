@@ -28,6 +28,16 @@ export default function FAQPage() {
 
   return (
     <div className="space-y-6">
+      <style jsx>{`
+        @keyframes slideDown {
+          from { opacity: 0; transform: translateY(-8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .answer-enter {
+          animation: slideDown 0.25s ease-out forwards;
+        }
+      `}</style>
+
       <div>
         <h1 className="text-2xl font-bold text-gray-900">よくある質問</h1>
         <p className="text-sm text-gray-500 mt-1">クチコミPlusに関するよくある質問をまとめました</p>
@@ -41,11 +51,11 @@ export default function FAQPage() {
               className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <span className="flex-shrink-0 w-7 h-7 rounded-full bg-gradient-to-r from-cyan-500 to-violet-500 flex items-center justify-center text-white text-xs font-bold">Q</span>
+                <span className={`flex-shrink-0 w-7 h-7 rounded-full bg-gradient-to-r from-cyan-500 to-violet-500 flex items-center justify-center text-white text-xs font-bold transition-transform duration-300 ${openIndex === i ? "scale-110" : ""}`}>Q</span>
                 <span className="text-sm font-medium text-gray-800">{faq.question}</span>
               </div>
               <svg
-                className={`w-5 h-5 text-gray-400 transition-transform flex-shrink-0 ml-2 ${openIndex === i ? "rotate-180" : ""}`}
+                className={`w-5 h-5 text-gray-400 transition-transform duration-300 flex-shrink-0 ml-2 ${openIndex === i ? "rotate-180" : ""}`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -54,7 +64,7 @@ export default function FAQPage() {
               </svg>
             </button>
             {openIndex === i && (
-              <div className="px-5 pb-4">
+              <div className="px-5 pb-4 answer-enter">
                 <div className="flex gap-3 ml-0.5">
                   <span className="flex-shrink-0 w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 text-xs font-bold">A</span>
                   <p className="text-sm text-gray-600 leading-relaxed pt-1">{faq.answer}</p>

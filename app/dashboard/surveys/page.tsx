@@ -195,6 +195,8 @@ function AdviceSection({ initialCount, initialList }: { initialCount: number; in
 
 // ---- Recent Sessions ----
 function RecentSessions({ sessions, shopName }: { sessions: Session[]; shopName: string }) {
+  const [page, setPage] = useState(1);
+  const perPage = 12;
   const [sort, setSort] = useState<"newest" | "oldest">("newest");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
@@ -228,8 +230,9 @@ function RecentSessions({ sessions, shopName }: { sessions: Session[]; shopName:
       {sorted.length === 0 ? (
         <p className="text-sm text-gray-400 text-center py-8">回答データがありません</p>
       ) : (
+        <>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {sorted.map((s) => {
+          {sorted.slice((page - 1) * perPage, page * perPage).map((s) => {
             const d = new Date(s.createdAt);
             const dateStr = `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
             return (
@@ -251,6 +254,16 @@ function RecentSessions({ sessions, shopName }: { sessions: Session[]; shopName:
             );
           })}
         </div>
+        {Math.ceil(sorted.length / perPage) > 1 && (
+          <div className="flex items-center justify-center gap-3 mt-4">
+            <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1}
+              className="px-4 py-2 text-sm border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors">前へ</button>
+            <span className="text-sm text-gray-600">ページ {page} / {Math.ceil(sorted.length / perPage)}</span>
+            <button onClick={() => setPage((p) => Math.min(Math.ceil(sorted.length / perPage), p + 1))} disabled={page >= Math.ceil(sorted.length / perPage)}
+              className="px-4 py-2 text-sm border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors">次へ</button>
+          </div>
+        )}
+        </>
       )}
     </div>
   );
@@ -327,9 +340,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {data.monthlyCounts.length > 0 && <LineChart data={data.monthlyCounts} />}
 
-      {data.survey && <AdviceSection initialCount={data.adviceCount} initialList={data.adviceList} />}
 
       {data.survey && <RecentSessions sessions={data.recentSessions} shopName={shopName} />}
     </div>

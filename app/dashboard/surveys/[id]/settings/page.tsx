@@ -106,7 +106,7 @@ export default function SurveySettingsPage() {
   const params = useParams();
   const surveyId = params.id as string;
 
-  const [activeTab, setActiveTab] = useState<Tab>("basic");
+  const [activeTab, setActiveTab] = useState<Tab>("logo");
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState<string>("");
   const [saving, setSaving] = useState(false);
