@@ -28,6 +28,9 @@ interface Survey {
   logoUrl: string | null;
   themeMainColor: string | null;
   themeUserColor: string | null;
+  closingMessage: string | null;
+  minRandomQuestions: number;
+  maxRandomQuestions: number;
   themeTextColor: string | null;
   questions: Question[];
 }
@@ -91,20 +94,22 @@ export default function SurveyPage({
 
         // Group random: pick one question per group
         const allQuestions = data.survey.questions;
-        const grouped = new Map<string, Question[]>();
-        const finalQuestions: Question[] = [];
+        const fixedQuestions: Question[] = [];
+        const randomPool: Question[] = [];
         for (const q of allQuestions) {
-          if (q.groupName) {
-            if (!grouped.has(q.groupName)) grouped.set(q.groupName, []);
-            grouped.get(q.groupName)!.push(q);
+          if (q.groupName || (q as any).isRandom) {
+            randomPool.push(q);
           } else {
-            finalQuestions.push(q);
+            fixedQuestions.push(q);
           }
         }
-        grouped.forEach((groupQs) => {
-          const picked = groupQs[Math.floor(Math.random() * groupQs.length)];
-          finalQuestions.push(picked);
-        });
+        // Pick min~max from random pool
+        const minR = data.survey.minRandomQuestions || 1;
+        const maxR = data.survey.maxRandomQuestions || randomPool.length;
+        const count = Math.min(randomPool.length, Math.max(minR, Math.floor(Math.random() * (maxR - minR + 1)) + minR));
+        const shuffled = [...randomPool].sort(() => Math.random() - 0.5);
+        const picked = shuffled.slice(0, count);
+        const finalQuestions = [...fixedQuestions, ...picked];
         finalQuestions.sort((a, b) => a.order - b.order);
         data.survey.questions = finalQuestions;
 
@@ -198,7 +203,7 @@ export default function SurveyPage({
       // All questions answered — generate review
       const thankMsg: Message = {
         role: "bot",
-        text: "ありがとうございました！回答内容をもとに口コミ文章を作成しています...",
+        text: session?.survey?.closingMessage || "ありがとうございました！",
       };
       setMessages((prev) => [...prev, userMsg, thankMsg]);
       setPhase({ type: "generating" });
@@ -352,70 +357,9 @@ export default function SurveyPage({
           <ChatMessage key={i} type={msg.role} message={msg.text} mainColor={mainColor} userColor={userColor} />
         ))}
 
-        {/* Generating spinner */}
-        {phase.type === "generating" && (
-          <div className="flex items-start gap-2 mb-4">
-            <div
-              className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center shadow-sm"
-              style={{ backgroundColor: mainColor }}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="white"
-                className="w-5 h-5"
-              >
-                <path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z" />
-                <path d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a2.29 2.29 0 0 0 .091-.086L12 5.432Z" />
-              </svg>
-            </div>
-            <div className="flex items-center gap-1 px-4 py-3 bg-white rounded-2xl rounded-tl-sm shadow-sm">
-              <span
-                className="w-2 h-2 rounded-full animate-bounce"
-                style={{ backgroundColor: mainColor, animationDelay: "0ms" }}
-              />
-              <span
-                className="w-2 h-2 rounded-full animate-bounce"
-                style={{ backgroundColor: mainColor, animationDelay: "150ms" }}
-              />
-              <span
-                className="w-2 h-2 rounded-full animate-bounce"
-                style={{ backgroundColor: mainColor, animationDelay: "300ms" }}
-              />
-            </div>
-          </div>
-        )}
 
-        {/* Done: result opened in new tab, show fallback button */}
-        {phase.type === "done" && (
-          <div className="mt-4">
-            <div className="bg-white rounded-2xl shadow-md p-5 border border-violet-200 text-center">
-              <div
-                className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3"
-                style={{ backgroundColor: mainColor }}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" className="w-6 h-6">
-                  <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <p className="text-sm font-semibold text-gray-800 mb-1">クチコミ文章が完成しました！</p>
-              <p className="text-xs text-gray-500 mb-4">別タブで結果ページが開きます。</p>
-              <button
-                onClick={() => window.open(`/survey/${surveyId}/result/${phase.sessionId}`, "_blank")}
-                className="w-full py-3 px-4 rounded-xl text-white text-sm font-bold shadow transition-opacity hover:opacity-90 mb-3"
-                style={{ backgroundColor: mainColor }}
-              >
-                結果を開く
-              </button>
-              <a
-                href={`/survey/${surveyId}`}
-                className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
-              >
-                アンケートへ戻る
-              </a>
-            </div>
-          </div>
-        )}
+
+
 
         <div ref={bottomRef} />
       </main>

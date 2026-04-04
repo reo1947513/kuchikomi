@@ -18,7 +18,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <span className="text-lg font-black text-white tracking-tight">クチコミPlus</span>
           <div className="flex items-center gap-3">
             <span className="inline-flex items-center px-3 py-1 rounded-full bg-gray-900 text-white text-xs font-semibold">
-              スーパー管理者
+              開発者
             </span>
             <a href="/api/auth/logout" className="text-sm text-white/80 hover:text-white underline">
               ログアウト

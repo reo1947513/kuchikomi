@@ -35,6 +35,7 @@ model User {
   contractStart   DateTime?
   contractEnd     DateTime?
   noContractLimit Boolean   @default(false)
+  lastAnalysisAt  DateTime?
   agency       Agency?  @relation(fields: [agencyId], references: [id])
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -49,14 +50,18 @@ model Survey {
   closingMessage      String?  // 終了挨拶文（お礼・再来店案内）
   completionMessage   String?  // レビュー確認メッセージ（口コミ投稿促進）
   keywords            String?  // キーワード（カンマ区切り）
+  selectedToneId      String?
+  toneRandom          Boolean  @default(true)
   promptTemplate      String?  // AIプロンプトテンプレート ({tone}, {keywords}, {formattedResponses})
   googleBusinessUrl   String?
   logoUrl             String?
   couponImageUrl      String?
   couponEnabled       Boolean  @default(false)
+  couponExpiry        String?
   themeMainColor      String?
   themeUserColor      String?
   themeTextColor      String?
+  minRandomQuestions  Int      @default(0)
   maxRandomQuestions  Int      @default(0) // 0 = 全質問表示
   isActive            Boolean  @default(true)
   monthlyReviewLimit  Int      @default(100)
@@ -146,5 +151,14 @@ model Contact {
   email          String
   phone          String
   content        String
+  status         String   @default("未対応")
   createdAt      DateTime @default(now())
+}
+
+model Faq {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
 }

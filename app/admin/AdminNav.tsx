@@ -8,6 +8,7 @@ const items = [
   { href: "/admin/shops", label: "ショップ管理" },
   { href: "/admin/agencies", label: "代理店管理" },
   { href: "/admin/industries", label: "業種管理" },
+  { href: "/admin/faqs", label: "質問管理" },
   { href: "/admin/contacts", label: "お問い合わせ" },
 ];
 

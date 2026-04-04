@@ -44,9 +44,14 @@ type Survey = {
   logoUrl?: string | null;
   couponImageUrl?: string | null;
   couponEnabled: boolean;
+  couponExpiry?: string | null;
   themeMainColor?: string | null;
   themeUserColor?: string | null;
+  minRandomQuestions?: number;
+  maxRandomQuestions?: number;
   themeTextColor?: string | null;
+  selectedToneId?: string | null;
+  toneRandom?: boolean;
   tones: Tone[];
   questions: Question[];
 };
@@ -120,7 +125,9 @@ export default function SurveySettingsPage() {
 
   // ---- AI tab state ----
   const [promptTemplate, setPromptTemplate] = useState(DEFAULT_PROMPT_TEMPLATE);
-  const [tones, setTones] = useState<Array<{ localId: string; name: string; id?: string }>>([]);
+  const [selectedToneId, setSelectedToneId] = useState("");
+  const [toneRandom, setToneRandom] = useState(true);
+  const [tones, setTones]  = useState<Array<{ localId: string; name: string; id?: string }>>([]);
 
   // ---- Questions tab state ----
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -138,6 +145,9 @@ export default function SurveySettingsPage() {
   const [logoUrl, setLogoUrl] = useState("");
   const [couponImageUrl, setCouponImageUrl] = useState("");
   const [couponEnabled, setCouponEnabled] = useState(false);
+  const [couponExpiry, setCouponExpiry] = useState("");
+  const [minRandomQuestions, setMinRandomQuestions] = useState(0);
+  const [maxRandomQuestions, setMaxRandomQuestions] = useState(0);
   const [themeMainColor, setThemeMainColor] = useState("#06B6D4");
   const [themeUserColor, setThemeUserColor] = useState("#8B5CF6");
   const [themeTextColor, setThemeTextColor] = useState("#FFFFFF");
@@ -170,6 +180,8 @@ export default function SurveySettingsPage() {
       setMonthlyReviewLimit(data.monthlyReviewLimit ?? 100);
       setIsActive(data.isActive ?? true);
       setPromptTemplate(data.promptTemplate ?? DEFAULT_PROMPT_TEMPLATE);
+      setSelectedToneId(data.selectedToneId ?? "");
+      setToneRandom(data.toneRandom ?? true);
       setTones(
         (data.tones ?? []).map((t) => ({ localId: newLocalToneId(), name: t.name, id: t.id }))
       );
@@ -177,6 +189,9 @@ export default function SurveySettingsPage() {
       setLogoUrl(data.logoUrl ?? "");
       setCouponImageUrl(data.couponImageUrl ?? "");
       setCouponEnabled(data.couponEnabled ?? false);
+      setCouponExpiry(data.couponExpiry ?? "");
+      setMinRandomQuestions(data.minRandomQuestions ?? 0);
+      setMaxRandomQuestions(data.maxRandomQuestions ?? 0);
       setThemeMainColor(data.themeMainColor ?? "#06B6D4");
       setThemeUserColor(data.themeUserColor ?? "#8B5CF6");
       setThemeTextColor(data.themeTextColor ?? "#FFFFFF");
@@ -241,6 +256,9 @@ export default function SurveySettingsPage() {
       logoUrl,
       couponImageUrl,
       couponEnabled,
+      couponExpiry: couponExpiry || null,
+      minRandomQuestions,
+      maxRandomQuestions,
       themeMainColor,
       themeUserColor,
       themeTextColor,
@@ -498,7 +516,7 @@ export default function SurveySettingsPage() {
         {/* Survey URL & QR Code */}
         <div className="bg-white rounded-xl shadow-sm p-5 mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">アンケートURL</label>
-          <div className="flex gap-2 mb-3">
+          <div className="flex flex-wrap gap-2 mb-3">
             <input type="text" value={surveyUrl} readOnly className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm bg-gray-50 text-gray-600 select-all" />
             <button type="button" onClick={handleCopyUrl} className="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap">{copying ? "コピー済み!" : "コピー"}</button>
             <button type="button" onClick={generateQR} disabled={qrGenerating} className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap disabled:opacity-50">{qrGenerating ? "生成中..." : "QRコード作成"}</button>
@@ -650,6 +668,26 @@ export default function SurveySettingsPage() {
             </Field>
 
             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">使用する口調</label>
+              <p className="text-xs text-gray-400 mb-2">固定の口調を使用するか、ランダムに選択するかを設定します。</p>
+              <select
+                value={selectedToneId}
+                onChange={(e) => setSelectedToneId(e.target.value)}
+                disabled={toneRandom}
+                className={`${inputCls} mb-2 ${toneRandom ? "opacity-50" : ""}`}
+              >
+                <option value="">口調を選択してください</option>
+                {tones.map((t) => (
+                  <option key={t.localId} value={t.id || t.localId}>{t.name}</option>
+                ))}
+              </select>
+              <label className="flex items-center gap-2 cursor-pointer select-none mb-4">
+                <input type="checkbox" checked={toneRandom} onChange={(e) => setToneRandom(e.target.checked)} className="rounded border-gray-300 text-violet-500 focus:ring-violet-400" />
+                <span className="text-sm text-gray-700">口調をランダムに選択する</span>
+              </label>
+            </div>
+
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">口調リスト</label>
               <div className="space-y-2">
                 {tones.map((tone) => (
@@ -696,6 +734,24 @@ export default function SurveySettingsPage() {
         {activeTab === "questions" && (
           <div className="space-y-4">
             <div className="bg-white rounded-xl shadow divide-y divide-gray-100">
+
+            {/* Random question count settings */}
+            <div className="bg-gray-50 rounded-xl p-5 space-y-3">
+              <label className="block text-sm font-semibold text-gray-700">ランダム質問表示数設定</label>
+              <p className="text-xs text-gray-500">ランダム対象の質問数: {questions.filter((q: any) => q.isRandom || q.groupName).length}件</p>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600">最小値</span>
+                  <input type="number" min={0} value={minRandomQuestions} onChange={(e) => setMinRandomQuestions(Number(e.target.value))} className="w-20 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-violet-400" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600">最大値</span>
+                  <input type="number" min={0} value={maxRandomQuestions} onChange={(e) => setMaxRandomQuestions(Number(e.target.value))} className="w-20 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-violet-400" />
+                </div>
+              </div>
+              <p className="text-xs text-gray-400">ランダム表示がONの質問とグルーピング質問から、指定した範囲の数だけランダムに表示します。0の場合は全件表示。</p>
+            </div>
+
               {questions.length === 0 && (
                 <p className="p-6 text-center text-sm text-gray-400">質問がありません</p>
               )}
@@ -772,6 +828,7 @@ export default function SurveySettingsPage() {
                   <input type="checkbox" checked={useGrouping} onChange={(e) => setUseGrouping(e.target.checked)} className="rounded border-gray-300 text-violet-500 focus:ring-violet-400" />
                   <span className="text-sm text-gray-700">グルーピングランダム質問設定を行う</span>
                 </label>
+
                 {useGrouping ? (
                   <div className="space-y-4">
                     <div>
@@ -1104,6 +1161,17 @@ export default function SurveySettingsPage() {
                   画像を削除
                 </button>
               )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">クーポン有効期限</label>
+              <input
+                type="date"
+                value={couponExpiry}
+                onChange={(e) => setCouponExpiry(e.target.value)}
+                className={inputCls}
+              />
+              <p className="text-xs text-gray-400 mt-1">設定すると結果ページのクーポン画像の下に有効期限が表示されます</p>
             </div>
 
             <div className="pt-2 flex justify-end">

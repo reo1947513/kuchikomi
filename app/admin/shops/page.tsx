@@ -100,6 +100,7 @@ export default function ShopsPage() {
     setPage(1);
   };
 
+
   const fetchShops = useCallback(async () => {
     setLoading(true);
     setError(null);

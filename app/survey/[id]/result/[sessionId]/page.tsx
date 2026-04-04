@@ -11,6 +11,7 @@ interface ResultData {
   googleBusinessUrl: string | null;
   logoUrl: string | null;
   couponImageUrl: string | null;
+  couponExpiry: string | null;
 }
 
 export default function ResultPage({
@@ -198,7 +199,14 @@ export default function ResultPage({
               </svg>
               <span className="text-sm font-bold text-white">クーポン</span>
             </div>
-            <img src={data.couponImageUrl} alt="coupon" className="w-full object-contain" />
+            <div className="relative">
+              <img src={data.couponImageUrl} alt="coupon" className="w-full object-contain pointer-events-none select-none" draggable={false} onContextMenu={(e) => e.preventDefault()} />
+              {data.couponExpiry && (
+                <p className="text-right text-xs text-gray-500 px-3 py-1.5">
+                  有効期限: {new Date(data.couponExpiry).toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric" })}まで
+                </p>
+              )}
+            </div>
           </div>
         )}
 

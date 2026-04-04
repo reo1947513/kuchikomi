@@ -64,6 +64,11 @@ export async function PUT(request: NextRequest, { params }: Params) {
     logoUrl?: string;
     couponImageUrl?: string;
     couponEnabled?: boolean;
+    couponExpiry?: string | null;
+    selectedToneId?: string | null;
+    toneRandom?: boolean;
+    minRandomQuestions?: number;
+    maxRandomQuestions?: number;
     themeMainColor?: string;
     themeUserColor?: string;
     themeTextColor?: string;
@@ -90,10 +95,14 @@ export async function PUT(request: NextRequest, { params }: Params) {
     logoUrl,
     couponImageUrl,
     couponEnabled,
+    couponExpiry,
+    selectedToneId,
+    toneRandom,
+    minRandomQuestions,
+    maxRandomQuestions,
     themeMainColor,
     themeUserColor,
     themeTextColor,
-    maxRandomQuestions,
     monthlyReviewLimit,
     isActive,
     tones,
@@ -117,6 +126,11 @@ export async function PUT(request: NextRequest, { params }: Params) {
       ...(logoUrl !== undefined && { logoUrl: logoUrl.trim() || null }),
       ...(couponImageUrl !== undefined && { couponImageUrl: couponImageUrl.trim() || null }),
       ...(couponEnabled !== undefined && { couponEnabled }),
+      ...(couponExpiry !== undefined && { couponExpiry }),
+      ...(selectedToneId !== undefined && { selectedToneId }),
+      ...(toneRandom !== undefined && { toneRandom }),
+      ...(minRandomQuestions !== undefined && { minRandomQuestions }),
+      ...(maxRandomQuestions !== undefined && { maxRandomQuestions }),
       ...(themeMainColor !== undefined && { themeMainColor: themeMainColor || null }),
       ...(themeUserColor !== undefined && { themeUserColor: themeUserColor || null }),
       ...(themeTextColor !== undefined && { themeTextColor: themeTextColor || null }),
