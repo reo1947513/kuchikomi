@@ -48,17 +48,15 @@ export function getSession(): { userId: string; role: string } | null {
   return null;
 }
 
-// Get session for a specific role context
+// Get session for a specific role context - NO fallback
 export function getSessionForRole(preferredRole: "super" | "admin"): { userId: string; role: string } | null {
   const jar = cookies();
   const cookieName = preferredRole === "super" ? "auth_token_super" : "auth_token_shop";
 
   const token = jar.get(cookieName)?.value;
   if (token) {
-    const session = verifyToken(token);
-    if (session) return session;
+    return verifyToken(token);
   }
 
-  // Fallback to any valid session
-  return getSession();
+  return null;
 }
