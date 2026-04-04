@@ -64,6 +64,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
     logoUrl?: string;
     couponImageUrl?: string;
     couponEnabled?: boolean;
+    couponExpiry?: string | null;
     themeMainColor?: string;
     themeUserColor?: string;
     themeTextColor?: string;
@@ -90,6 +91,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
     logoUrl,
     couponImageUrl,
     couponEnabled,
+    couponExpiry,
     themeMainColor,
     themeUserColor,
     themeTextColor,
@@ -117,6 +119,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
       ...(logoUrl !== undefined && { logoUrl: logoUrl.trim() || null }),
       ...(couponImageUrl !== undefined && { couponImageUrl: couponImageUrl.trim() || null }),
       ...(couponEnabled !== undefined && { couponEnabled }),
+      ...(couponExpiry !== undefined && { couponExpiry }),
       ...(themeMainColor !== undefined && { themeMainColor: themeMainColor || null }),
       ...(themeUserColor !== undefined && { themeUserColor: themeUserColor || null }),
       ...(themeTextColor !== undefined && { themeTextColor: themeTextColor || null }),
