@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Stats = {
   totalShops: number;
@@ -21,6 +21,30 @@ function slicePath(cx: number, cy: number, r: number, start: number, end: number
   const e = polar(cx, cy, r, end);
   const large = end - start > 180 ? 1 : 0;
   return `M${cx},${cy} L${s.x.toFixed(2)},${s.y.toFixed(2)} A${r},${r} 0 ${large} 1 ${e.x.toFixed(2)},${e.y.toFixed(2)} Z`;
+}
+
+function AnimatedNumber({ value, duration = 1200 }: { value: number; duration?: number }) {
+  const [display, setDisplay] = useState(0);
+  const ref = useRef<number>(0);
+
+  useEffect(() => {
+    const start = ref.current;
+    const diff = value - start;
+    if (diff === 0) return;
+    const startTime = performance.now();
+    const animate = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = Math.round(start + diff * eased);
+      setDisplay(current);
+      if (progress < 1) requestAnimationFrame(animate);
+      else ref.current = value;
+    };
+    requestAnimationFrame(animate);
+  }, [value, duration]);
+
+  return <>{display.toLocaleString()}</>;
 }
 
 export default function SuperAdminDashboard() {
@@ -65,52 +89,76 @@ export default function SuperAdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">ダッシュボード</h1>
+      <style>{`
+        @keyframes fadeSlideUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .anim-fade { animation: fadeSlideUp 0.5s ease-out forwards; opacity: 0; }
+        @keyframes barGrow {
+          from { transform: scaleY(0); }
+          to { transform: scaleY(1); }
+        }
+        .anim-bar { animation: barGrow 0.8s ease-out forwards; transform-origin: bottom; }
+        @keyframes pieRotate {
+          from { opacity: 0; transform: rotate(-90deg) scale(0.8); }
+          to { opacity: 1; transform: rotate(0deg) scale(1); }
+        }
+        .anim-pie { animation: pieRotate 0.7s ease-out forwards; transform-origin: center; opacity: 0; }
+      `}</style>
+
+      {/* Welcome Card */}
+      <div className="rounded-2xl bg-gradient-to-r from-cyan-500 to-violet-500 p-6 text-white shadow-lg anim-fade">
+        <p className="text-sm opacity-90">管理者ダッシュボード</p>
+        <h1 className="text-2xl font-bold mt-1">クチコミPlus</h1>
+        <p className="text-sm opacity-80 mt-2">システム全体の状況を確認できます</p>
+      </div>
 
       {/* Stats cards */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="bg-white rounded-2xl shadow-sm border border-violet-100 p-6">
-          <div className="flex items-start justify-between">
-            <svg className="w-9 h-9 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
+        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/50 p-6 anim-fade" style={{ animationDelay: "100ms" }}>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-violet-500 flex items-center justify-center">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
             <span className="text-sm font-medium text-gray-500">総ショップ数</span>
           </div>
-          <div className="mt-6">
-            <span className="text-5xl font-bold text-violet-500">{stats.totalShops.toLocaleString()}</span>
-            <p className="text-sm text-gray-400 mt-1">登録ショップ</p>
-          </div>
+          <span className="text-5xl font-bold text-gray-900"><AnimatedNumber value={stats.totalShops} /></span>
+          <p className="text-sm text-gray-400 mt-2">登録ショップ</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-violet-100 p-6">
-          <div className="flex items-start justify-between">
-            <svg className="w-9 h-9 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-            </svg>
+        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/50 p-6 anim-fade" style={{ animationDelay: "200ms" }}>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-violet-500 flex items-center justify-center">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                  d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+              </svg>
+            </div>
             <span className="text-sm font-medium text-gray-500">総レビュー数</span>
           </div>
-          <div className="mt-6">
-            <span className="text-5xl font-bold text-violet-500">{stats.totalReviews.toLocaleString()}</span>
-            <p className="text-sm text-gray-400 mt-1">投稿されたレビュー</p>
-          </div>
+          <span className="text-5xl font-bold text-gray-900"><AnimatedNumber value={stats.totalReviews} /></span>
+          <p className="text-sm text-gray-400 mt-2">生成されたレビュー</p>
         </div>
       </div>
 
       {/* Charts */}
       <div className="grid grid-cols-2 gap-4">
         {/* Bar chart */}
-        <div className="bg-white rounded-2xl shadow-sm border border-violet-100 p-6">
-          <div className="flex items-center justify-between mb-4">
-            <svg className="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
+        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/50 p-6 anim-fade" style={{ animationDelay: "300ms" }}>
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-violet-500 flex items-center justify-center">
+              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
             <span className="text-sm font-semibold text-gray-700">月別レビュー数</span>
           </div>
           <svg viewBox={`0 0 ${chartW + 50} ${chartH + 55}`} className="w-full">
-            {/* Grid lines & y labels */}
             {yTicks.map((t) => {
               const y = chartH - t * chartH;
               const label = Math.round(safeYMax * t);
@@ -123,7 +171,6 @@ export default function SuperAdminDashboard() {
                 </g>
               );
             })}
-            {/* Bars */}
             {monthlyReviews.map((m, i) => {
               const ratio = m.count / safeYMax;
               const bh = ratio * chartH;
@@ -131,29 +178,37 @@ export default function SuperAdminDashboard() {
               const by = chartH - bh;
               return (
                 <g key={m.month}>
-                  <rect x={bx} y={by} width={barW} height={bh} fill="#8B5CF6" rx={3} />
+                  <rect x={bx} y={by} width={barW} height={bh} fill="url(#barGrad)" rx={4} className="anim-bar" style={{ animationDelay: `${400 + i * 60}ms` }} />
                   <text x={bx + barW / 2} y={chartH + 18} textAnchor="middle" fontSize={9} fill="#6B7280">
                     {m.month}
                   </text>
                 </g>
               );
             })}
+            <defs>
+              <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#06B6D4" />
+                <stop offset="100%" stopColor="#8B5CF6" />
+              </linearGradient>
+            </defs>
           </svg>
         </div>
 
         {/* Pie chart */}
-        <div className="bg-white rounded-2xl shadow-sm border border-violet-100 p-6">
-          <div className="flex items-center justify-between mb-4">
-            <svg className="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
-            </svg>
+        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/50 p-6 anim-fade" style={{ animationDelay: "400ms" }}>
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-violet-500 flex items-center justify-center">
+              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                  d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                  d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+              </svg>
+            </div>
             <span className="text-sm font-semibold text-gray-700">業種別ショップ分布</span>
           </div>
           <div className="flex items-center gap-6 mt-2">
-            <svg viewBox="0 0 200 200" className="w-44 h-44 shrink-0">
+            <svg viewBox="0 0 200 200" className="w-44 h-44 shrink-0 anim-pie" style={{ animationDelay: "500ms" }}>
               {industryDistribution.length === 0 ? (
                 <circle cx={100} cy={100} r={80} fill="#F3F4F6" />
               ) : industryDistribution.length === 1 ? (
@@ -180,12 +235,13 @@ export default function SuperAdminDashboard() {
             </svg>
             <div className="space-y-2">
               {industryDistribution.map((d, i) => (
-                <div key={i} className="flex items-center gap-2">
+                <div key={i} className="flex items-center gap-2 anim-fade" style={{ animationDelay: `${600 + i * 80}ms` }}>
                   <div
                     className="w-3 h-3 rounded-sm shrink-0"
                     style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }}
                   />
                   <span className="text-xs text-gray-600">{d.industry}</span>
+                  <span className="text-xs text-gray-400 ml-auto">{d.count}</span>
                 </div>
               ))}
               {industryDistribution.length === 0 && (
