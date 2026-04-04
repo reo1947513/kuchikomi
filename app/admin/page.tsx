@@ -170,8 +170,10 @@ export default function SuperAdminDashboard() {
               const bx = 45 + i * slotW + (slotW - barW) / 2;
               const by = chartH - bh;
               return (
-                <g key={m.month}>
-                  <rect x={bx} y={by} width={barW} height={bh} fill="url(#barGrad)" rx={4} className="anim-bar" style={{ animationDelay: `${400 + i * 60}ms` }} />
+                <g key={m.month} className="cursor-pointer">
+                  <rect x={bx} y={by} width={barW} height={bh} fill="url(#barGrad)" rx={4} className="anim-bar" style={{ animationDelay: `${400 + i * 60}ms` }}>
+                    <title>{m.month}: {m.count}件</title>
+                  </rect>
                   <text x={bx + barW / 2} y={chartH + 18} textAnchor="middle" fontSize={9} fill="#6B7280">
                     {m.month}
                   </text>
@@ -213,14 +215,18 @@ export default function SuperAdminDashboard() {
                     const angle = (d.count / totalIndustry) * 360;
                     const path = slicePath(100, 100, 80, cum, cum + angle);
                     cum += angle;
+                    const pct = Math.round((d.count / totalIndustry) * 100);
                     return (
                       <path
                         key={i}
                         d={path}
+                        className="cursor-pointer"
                         fill={PIE_COLORS[i % PIE_COLORS.length]}
                         stroke="white"
                         strokeWidth={2}
-                      />
+                      >
+                        <title>{d.industry}: {d.count}件 ({pct}%)</title>
+                      </path>
                     );
                   });
                 })()
