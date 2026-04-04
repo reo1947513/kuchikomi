@@ -26,6 +26,8 @@ interface Survey {
   description: string | null;
   googleBusinessUrl: string | null;
   logoUrl: string | null;
+  chatIconType: string | null;
+  chatIconPreset: string | null;
   themeMainColor: string | null;
   themeUserColor: string | null;
   closingMessage: string | null;
@@ -354,7 +356,7 @@ export default function SurveyPage({
 
         {/* Messages */}
         {messages.map((msg, i) => (
-          <ChatMessage key={i} type={msg.role} message={msg.text} mainColor={mainColor} userColor={userColor} />
+          <ChatMessage key={i} type={msg.role} message={msg.text} mainColor={mainColor} userColor={userColor} chatIconType={session?.survey.chatIconType} chatIconPreset={session?.survey.chatIconPreset} logoUrl={session?.survey.logoUrl} />
         ))}
 
 

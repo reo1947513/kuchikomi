@@ -45,6 +45,8 @@ type Survey = {
   couponImageUrl?: string | null;
   couponEnabled: boolean;
   couponExpiry?: string | null;
+  chatIconType?: string | null;
+  chatIconPreset?: string | null;
   themeMainColor?: string | null;
   themeUserColor?: string | null;
   minRandomQuestions?: number;
@@ -94,6 +96,30 @@ function newLocalToneId() {
   return `local-tone-${++localToneCounter}`;
 }
 
+const CHAT_ICON_PATHS: Record<string, { d: string; stroke?: boolean }> = {
+  home: { d: "M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a2.29 2.29 0 0 0 .091-.086L12 5.432Z" },
+  store: { d: "M2.25 2.25a.75.75 0 0 0 0 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 0 0-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 0 0 0-1.5H5.378A2.25 2.25 0 0 1 7.5 15h11.218a.75.75 0 0 0 .674-.421 60.358 60.358 0 0 0 2.96-7.228.75.75 0 0 0-.525-.965A60.864 60.864 0 0 0 5.68 4.509l-.232-.867A1.875 1.875 0 0 0 3.636 2.25H2.25ZM3.75 20.25a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM16.5 20.25a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z" },
+  heart: { d: "M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" },
+  star: { d: "M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" },
+  smile: { d: "M15.182 15.182a4.5 4.5 0 0 1-6.364 0M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z", stroke: true },
+  utensils: { d: "M4 4v8h3v8h2V4H7v6H5V4H4Zm10 0v6.5c0 1.38 1.12 2.5 2.5 2.5H18v7h2V4h-2v7h-1.5c-.28 0-.5-.22-.5-.5V4h-2Z" },
+  scissors: { d: "M9.75 9.362a.75.75 0 0 0-1.08.673v2.929a.75.75 0 0 0 1.08.674L12 12.576V14.5a2.5 2.5 0 1 1-5 0V12l-2.22 1.11a.75.75 0 0 0 .67 1.34L7.5 13.5v1a4 4 0 0 0 8 0v-1l2.05 1.025a.75.75 0 0 0 .67-1.34L16 12v-2.5a2.5 2.5 0 0 0-5 0v1.924l-1.25-.562Z" },
+  medical: { d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Zm1 15h-2v-4H7v-2h4V7h2v4h4v2h-4v4Z" },
+};
+
+function ChatIconPreview({ iconKey }: { iconKey: string }) {
+  const icon = CHAT_ICON_PATHS[iconKey] || CHAT_ICON_PATHS.home;
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="w-5 h-5"
+      fill={icon.stroke ? "none" : "white"}
+      stroke={icon.stroke ? "white" : "none"}
+      strokeWidth={icon.stroke ? 1.5 : 0}
+    >
+      <path d={icon.d} strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 const DEFAULT_CHOICES: Choice[] = [
   { text: "非常に満足", order: 0, score: 2 },
   { text: "満足", order: 1, score: 1 },
@@ -107,6 +133,8 @@ export default function SurveySettingsPage() {
   const surveyId = params.id as string;
 
   const [activeTab, setActiveTab] = useState<Tab>("logo");
+  const [chatIconType, setChatIconType] = useState<string>("preset");
+  const [chatIconPreset, setChatIconPreset] = useState<string>("home");
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState<string>("");
   const [saving, setSaving] = useState(false);
@@ -159,7 +187,10 @@ export default function SurveySettingsPage() {
   const [couponUploadError, setCouponUploadError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/auth/me").then(r => r.json()).then(d => setUserRole(d.role ?? "")).catch(() => {});
+    fetch("/api/auth/me").then(r => r.json()).then(d => {
+      setUserRole(d.role ?? "");
+      if (d.role === "super") setActiveTab("basic");
+    }).catch(() => {});
   }, []);
 
   // ---- Fetch survey ----
@@ -190,6 +221,8 @@ export default function SurveySettingsPage() {
       setCouponImageUrl(data.couponImageUrl ?? "");
       setCouponEnabled(data.couponEnabled ?? false);
       setCouponExpiry(data.couponExpiry ?? "");
+      setChatIconType(data.chatIconType ?? "preset");
+      setChatIconPreset(data.chatIconPreset ?? "home");
       setMinRandomQuestions(data.minRandomQuestions ?? 0);
       setMaxRandomQuestions(data.maxRandomQuestions ?? 0);
       setThemeMainColor(data.themeMainColor ?? "#06B6D4");
@@ -257,6 +290,8 @@ export default function SurveySettingsPage() {
       couponImageUrl,
       couponEnabled,
       couponExpiry: couponExpiry || null,
+      chatIconType,
+      chatIconPreset,
       minRandomQuestions,
       maxRandomQuestions,
       themeMainColor,
@@ -1172,6 +1207,63 @@ export default function SurveySettingsPage() {
                 className={inputCls}
               />
               <p className="text-xs text-gray-400 mt-1">設定すると結果ページのクーポン画像の下に有効期限が表示されます</p>
+            </div>
+
+            {/* Chat Icon Setting */}
+            <div className="border-t border-gray-200 pt-6 mt-6">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">チャットアイコン</h3>
+              <p className="text-xs text-gray-500 mb-4">アンケート画面でボットメッセージの横に表示されるアイコンを設定します</p>
+
+              <div className="flex gap-4 mb-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="radio" name="chatIconType" value="preset" checked={chatIconType === "preset"} onChange={() => setChatIconType("preset")} className="text-violet-500 focus:ring-violet-400" />
+                  <span className="text-sm text-gray-700">プリセットアイコン</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="radio" name="chatIconType" value="logo" checked={chatIconType === "logo"} onChange={() => setChatIconType("logo")} className="text-violet-500 focus:ring-violet-400" />
+                  <span className="text-sm text-gray-700">ショップロゴを使用</span>
+                </label>
+              </div>
+
+              {chatIconType === "preset" && (
+                <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
+                  {[
+                    { key: "home", label: "ホーム" },
+                    { key: "store", label: "ショップ" },
+                    { key: "heart", label: "ハート" },
+                    { key: "star", label: "スター" },
+                    { key: "smile", label: "スマイル" },
+                    { key: "utensils", label: "飲食" },
+                    { key: "scissors", label: "美容" },
+                    { key: "medical", label: "医療" },
+                  ].map((icon) => (
+                    <button
+                      key={icon.key}
+                      type="button"
+                      onClick={() => setChatIconPreset(icon.key)}
+                      className={`flex flex-col items-center gap-1 p-3 rounded-xl border-2 transition-colors ${chatIconPreset === icon.key ? "border-violet-500 bg-violet-50" : "border-gray-200 hover:border-violet-300"}`}
+                    >
+                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-cyan-500 to-violet-500 flex items-center justify-center">
+                        <ChatIconPreview iconKey={icon.key} />
+                      </div>
+                      <span className="text-xs text-gray-600">{icon.label}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {chatIconType === "logo" && (
+                <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+                  {logoUrl ? (
+                    <>
+                      <img src={logoUrl} alt="logo" className="w-9 h-9 rounded-full object-cover" />
+                      <span className="text-sm text-gray-600">アップロード済みのロゴが使用されます</span>
+                    </>
+                  ) : (
+                    <span className="text-sm text-gray-400">ロゴをアップロードしてください（上のロゴ設定から）</span>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="pt-2 flex justify-end">

@@ -59,6 +59,8 @@ model Survey {
   couponImageUrl      String?
   couponEnabled       Boolean  @default(false)
   couponExpiry        String?
+  chatIconType        String?  // "preset" | "logo"
+  chatIconPreset      String?  // preset icon name: "home","store","heart","star","smile","utensils","scissors","bone"
   themeMainColor      String?
   themeUserColor      String?
   themeTextColor      String?

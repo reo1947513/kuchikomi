@@ -66,6 +66,8 @@ export async function PUT(request: NextRequest, { params }: Params) {
     couponImageUrl?: string;
     couponEnabled?: boolean;
     couponExpiry?: string | null;
+    chatIconType?: string | null;
+    chatIconPreset?: string | null;
     selectedToneId?: string | null;
     toneRandom?: boolean;
     minRandomQuestions?: number;
@@ -96,6 +98,8 @@ export async function PUT(request: NextRequest, { params }: Params) {
     couponImageUrl,
     couponEnabled,
     couponExpiry,
+    chatIconType,
+    chatIconPreset,
     selectedToneId,
     toneRandom,
     minRandomQuestions,
@@ -127,6 +131,8 @@ export async function PUT(request: NextRequest, { params }: Params) {
       ...(couponImageUrl !== undefined && { couponImageUrl: couponImageUrl.trim() || null }),
       ...(couponEnabled !== undefined && { couponEnabled }),
       ...(couponExpiry !== undefined && { couponExpiry }),
+      ...(chatIconType !== undefined && { chatIconType }),
+      ...(chatIconPreset !== undefined && { chatIconPreset }),
       ...(selectedToneId !== undefined && { selectedToneId }),
       ...(toneRandom !== undefined && { toneRandom }),
       ...(minRandomQuestions !== undefined && { minRandomQuestions }),
