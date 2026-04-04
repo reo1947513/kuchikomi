@@ -29,6 +29,8 @@ interface Survey {
   themeMainColor: string | null;
   themeUserColor: string | null;
   closingMessage: string | null;
+  minRandomQuestions: number;
+  maxRandomQuestions: number;
   themeTextColor: string | null;
   questions: Question[];
 }
@@ -103,8 +105,11 @@ export default function SurveyPage({
           }
         }
         grouped.forEach((groupQs) => {
-          const picked = groupQs[Math.floor(Math.random() * groupQs.length)];
-          finalQuestions.push(picked);
+          const minR = data.survey.minRandomQuestions || 1;
+          const maxR = data.survey.maxRandomQuestions || groupQs.length;
+          const count = Math.min(groupQs.length, Math.max(minR, Math.floor(Math.random() * (maxR - minR + 1)) + minR));
+          const shuffled = [...groupQs].sort(() => Math.random() - 0.5);
+          shuffled.slice(0, count).forEach((q) => finalQuestions.push(q));
         });
         finalQuestions.sort((a, b) => a.order - b.order);
         data.survey.questions = finalQuestions;

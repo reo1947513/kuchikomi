@@ -65,6 +65,8 @@ export async function PUT(request: NextRequest, { params }: Params) {
     couponImageUrl?: string;
     couponEnabled?: boolean;
     couponExpiry?: string | null;
+    minRandomQuestions?: number;
+    maxRandomQuestions?: number;
     themeMainColor?: string;
     themeUserColor?: string;
     themeTextColor?: string;
@@ -92,6 +94,8 @@ export async function PUT(request: NextRequest, { params }: Params) {
     couponImageUrl,
     couponEnabled,
     couponExpiry,
+    minRandomQuestions,
+    maxRandomQuestions,
     themeMainColor,
     themeUserColor,
     themeTextColor,
@@ -120,6 +124,8 @@ export async function PUT(request: NextRequest, { params }: Params) {
       ...(couponImageUrl !== undefined && { couponImageUrl: couponImageUrl.trim() || null }),
       ...(couponEnabled !== undefined && { couponEnabled }),
       ...(couponExpiry !== undefined && { couponExpiry }),
+      ...(minRandomQuestions !== undefined && { minRandomQuestions }),
+      ...(maxRandomQuestions !== undefined && { maxRandomQuestions }),
       ...(themeMainColor !== undefined && { themeMainColor: themeMainColor || null }),
       ...(themeUserColor !== undefined && { themeUserColor: themeUserColor || null }),
       ...(themeTextColor !== undefined && { themeTextColor: themeTextColor || null }),

@@ -47,6 +47,8 @@ type Survey = {
   couponExpiry?: string | null;
   themeMainColor?: string | null;
   themeUserColor?: string | null;
+  minRandomQuestions?: number;
+  maxRandomQuestions?: number;
   themeTextColor?: string | null;
   tones: Tone[];
   questions: Question[];
@@ -140,6 +142,8 @@ export default function SurveySettingsPage() {
   const [couponImageUrl, setCouponImageUrl] = useState("");
   const [couponEnabled, setCouponEnabled] = useState(false);
   const [couponExpiry, setCouponExpiry] = useState("");
+  const [minRandomQuestions, setMinRandomQuestions] = useState(0);
+  const [maxRandomQuestions, setMaxRandomQuestions] = useState(0);
   const [themeMainColor, setThemeMainColor] = useState("#06B6D4");
   const [themeUserColor, setThemeUserColor] = useState("#8B5CF6");
   const [themeTextColor, setThemeTextColor] = useState("#FFFFFF");
@@ -180,6 +184,8 @@ export default function SurveySettingsPage() {
       setCouponImageUrl(data.couponImageUrl ?? "");
       setCouponEnabled(data.couponEnabled ?? false);
       setCouponExpiry(data.couponExpiry ?? "");
+      setMinRandomQuestions(data.minRandomQuestions ?? 0);
+      setMaxRandomQuestions(data.maxRandomQuestions ?? 0);
       setThemeMainColor(data.themeMainColor ?? "#06B6D4");
       setThemeUserColor(data.themeUserColor ?? "#8B5CF6");
       setThemeTextColor(data.themeTextColor ?? "#FFFFFF");
@@ -245,6 +251,8 @@ export default function SurveySettingsPage() {
       couponImageUrl,
       couponEnabled,
       couponExpiry: couponExpiry || null,
+      minRandomQuestions,
+      maxRandomQuestions,
       themeMainColor,
       themeUserColor,
       themeTextColor,
@@ -775,6 +783,23 @@ export default function SurveySettingsPage() {
                 <label className="flex items-center gap-2 cursor-pointer select-none">
                   <input type="checkbox" checked={useGrouping} onChange={(e) => setUseGrouping(e.target.checked)} className="rounded border-gray-300 text-violet-500 focus:ring-violet-400" />
                   <span className="text-sm text-gray-700">グルーピングランダム質問設定を行う</span>
+                </label>
+                <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">ランダム質問表示数設定</label>
+                  <p className="text-xs text-gray-500">ランダム表示の質問数: {groupQuestions.length}</p>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1">
+                      <span className="text-sm text-gray-600">最小値</span>
+                      <input type="number" min={0} max={groupQuestions.length} value={minRandomQuestions} onChange={(e) => setMinRandomQuestions(Number(e.target.value))} className="w-16 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-violet-400" />
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-sm text-gray-600">最大値</span>
+                      <input type="number" min={0} max={groupQuestions.length} value={maxRandomQuestions} onChange={(e) => setMaxRandomQuestions(Number(e.target.value))} className="w-16 border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-center focus:outline-none focus:ring-2 focus:ring-violet-400" />
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-400">ランダムに表示する質問数の範囲を設定してください。</p>
+                </div>
+                <label className="hidden"
                 </label>
                 {useGrouping ? (
                   <div className="space-y-4">
