@@ -380,7 +380,7 @@ export default function SurveySettingsPage() {
       const validQs = groupQuestions.filter((gq) => gq.text.trim());
       if (validQs.length === 0) { alert("\u8cea\u554f\u30921\u3064\u4ee5\u4e0a\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044"); return; }
       try {
-        const added = [];
+        const added: Question[] = [];
         for (let i = 0; i < validQs.length; i++) {
           const gq = validQs[i];
           const res = await fetch(`/api/surveys/${surveyId}/questions`, {

@@ -17,7 +17,6 @@ export async function GET(
           couponImageUrl: true,
           couponExpiry: true,
           couponEnabled: true,
-          couponExpiry: true,
         },
       },
     },

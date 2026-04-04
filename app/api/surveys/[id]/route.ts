@@ -72,7 +72,6 @@ export async function PUT(request: NextRequest, { params }: Params) {
     themeMainColor?: string;
     themeUserColor?: string;
     themeTextColor?: string;
-    maxRandomQuestions?: number;
     monthlyReviewLimit?: number;
     isActive?: boolean;
     tones?: Array<{ name: string; order: number; isActive?: boolean }>;
