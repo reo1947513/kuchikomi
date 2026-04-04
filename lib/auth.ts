@@ -16,9 +16,49 @@ export function verifyToken(token: string): { userId: string; role: string } | n
   }
 }
 
-// Use Next.js cookies() API — works reliably in route handlers and server components
+export function cookieNameForRole(role: string): string {
+  return role === "super" ? "auth_token_super" : "auth_token_shop";
+}
+
+// Check both cookies, return whichever is valid
 export function getSession(): { userId: string; role: string } | null {
-  const token = cookies().get("auth_token")?.value;
-  if (!token) return null;
-  return verifyToken(token);
+  const jar = cookies();
+
+  // Try super admin cookie
+  const superToken = jar.get("auth_token_super")?.value;
+  if (superToken) {
+    const session = verifyToken(superToken);
+    if (session) return session;
+  }
+
+  // Try shop admin cookie
+  const shopToken = jar.get("auth_token_shop")?.value;
+  if (shopToken) {
+    const session = verifyToken(shopToken);
+    if (session) return session;
+  }
+
+  // Fallback: old auth_token cookie (backward compat)
+  const oldToken = jar.get("auth_token")?.value;
+  if (oldToken) {
+    const session = verifyToken(oldToken);
+    if (session) return session;
+  }
+
+  return null;
+}
+
+// Get session for a specific role context
+export function getSessionForRole(preferredRole: "super" | "admin"): { userId: string; role: string } | null {
+  const jar = cookies();
+  const cookieName = preferredRole === "super" ? "auth_token_super" : "auth_token_shop";
+
+  const token = jar.get(cookieName)?.value;
+  if (token) {
+    const session = verifyToken(token);
+    if (session) return session;
+  }
+
+  // Fallback to any valid session
+  return getSession();
 }

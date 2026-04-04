@@ -4,12 +4,13 @@ import { NextRequest, NextResponse } from "next/server";
 function clearCookieAndRedirect(request: NextRequest) {
   const url = new URL("/login", request.url);
   const response = NextResponse.redirect(url);
-  response.cookies.set("auth_token", "", {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    maxAge: 0,
-  });
+
+  // Clear all auth cookies
+  const cookieOptions = { httpOnly: true, sameSite: "lax" as const, path: "/", maxAge: 0 };
+  response.cookies.set("auth_token_super", "", cookieOptions);
+  response.cookies.set("auth_token_shop", "", cookieOptions);
+  response.cookies.set("auth_token", "", cookieOptions);
+
   return response;
 }
 

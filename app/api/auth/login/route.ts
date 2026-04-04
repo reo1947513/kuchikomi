@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
-import { signToken } from "@/lib/auth";
+import { signToken, cookieNameForRole } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,7 +16,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find user by email OR loginId
     const user = await prisma.user.findFirst({
       where: {
         OR: [{ email: identifier }, { loginId: identifier }],
@@ -39,6 +38,7 @@ export async function POST(request: NextRequest) {
     }
 
     const token = signToken({ userId: user.id, role: user.role });
+    const cookieName = cookieNameForRole(user.role);
 
     const response = NextResponse.json({
       user: {
@@ -48,11 +48,11 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    response.cookies.set("auth_token", token, {
+    response.cookies.set(cookieName, token, {
       httpOnly: true,
       sameSite: "lax",
       path: "/",
-      maxAge: 60 * 60 * 24 * 7, // 7 days in seconds
+      maxAge: 60 * 60 * 24 * 7,
     });
 
     return response;
