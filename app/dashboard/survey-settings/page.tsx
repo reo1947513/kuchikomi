@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
-import { getSession } from "@/lib/auth";
+import { getSessionForRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
 export default async function SurveySettingsRedirect() {
-  const session = getSession();
+  const session = getSessionForRole("admin");
   if (!session) redirect("/login");
 
   const survey = await prisma.survey.findFirst({

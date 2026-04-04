@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
-import { getSession } from "@/lib/auth";
+import { getSessionForRole } from "@/lib/auth";
 import DashboardNav from "./DashboardNav";
 import ExpiredNav from "./ExpiredNav";
 import { prisma } from "@/lib/db";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const session = getSession();
+  const session = getSessionForRole("admin");
   if (!session) redirect("/login");
 
   // agent role is removed — redirect to login

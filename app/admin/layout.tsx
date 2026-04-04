@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
-import { getSession } from "@/lib/auth";
+import { getSessionForRole } from "@/lib/auth";
 import AdminNav from "./AdminNav";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const session = getSession();
+  const session = getSessionForRole("super");
   if (!session) redirect("/login");
   if (session.role !== "super") redirect("/dashboard");
 
