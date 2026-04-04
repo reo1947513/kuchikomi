@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="bg3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#EC4899"/>
+      <stop offset="100%" stop-color="#A855F7"/>
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="95" fill="url(#bg3)"/>
+  <circle cx="100" cy="100" r="85" fill="none" stroke="white" stroke-width="2" opacity="0.3"/>
+  <!-- Scissors -->
+  <g transform="translate(100,90) rotate(-30)" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round">
+    <circle cx="-12" cy="25" r="10"/>
+    <circle cx="12" cy="25" r="10"/>
+    <line x1="-8" y1="16" x2="12" y2="-35"/>
+    <line x1="8" y1="16" x2="-12" y2="-35"/>
+  </g>
+  <text x="100" y="170" text-anchor="middle" fill="white" font-size="16" font-weight="bold" font-family="sans-serif">デモ美容室</text>
+</svg>

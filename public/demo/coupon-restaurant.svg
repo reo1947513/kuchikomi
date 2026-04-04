@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" width="600" height="300">
+  <defs>
+    <linearGradient id="cbg1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF7ED"/>
+      <stop offset="100%" stop-color="#FEF3C7"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="300" rx="20" fill="url(#cbg1)"/>
+  <rect x="8" y="8" width="584" height="284" rx="16" fill="none" stroke="#F97316" stroke-width="2" stroke-dasharray="8 4" opacity="0.5"/>
+  <!-- Left decorative circle -->
+  <circle cx="0" cy="150" r="20" fill="white"/>
+  <circle cx="600" cy="150" r="20" fill="white"/>
+  <!-- Content -->
+  <text x="300" y="60" text-anchor="middle" fill="#9A3412" font-size="18" font-weight="bold" font-family="sans-serif">SPECIAL COUPON</text>
+  <text x="300" y="130" text-anchor="middle" fill="#EA580C" font-size="64" font-weight="bold" font-family="sans-serif">10%OFF</text>
+  <text x="300" y="170" text-anchor="middle" fill="#9A3412" font-size="16" font-family="sans-serif">お食事代金から10%割引</text>
+  <line x1="80" y1="200" x2="520" y2="200" stroke="#F97316" stroke-width="1" opacity="0.3"/>
+  <text x="300" y="230" text-anchor="middle" fill="#B45309" font-size="13" font-family="sans-serif">アンケートにご回答いただいたお客様限定</text>
+  <text x="300" y="260" text-anchor="middle" fill="#B45309" font-size="11" font-family="sans-serif">有効期限：発行日より1ヶ月  |  他クーポンとの併用不可</text>
+  <text x="300" y="285" text-anchor="middle" fill="#D97706" font-size="10" font-family="sans-serif">デモ飲食店</text>
+</svg>

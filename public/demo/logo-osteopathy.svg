@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06B6D4"/>
+      <stop offset="100%" stop-color="#0284C7"/>
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="95" fill="url(#bg2)"/>
+  <circle cx="100" cy="100" r="85" fill="none" stroke="white" stroke-width="2" opacity="0.3"/>
+  <!-- Spine / body icon -->
+  <g transform="translate(100,55)" fill="white">
+    <circle cx="0" cy="0" r="14" fill="white"/>
+    <path d="M0,18 L0,70" stroke="white" stroke-width="5" stroke-linecap="round"/>
+    <path d="M-20,32 L0,25 L20,32" stroke="white" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Healing hands -->
+    <path d="M-30,50 Q-15,40 0,50 Q15,40 30,50" stroke="white" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.7"/>
+    <path d="M-25,60 Q-10,50 0,60 Q10,50 25,60" stroke="white" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.5"/>
+  </g>
+  <text x="100" y="170" text-anchor="middle" fill="white" font-size="16" font-weight="bold" font-family="sans-serif">デモ整骨院</text>
+</svg>

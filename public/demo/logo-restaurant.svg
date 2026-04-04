@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="bg1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F97316"/>
+      <stop offset="100%" stop-color="#EF4444"/>
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="95" fill="url(#bg1)"/>
+  <circle cx="100" cy="100" r="85" fill="none" stroke="white" stroke-width="2" opacity="0.3"/>
+  <!-- Fork and knife -->
+  <g transform="translate(100,95)" fill="white">
+    <!-- Fork -->
+    <path d="M-28,-45 L-28,-15 Q-28,-5 -22,-5 L-22,45 Q-22,48 -19,48 L-17,48 Q-14,48 -14,45 L-14,-5 Q-8,-5 -8,-15 L-8,-45 M-8,-45 L-8,-20 M-18,-45 L-18,-20 M-28,-45 L-28,-20" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- Knife -->
+    <path d="M15,-45 Q25,-30 25,-10 L25,-5 Q25,-2 22,-2 L18,-2 L18,45 Q18,48 21,48 L23,48 Q26,48 26,45 L26,-2" stroke="white" stroke-width="2.5" fill="white" opacity="0.9"/>
+  </g>
+  <text x="100" y="170" text-anchor="middle" fill="white" font-size="16" font-weight="bold" font-family="sans-serif">デモ飲食店</text>
+</svg>

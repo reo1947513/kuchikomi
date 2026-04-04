@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" width="600" height="300">
+  <defs>
+    <linearGradient id="cbg2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ECFEFF"/>
+      <stop offset="100%" stop-color="#E0F2FE"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="300" rx="20" fill="url(#cbg2)"/>
+  <rect x="8" y="8" width="584" height="284" rx="16" fill="none" stroke="#0891B2" stroke-width="2" stroke-dasharray="8 4" opacity="0.5"/>
+  <circle cx="0" cy="150" r="20" fill="white"/>
+  <circle cx="600" cy="150" r="20" fill="white"/>
+  <text x="300" y="60" text-anchor="middle" fill="#164E63" font-size="18" font-weight="bold" font-family="sans-serif">THANK YOU COUPON</text>
+  <text x="300" y="130" text-anchor="middle" fill="#0891B2" font-size="56" font-weight="bold" font-family="sans-serif">初回500円OFF</text>
+  <text x="300" y="170" text-anchor="middle" fill="#164E63" font-size="16" font-family="sans-serif">次回ご来院時にご利用いただけます</text>
+  <line x1="80" y1="200" x2="520" y2="200" stroke="#0891B2" stroke-width="1" opacity="0.3"/>
+  <text x="300" y="230" text-anchor="middle" fill="#155E75" font-size="13" font-family="sans-serif">口コミ投稿でさらに500円OFF！</text>
+  <text x="300" y="260" text-anchor="middle" fill="#155E75" font-size="11" font-family="sans-serif">有効期限：発行日より2ヶ月  |  お一人様1回限り</text>
+  <text x="300" y="285" text-anchor="middle" fill="#0E7490" font-size="10" font-family="sans-serif">デモ整骨院</text>
+</svg>
