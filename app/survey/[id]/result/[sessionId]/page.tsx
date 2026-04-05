@@ -195,11 +195,14 @@ export default function ResultPage({
         {/* Coupon image */}
         {data.couponImageUrl && (
           <div className="rounded-2xl overflow-hidden shadow-sm border border-violet-200">
-            <div className="px-4 py-2 flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-500">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-white">
-                <path d="M9.375 3a1.875 1.875 0 0 0 0 3.75h1.875v4.5H3.375A1.875 1.875 0 0 1 1.5 9.375v-.75a1.875 1.875 0 0 1 1.875-1.875h.375m0 0V3A1.875 1.875 0 0 1 5.625 3h5.25A1.875 1.875 0 0 1 12.75 4.875V6.75m0 0h-3.375m3.375 0h.375a1.875 1.875 0 0 1 1.875 1.875v.75c0 1.036-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 0 1 1.5 9.375v-.75m12 4.5v5.625a1.875 1.875 0 0 1-1.875 1.875H5.625a1.875 1.875 0 0 1-1.875-1.875V13.5h10.5Z" />
-              </svg>
-              <span className="text-sm font-bold text-white">クーポン</span>
+            <div className="px-4 py-2 flex items-center justify-between bg-gradient-to-r from-cyan-500 to-violet-500">
+              <div className="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-white">
+                  <path d="M9.375 3a1.875 1.875 0 0 0 0 3.75h1.875v4.5H3.375A1.875 1.875 0 0 1 1.5 9.375v-.75a1.875 1.875 0 0 1 1.875-1.875h.375m0 0V3A1.875 1.875 0 0 1 5.625 3h5.25A1.875 1.875 0 0 1 12.75 4.875V6.75m0 0h-3.375m3.375 0h.375a1.875 1.875 0 0 1 1.875 1.875v.75c0 1.036-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 0 1 1.5 9.375v-.75m12 4.5v5.625a1.875 1.875 0 0 1-1.875 1.875H5.625a1.875 1.875 0 0 1-1.875-1.875V13.5h10.5Z" />
+                </svg>
+                <span className="text-sm font-bold text-white">クーポン</span>
+              </div>
+              <span className="text-xs text-white/80">{formattedTime}</span>
             </div>
             <div className="relative">
               <img src={data.couponImageUrl} alt="coupon" className="w-full object-contain pointer-events-none select-none" draggable={false} onContextMenu={(e) => e.preventDefault()} />

@@ -233,9 +233,12 @@ export default function SurveyPage({
 
       if (!res.ok) {
         const data = await res.json();
+        const isLimitReached = res.status === 429;
         setPhase({
           type: "error",
-          message: data.error ?? "口コミの生成に失敗しました",
+          message: isLimitReached
+            ? "ご回答ありがとうございました。現在、口コミ生成を一時停止しております。ご不便をおかけして申し訳ございません。"
+            : data.error ?? "口コミの生成に失敗しました",
         });
         return;
       }

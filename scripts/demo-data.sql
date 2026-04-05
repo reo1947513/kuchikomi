@@ -2033,4 +2033,55 @@ VALUES ('demo-answer-699', 'demo-session-100', 'demo-q5b-3', 'demo-choice-96', N
 INSERT INTO "Answer" (id, "sessionId", "questionId", "choiceId", "textValue", "createdAt")
 VALUES ('demo-answer-700', 'demo-session-100', 'demo-q6a-3', 'demo-choice-101', NULL, '2026-04-03T17:03:26.713Z');
 
+-- ============================================
+-- Shop 4: デモバー (Light plan, 18/20 used)
+-- ============================================
+INSERT INTO "User" (id, email, "loginId", password, name, role, "shopName", address, industry, "noContractLimit", "planType", "planReviewLimit", "createdAt", "updatedAt")
+VALUES ('demo-user-4', 'demo4@kuchikomi.jp', 'AG-000004', '$2a$10$V5h/b24p0tNw34DJ9T7TkOxGaOubUwBnvLOALbMPZFtvr2wsIJi0y', 'デモバー管理者', 'admin', 'デモバー', '東京都渋谷区demo4', 'バー', true, 'light', 20, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z');
+
+INSERT INTO "Survey" (id, title, "openingMessage", "closingMessage", "completionMessage", keywords, "toneRandom", "googleBusinessUrl", "logoUrl", "couponImageUrl", "couponEnabled", "couponExpiry", "chatIconType", "chatIconPreset", "themeMainColor", "themeUserColor", "minRandomQuestions", "maxRandomQuestions", "isActive", "monthlyReviewLimit", "monthlyReviewCount", "createdAt", "updatedAt", "userId")
+VALUES ('demo-survey-4', 'デモバーアンケート', 'ご来店ありがとうございます。サービス向上のため、簡単なアンケートにご協力ください。', 'アンケートにご協力いただきありがとうございました。', 'ご回答ありがとうございました。次回のご来店をお待ちしております！', 'カクテル,雰囲気,バーテンダー,接客,落ち着く', true, 'https://g.page/demo-bar', '/demo/logo-bar.svg', '/demo/coupon-bar.svg', true, '2026-12-31', 'preset', 'utensils', '#312e81', '#4c1d95', 1, 1, true, 20, 18, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z', 'demo-user-4');
+
+INSERT INTO "Tone" (id, name, "isActive", "order", "surveyId")
+VALUES ('demo-tone-4-1', 'カジュアルな口調', true, 1, 'demo-survey-4');
+INSERT INTO "Tone" (id, name, "isActive", "order", "surveyId")
+VALUES ('demo-tone-4-2', '情緒的で感情豊かな表現', true, 2, 'demo-survey-4');
+
+INSERT INTO "Question" (id, text, "order", type, "isRandom", "groupName", "surveyId")
+VALUES ('demo-q1-4', 'お飲み物はいかがでしたか？', 1, 'choice', false, NULL, 'demo-survey-4');
+INSERT INTO "Choice" (id, text, "order", score, "questionId")
+VALUES ('demo-choice-4-1', 'とても美味しかった', 1, 5, 'demo-q1-4');
+INSERT INTO "Choice" (id, text, "order", score, "questionId")
+VALUES ('demo-choice-4-2', '美味しかった', 2, 4, 'demo-q1-4');
+INSERT INTO "Choice" (id, text, "order", score, "questionId")
+VALUES ('demo-choice-4-3', '普通', 3, 3, 'demo-q1-4');
+
+INSERT INTO "Question" (id, text, "order", type, "isRandom", "groupName", "surveyId")
+VALUES ('demo-q2-4', '店内の雰囲気はいかがでしたか？', 2, 'choice', false, NULL, 'demo-survey-4');
+INSERT INTO "Choice" (id, text, "order", score, "questionId")
+VALUES ('demo-choice-4-4', 'とても良い', 1, 5, 'demo-q2-4');
+INSERT INTO "Choice" (id, text, "order", score, "questionId")
+VALUES ('demo-choice-4-5', '良い', 2, 4, 'demo-q2-4');
+INSERT INTO "Choice" (id, text, "order", score, "questionId")
+VALUES ('demo-choice-4-6', '普通', 3, 3, 'demo-q2-4');
+
+INSERT INTO "Question" (id, text, "order", type, "isRandom", "groupName", "surveyId")
+VALUES ('demo-q3-4', 'バーテンダーの接客はいかがでしたか？', 3, 'choice', false, NULL, 'demo-survey-4');
+INSERT INTO "Choice" (id, text, "order", score, "questionId")
+VALUES ('demo-choice-4-7', 'とても良い', 1, 5, 'demo-q3-4');
+INSERT INTO "Choice" (id, text, "order", score, "questionId")
+VALUES ('demo-choice-4-8', '良い', 2, 4, 'demo-q3-4');
+INSERT INTO "Choice" (id, text, "order", score, "questionId")
+VALUES ('demo-choice-4-9', '普通', 3, 3, 'demo-q3-4');
+
+INSERT INTO "Question" (id, text, "order", type, "isRandom", "groupName", "surveyId")
+VALUES ('demo-q4-4', 'また来たいと思いますか？', 4, 'choice', false, NULL, 'demo-survey-4');
+INSERT INTO "Choice" (id, text, "order", score, "questionId")
+VALUES ('demo-choice-4-10', 'ぜひまた来たい', 1, 5, 'demo-q4-4');
+INSERT INTO "Choice" (id, text, "order", score, "questionId")
+VALUES ('demo-choice-4-11', '機会があれば', 2, 3, 'demo-q4-4');
+
+INSERT INTO "Question" (id, text, "order", type, "isRandom", "groupName", "surveyId")
+VALUES ('demo-q5-4', 'ご意見やご要望があればお聞かせください', 5, 'text', false, NULL, 'demo-survey-4');
+
 COMMIT;

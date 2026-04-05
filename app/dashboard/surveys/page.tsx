@@ -266,11 +266,27 @@ export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showLimitPopup, setShowLimitPopup] = useState(false);
 
   useEffect(() => {
     fetch("/api/dashboard")
       .then((r) => r.json())
-      .then(setData)
+      .then((d) => {
+        setData(d);
+        // Show limit popup up to 5 times
+        if (d.survey) {
+          const limit = d.survey.monthlyReviewLimit;
+          const count = d.survey.monthlyReviewCount ?? 0;
+          if (limit > 0 && count >= limit) {
+            const key = "limitPopupCount";
+            const shown = parseInt(sessionStorage.getItem(key) || "0", 10);
+            if (shown < 5) {
+              setShowLimitPopup(true);
+              sessionStorage.setItem(key, String(shown + 1));
+            }
+          }
+        }
+      })
       .catch(() => setError("データの取得に失敗しました"))
       .finally(() => setLoading(false));
   }, []);
@@ -375,6 +391,47 @@ export default function DashboardPage() {
       )}
 
       {data.survey && <RecentSessions sessions={data.recentSessions} shopName={shopName} />}
+
+      {/* Limit reached popup */}
+      {showLimitPopup && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={() => setShowLimitPopup(false)}>
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-gradient-to-r from-red-500 to-orange-500 px-5 py-4">
+              <h3 className="text-white font-bold flex items-center gap-2">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+                口コミ生成の上限に達しました
+              </h3>
+            </div>
+            <div className="p-5 space-y-4">
+              <p className="text-sm text-gray-600">
+                今月の口コミ生成数が上限（{data.survey?.monthlyReviewLimit}件）に達しています。アンケートからの口コミ生成が一時停止中です。
+              </p>
+              <div className="flex flex-col gap-2">
+                <a
+                  href="/dashboard/billing"
+                  className="w-full text-center py-2.5 bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold text-sm rounded-xl"
+                >
+                  プランをアップグレード
+                </a>
+                <a
+                  href="/dashboard/billing"
+                  className="w-full text-center py-2.5 border border-gray-300 text-gray-700 font-medium text-sm rounded-xl hover:bg-gray-50"
+                >
+                  追加レビューを購入
+                </a>
+                <button
+                  onClick={() => setShowLimitPopup(false)}
+                  className="text-xs text-gray-400 hover:text-gray-600 mt-1"
+                >
+                  閉じる
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
