@@ -190,26 +190,41 @@ export default function LpPage() {
           </button>
         </div>
 
-        {/* Mobile menu */}
-        {menuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-100 px-4 pb-4">
+        {/* Mobile menu overlay */}
+        <div
+          className={`fixed inset-0 bg-black/40 z-40 transition-opacity duration-300 md:hidden ${menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+          onClick={() => setMenuOpen(false)}
+        />
+        {/* Mobile menu drawer */}
+        <div className={`fixed top-0 right-0 h-full w-72 bg-white z-50 shadow-2xl transform transition-transform duration-300 ease-out md:hidden ${menuOpen ? "translate-x-0" : "translate-x-full"}`}>
+          <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+            <span className="text-sm font-bold text-gray-800">メニュー</span>
+            <button onClick={() => setMenuOpen(false)} className="p-1 text-gray-400 hover:text-gray-600">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <nav className="px-5 py-4 space-y-1">
             {navLinks.map((l) => (
               <button
                 key={l.id}
                 onClick={() => handleNav(l.id)}
-                className="block w-full text-left py-3 text-gray-600 hover:text-gray-900"
+                className="block w-full text-left py-3 px-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors"
               >
                 {l.label}
               </button>
             ))}
+          </nav>
+          <div className="px-5 mt-2">
             <button
               onClick={() => window.location.href = "/contact"}
-              className="mt-2 w-full bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-semibold py-3 rounded-full"
+              className="w-full bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-semibold py-3 rounded-full"
             >
               お問い合わせ
             </button>
           </div>
-        )}
+        </div>
       </header>
 
       {/* ───────── Hero ───────── */}
@@ -563,6 +578,7 @@ export default function LpPage() {
                   "チャット形式アンケート",
                   "QRコード発行",
                   "リアルタイム分析",
+                  "メール通知",
                   "カスタマーサポート",
                 ],
               },
@@ -655,7 +671,7 @@ export default function LpPage() {
           <div className="grid md:grid-cols-3 gap-6 items-start">
             {[
               { name: "ライト", price: "90,000", limit: "月20件", features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行"] },
-              { name: "スタンダード", price: "150,000", limit: "月50件", features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行", "リアルタイム分析", "カスタマーサポート"] },
+              { name: "スタンダード", price: "150,000", limit: "月50件", features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行", "リアルタイム分析", "メール通知", "カスタマーサポート"] },
               { name: "プレミアム", price: "250,000", limit: "無制限", features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行", "リアルタイム分析", "AI分析レポート", "CSVデータエクスポート", "カスタムプロンプト", "メール通知", "口コミ生成 無制限"] },
             ].map((plan) => (
               <div key={plan.name} className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 border border-amber-200 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
