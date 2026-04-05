@@ -8,7 +8,6 @@ const items = [
   { href: "/dashboard/survey-settings", label: "アンケート設定" },
   { href: "/dashboard/analysis", label: "分析" },
   { href: "/dashboard/faq", label: "Q&A" },
-  { href: "/dashboard/contact", label: "お問い合わせ" },
   { href: "/dashboard/billing", label: "プラン・お支払い" },
 ];
 
