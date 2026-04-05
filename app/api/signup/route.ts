@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
-import { verifyInviteToken } from "@/app/api/admin/invite/route";
+import { verifyInviteToken } from "@/lib/invite";
 
 export async function POST(request: NextRequest) {
   try {

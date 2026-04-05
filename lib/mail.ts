@@ -1,11 +1,13 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "noreply@comista-kuchikomi.com";
 
+function getResend() {
+  return new Resend(process.env.RESEND_API_KEY);
+}
+
 export async function sendPasswordResetEmail(email: string, resetUrl: string) {
-  await resend.emails.send({
+  await getResend().emails.send({
     from: `ComiSta <${FROM_EMAIL}>`,
     to: email,
     subject: "【ComiSta】パスワード再設定",
