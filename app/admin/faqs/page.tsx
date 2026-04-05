@@ -85,7 +85,7 @@ export default function FaqsPage() {
               type="text"
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
-              placeholder="例：クチコミPlusとは何ですか？"
+              placeholder="例：ComiStaとは何ですか？"
               className={inputCls}
             />
           </div>

@@ -241,7 +241,7 @@ export default function SharePage({ params }: { params: { id: string } }) {
         </div>
       )}
       <footer className="text-center text-xs text-gray-400 py-6">
-        © 2026 クチコミPlus. All Rights Reserved.
+        © 2026 ComiSta. All Rights Reserved.
       </footer>
     </div>
   );

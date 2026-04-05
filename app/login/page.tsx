@@ -51,9 +51,9 @@ export default function LoginPage() {
       <div className="bg-white rounded-2xl shadow-lg w-full max-w-md px-8 py-10">
         {/* Logo & App Name */}
         <div className="flex flex-col items-center mb-8">
-          <img src="/logo.png" alt="クチコミPlus" className="h-28 w-auto mb-3" />
+          <img src="/logo.png" alt="ComiSta" className="h-28 w-auto mb-3" />
           <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent tracking-tight">
-            クチコミPlus
+            ComiSta
           </h1>
           <p className="text-sm text-slate-400 mt-1">アカウントにログイン</p>
         </div>
@@ -175,7 +175,7 @@ export default function LoginPage() {
         </form>
       </div>
       <footer className="text-center text-xs text-white/60 mt-6">
-        © 2026 クチコミPlus. All Rights Reserved.
+        © 2026 ComiSta. All Rights Reserved.
       </footer>
     </main>
   );

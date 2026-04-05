@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "クチコミPlus",
+  title: "ComiSta",
   description: "口コミ作成支援サービス",
 };
 

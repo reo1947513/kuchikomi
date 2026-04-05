@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 type Faq = { id: string; question: string; answer: string };
 
 const defaultFaqs: Faq[] = [
-  { id: "1", question: "クチコミPlusとは何ですか？", answer: "クチコミPlusは、お客様のアンケート回答をもとにAIが口コミ文章を自動生成するサービスです。生成された文章をGoogleマップなどに投稿することで、店舗の評価向上に貢献します。" },
+  { id: "1", question: "ComiStaとは何ですか？", answer: "ComiStaは、お客様のアンケート回答をもとにAIが口コミ文章を自動生成するサービスです。生成された文章をGoogleマップなどに投稿することで、店舗の評価向上に貢献します。" },
   { id: "2", question: "アンケートの質問内容は変更できますか？", answer: "はい、アンケート設定画面から質問の追加・編集・削除・並べ替えが自由に行えます。選択式とテキスト入力式の両方に対応しています。" },
   { id: "3", question: "生成された口コミ文章は編集できますか？", answer: "はい、AIが生成した文章はアンケート結果ページで自由に編集できます。内容を確認・修正してからGoogleマップに投稿してください。" },
   { id: "4", question: "QRコードはどのように使いますか？", answer: "アンケート設定画面でQRコードを作成・ダウンロードできます。印刷して店頭に設置することで、お客様がスマートフォンから簡単にアンケートに回答できるようになります。" },
@@ -40,7 +40,7 @@ export default function FAQPage() {
 
       <div>
         <h1 className="text-2xl font-bold text-gray-900">よくある質問</h1>
-        <p className="text-sm text-gray-500 mt-1">クチコミPlusに関するよくある質問をまとめました</p>
+        <p className="text-sm text-gray-500 mt-1">ComiStaに関するよくある質問をまとめました</p>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm divide-y divide-gray-100">

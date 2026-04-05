@@ -12,7 +12,7 @@ services:
       - DATABASE_URL=file:/app/data/prod.db
       - JWT_SECRET=${JWT_SECRET:-please-change-this-secret}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
-      - NEXT_PUBLIC_APP_NAME=クチコミPlus
+      - NEXT_PUBLIC_APP_NAME=ComiSta
     volumes:
       - db_data:/app/data
     restart: unless-stopped
