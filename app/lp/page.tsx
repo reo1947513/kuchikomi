@@ -728,6 +728,34 @@ export default function LpPage() {
             ))}
           </div>
           <p className="text-center text-xs text-gray-400 mt-6">※ 分割払いにも対応しております。詳しくはお問い合わせください。</p>
+
+          {/* Payment & contract info */}
+          <div className="mt-12 bg-white/60 backdrop-blur-sm rounded-2xl border border-gray-200 p-6 sm:p-8">
+            <h3 className="text-base font-bold text-gray-800 mb-4 text-center">お支払い・ご契約について</h3>
+            <div className="grid sm:grid-cols-2 gap-6">
+              <div>
+                <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                  <svg className="w-4 h-4 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+                  対応支払い方法
+                </h4>
+                <ul className="text-sm text-gray-600 space-y-1.5">
+                  <li>・クレジットカード（Visa / Mastercard / AMEX / JCB）</li>
+                  <li>・請求書払い（法人のみ・要相談）</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                  <svg className="w-4 h-4 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                  ご契約について
+                </h4>
+                <ul className="text-sm text-gray-600 space-y-1.5">
+                  <li>・最低契約期間: 6ヶ月</li>
+                  <li>・契約期間中の途中解約はできません</li>
+                  <li>・契約期間中のプランアップグレードは差額精算で即時反映</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </Section>
 

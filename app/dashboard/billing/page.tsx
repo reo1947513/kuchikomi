@@ -348,6 +348,28 @@ export default function BillingPage() {
         </div>
       </section>
       )}
+
+      {/* Payment & contract info */}
+      <section className="bg-white rounded-lg shadow p-4 sm:p-6">
+        <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-4">お支払い・ご契約について</h2>
+        <div className="grid sm:grid-cols-2 gap-6">
+          <div>
+            <h3 className="text-sm font-semibold text-gray-700 mb-2">対応支払い方法</h3>
+            <ul className="text-sm text-gray-600 space-y-1">
+              <li>・クレジットカード（Visa / Mastercard / AMEX / JCB）</li>
+              <li>・請求書払い（法人のみ・要相談）</li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-gray-700 mb-2">ご契約について</h3>
+            <ul className="text-sm text-gray-600 space-y-1">
+              <li>・最低契約期間: 6ヶ月</li>
+              <li>・契約期間中の途中解約はできません</li>
+              <li>・プランのアップグレードは差額精算で即時反映されます</li>
+            </ul>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
