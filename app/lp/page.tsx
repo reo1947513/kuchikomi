@@ -689,11 +689,19 @@ export default function LpPage() {
           <p className="text-center text-sm text-gray-500 mb-8">月額不要・一括払いでずっと使える</p>
           <div className="grid md:grid-cols-3 gap-6 items-start">
             {[
-              { name: "ライト", price: "90,000", limit: "月20件", features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行"] },
-              { name: "スタンダード", price: "150,000", limit: "月50件", features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行", "リアルタイム分析", "メール通知", "カスタマーサポート"] },
-              { name: "プレミアム", price: "250,000", limit: "無制限", features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行", "リアルタイム分析", "AI分析レポート", "CSVデータエクスポート", "カスタムプロンプト", "メール通知", "口コミ生成 無制限", "カスタマーサポート"] },
+              { name: "ライト", price: "90,000", limit: "月20件", popular: false, features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行"] },
+              { name: "スタンダード", price: "150,000", limit: "月50件", popular: true, features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行", "リアルタイム分析", "メール通知", "カスタマーサポート"] },
+              { name: "プレミアム", price: "250,000", limit: "無制限", popular: false, features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行", "リアルタイム分析", "AI分析レポート", "CSVデータエクスポート", "カスタムプロンプト", "メール通知", "口コミ生成 無制限", "カスタマーサポート"] },
             ].map((plan) => (
-              <div key={plan.name} className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 border border-amber-200 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
+              <div key={plan.name} className={`relative bg-white/70 backdrop-blur-sm rounded-3xl p-8 border transition-all hover:-translate-y-1 ${plan.popular ? "border-transparent shadow-2xl shadow-amber-500/20 ring-2 ring-amber-400 md:scale-[1.06]" : "border-amber-200 shadow-lg hover:shadow-xl"}`}>
+                {plan.popular && (
+                  <>
+                    <div className="absolute -inset-[3px] rounded-3xl bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 opacity-20 blur-lg -z-10" />
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold px-5 py-1.5 rounded-full shadow-lg">
+                      おすすめ
+                    </div>
+                  </>
+                )}
                 <h3 className="font-bold text-lg mb-1">{plan.name}</h3>
                 <div className="mb-6">
                   <span className="text-3xl sm:text-4xl font-black bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">¥{plan.price}</span>
@@ -712,13 +720,14 @@ export default function LpPage() {
                 </ul>
                 <button
                   onClick={() => scrollTo("contact")}
-                  className="mt-8 w-full py-3.5 rounded-full font-semibold border border-amber-400 text-amber-700 hover:bg-amber-50 transition-all"
+                  className={`mt-8 w-full py-3.5 rounded-full font-semibold transition-all ${plan.popular ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg hover:shadow-xl hover:scale-105" : "border border-amber-400 text-amber-700 hover:bg-amber-50"}`}
                 >
                   お問い合わせ
                 </button>
               </div>
             ))}
           </div>
+          <p className="text-center text-xs text-gray-400 mt-6">※ 分割払いにも対応しております。詳しくはお問い合わせください。</p>
         </div>
       </Section>
 
