@@ -92,7 +92,13 @@ export default function ContactPage() {
             </svg>
           </div>
           <h2 className="text-xl font-bold text-gray-900 mb-2">送信が完了しました</h2>
-          <p className="text-sm text-gray-500">お問い合わせいただきありがとうございます。担当者より折り返しご連絡いたします。</p>
+          <p className="text-sm text-gray-500 mb-6">お問い合わせいただきありがとうございます。担当者より折り返しご連絡いたします。</p>
+          <a
+            href="/dashboard"
+            className="inline-block px-6 py-3 rounded-xl text-white font-bold text-sm bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 transition-colors"
+          >
+            ダッシュボードに戻る
+          </a>
         </div>
       </div>
     );

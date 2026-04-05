@@ -339,7 +339,7 @@ export default function SurveyPage({
       </header>
 
       {/* Chat area */}
-      <main className="flex-1 max-w-lg mx-auto w-full px-4 pt-8 pb-32 relative z-0">
+      <main className="flex-1 max-w-lg mx-auto w-full px-4 pt-12 pb-32 relative z-0">
         {phase.type === "loading_session" && (
           <div className="flex items-center justify-center py-20">
             <div

@@ -163,6 +163,7 @@ model Contact {
   content        String
   source         String   @default("dashboard") // "dashboard" | "hp"
   status         String   @default("未対応")
+  userId         String?
   createdAt      DateTime @default(now())
 }
 

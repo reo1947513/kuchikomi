@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { getSession } from "@/lib/auth";
 import { z } from "zod";
 
 const contactSchema = z.object({
@@ -19,7 +20,9 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const data = contactSchema.parse(body);
-    const contact = await prisma.contact.create({ data: { ...data, source: data.source || "dashboard" } });
+    const session = getSession();
+    const userId = session?.userId || null;
+    const contact = await prisma.contact.create({ data: { ...data, source: data.source || "dashboard", userId } });
     return NextResponse.json(contact, { status: 201 });
   } catch (e) {
     if (e instanceof z.ZodError) {
