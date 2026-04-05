@@ -111,20 +111,20 @@ export default function AnalysisPage() {
           {item.data.every((d) => d.value === 0) ? (
             <p className="text-sm text-gray-400 text-center py-8">回答データがありません</p>
           ) : (
-            <div className="h-48 sm:h-64" style={{ minWidth: 0, minHeight: 0 }}>
+            <div className="h-64 sm:h-72" style={{ minWidth: 0, minHeight: 0 }}>
               <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
+                <PieChart margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
                   <Pie
                     data={item.data.filter((d) => d.value > 0)}
                     cx="50%"
-                    cy="50%"
-                    innerRadius={50}
-                    outerRadius={90}
+                    cy="45%"
+                    innerRadius="30%"
+                    outerRadius="50%"
                     paddingAngle={2}
                     dataKey="value"
                     label={({ name, percent }: any) => `${name} ${(percent * 100).toFixed(0)}%`}
                     labelLine={false}
-                    fontSize={11}
+                    fontSize={10}
                   >
                     {item.data.filter((d) => d.value > 0).map((_, i) => (
                       <Cell key={i} fill={COLORS[i % COLORS.length]} />
