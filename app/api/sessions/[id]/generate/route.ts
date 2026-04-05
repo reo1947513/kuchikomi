@@ -35,6 +35,7 @@ export async function POST(
       survey: {
         include: {
           tones: { where: { isActive: true }, orderBy: { order: "asc" } },
+          user: { select: { id: true, additionalReviews: true } },
         },
       },
       answers: {
@@ -56,11 +57,18 @@ export async function POST(
   }
 
   // Check monthly review limit (0 = unlimited, e.g. premium plan)
+  let useAdditionalReview = false;
   if (session.survey.monthlyReviewLimit > 0 && session.survey.monthlyReviewCount >= session.survey.monthlyReviewLimit) {
-    return NextResponse.json(
-      { error: "今月の口コミ生成上限に達しました。プランのアップグレードまたは追加レビューの購入をご検討ください。" },
-      { status: 429 }
-    );
+    // Check if user has additional reviews
+    const additionalReviews = session.survey.user?.additionalReviews ?? 0;
+    if (additionalReviews > 0) {
+      useAdditionalReview = true;
+    } else {
+      return NextResponse.json(
+        { error: "今月の口コミ生成上限に達しました。プランのアップグレードまたは追加レビューの購入をご検討ください。" },
+        { status: 429 }
+      );
+    }
   }
 
   if (session.answers.length === 0) {
@@ -139,21 +147,28 @@ export async function POST(
   }
 
   // Save the review text, mark session as completed, and increment monthly count
-  await Promise.all([
+  const updates: Promise<any>[] = [
     prisma.reviewSession.update({
       where: { id: sessionId },
-      data: {
-        reviewText,
-        status: "completed",
-      },
+      data: { reviewText, status: "completed" },
     }),
     prisma.survey.update({
       where: { id: session.survey.id },
-      data: {
-        monthlyReviewCount: { increment: 1 },
-      },
+      data: { monthlyReviewCount: { increment: 1 } },
     }),
-  ]);
+  ];
+
+  // Decrement additional reviews if used
+  if (useAdditionalReview && session.survey.user) {
+    updates.push(
+      prisma.user.update({
+        where: { id: session.survey.user.id },
+        data: { additionalReviews: { decrement: 1 } },
+      })
+    );
+  }
+
+  await Promise.all(updates);
 
   return NextResponse.json({
     reviewText,

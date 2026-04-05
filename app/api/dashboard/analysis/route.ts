@@ -70,6 +70,8 @@ export async function GET() {
   return NextResponse.json({ totalSessions: survey.sessions.length, chartData, monthlySessions });
 }
 
+const PREMIUM_PLANS = ["premium", "lifetime_premium"];
+
 export async function POST() {
   const session = getSessionForRole("admin") || getSessionForRole("super");
   if (!session || session.role === "super") {
@@ -78,8 +80,13 @@ export async function POST() {
 
   const user = await prisma.user.findUnique({
     where: { id: session.userId },
-    select: { lastAnalysisAt: true },
+    select: { lastAnalysisAt: true, planType: true },
   });
+
+  // AI analysis report is premium-only
+  if (!user || !PREMIUM_PLANS.includes(user.planType ?? "")) {
+    return NextResponse.json({ error: "AI分析レポートはプレミアムプランでのみご利用いただけます" }, { status: 403 });
+  }
 
   if (user?.lastAnalysisAt) {
     const last = new Date(user.lastAnalysisAt);

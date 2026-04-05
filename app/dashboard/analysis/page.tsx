@@ -14,6 +14,7 @@ type AnalysisData = {
 };
 
 const LOCKED_PLANS = [null, "light", "lifetime_light"];
+const PREMIUM_PLANS = ["premium", "lifetime_premium"];
 
 export default function AnalysisPage() {
   const [data, setData] = useState<AnalysisData | null>(null);
@@ -52,6 +53,8 @@ export default function AnalysisPage() {
       setAnalyzing(false);
     }
   };
+
+  const isPremium = PREMIUM_PLANS.includes(planType ?? "");
 
   if (planLoaded && LOCKED_PLANS.includes(planType)) {
     return <LockedAnalysis />;
@@ -141,12 +144,14 @@ export default function AnalysisPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h2 className="text-sm font-semibold text-gray-800">AI分析レポート</h2>
-            <p className="text-xs text-gray-400 mt-0.5">月1回のみ実行可能です</p>
+            <p className="text-xs text-gray-400 mt-0.5">
+              {isPremium ? "月1回のみ実行可能です" : "プレミアムプラン限定機能です"}
+            </p>
           </div>
           <button
             onClick={runAnalysis}
-            disabled={analyzing}
-            className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white text-sm font-semibold rounded-xl shadow transition-colors disabled:opacity-60"
+            disabled={analyzing || !isPremium}
+            className={`w-full sm:w-auto px-4 py-2 text-sm font-semibold rounded-xl shadow transition-colors disabled:opacity-60 ${isPremium ? "bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white" : "bg-gray-200 text-gray-500 cursor-not-allowed"}`}
           >
             {analyzing ? "分析中..." : "AI分析を実行"}
           </button>
