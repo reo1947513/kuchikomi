@@ -1072,7 +1072,7 @@ export default function SurveySettingsPage() {
 
         {/* ===== Tab: ロゴ・クーポン ===== */}
         {activeTab === "logo" && (
-          <div className="bg-white rounded-xl shadow p-6 space-y-5">
+          <div className="bg-white rounded-xl shadow p-4 sm:p-6 space-y-5">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">ロゴ画像</label>
               <p className="text-xs text-gray-400 mb-2">推奨サイズ 200x50px / JPEG・PNG・WebP・GIF・SVG / 5MBまで</p>
@@ -1276,7 +1276,7 @@ export default function SurveySettingsPage() {
 
         {activeTab === "color" && (
           <div className="space-y-6">
-            <div className="bg-white rounded-xl shadow p-6">
+            <div className="bg-white rounded-xl shadow p-4 sm:p-6">
               <h3 className="text-sm font-bold text-gray-800 mb-1">カラーテーマを選択</h3>
               <p className="text-xs text-gray-400 mb-4">テンプレートを選択すると、関連するカラーが自動的に設定されます</p>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
@@ -1293,7 +1293,7 @@ export default function SurveySettingsPage() {
                 })}
               </div>
             </div>
-            <div className="bg-white rounded-xl shadow p-6">
+            <div className="bg-white rounded-xl shadow p-4 sm:p-6">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">メインカラー</label>
@@ -1321,7 +1321,7 @@ export default function SurveySettingsPage() {
                 </div>
               </div>
             </div>
-            <div className="bg-white rounded-xl shadow p-6">
+            <div className="bg-white rounded-xl shadow p-4 sm:p-6">
               <h3 className="text-sm font-bold text-gray-800 mb-4">カラープレビュー</h3>
               <div className="border border-gray-200 rounded-xl overflow-hidden">
                 <div className="px-4 py-3 font-bold text-sm" style={{ backgroundColor: themeMainColor, color: themeTextColor }}>アンケートヘッダー（メインカラー）</div>
