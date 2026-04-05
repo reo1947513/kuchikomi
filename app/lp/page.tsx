@@ -616,6 +616,7 @@ export default function LpPage() {
                   "カスタムプロンプト",
                   "メール通知",
                   "口コミ生成 無制限",
+                  "カスタマーサポート",
                 ],
               },
             ].map((plan) => (
@@ -690,7 +691,7 @@ export default function LpPage() {
             {[
               { name: "ライト", price: "90,000", limit: "月20件", features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行"] },
               { name: "スタンダード", price: "150,000", limit: "月50件", features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行", "リアルタイム分析", "メール通知", "カスタマーサポート"] },
-              { name: "プレミアム", price: "250,000", limit: "無制限", features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行", "リアルタイム分析", "AI分析レポート", "CSVデータエクスポート", "カスタムプロンプト", "メール通知", "口コミ生成 無制限"] },
+              { name: "プレミアム", price: "250,000", limit: "無制限", features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行", "リアルタイム分析", "AI分析レポート", "CSVデータエクスポート", "カスタムプロンプト", "メール通知", "口コミ生成 無制限", "カスタマーサポート"] },
             ].map((plan) => (
               <div key={plan.name} className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 border border-amber-200 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
                 <h3 className="font-bold text-lg mb-1">{plan.name}</h3>
