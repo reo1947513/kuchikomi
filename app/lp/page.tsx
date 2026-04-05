@@ -265,6 +265,18 @@ export default function LpPage() {
             0% { background-position: -200% center; }
             100% { background-position: 200% center; }
           }
+          @keyframes glowPulse {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.35; transform: scale(1.02); }
+          }
+          @keyframes popularPulse {
+            0%, 100% { box-shadow: 0 25px 50px -12px rgba(139,92,246,0.2); }
+            50% { box-shadow: 0 25px 60px -8px rgba(139,92,246,0.35); }
+          }
+          @keyframes badgeBounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-3px); }
+          }
         `}</style>
         <div className="relative max-w-5xl mx-auto text-center px-4 py-24">
           {/* Badge */}
@@ -605,15 +617,15 @@ export default function LpPage() {
                 key={plan.name}
                 className={`relative bg-white/70 backdrop-blur-sm rounded-3xl p-8 border transition-all hover:-translate-y-1 ${
                   plan.popular
-                    ? "border-transparent shadow-2xl shadow-violet-500/20 ring-2 ring-violet-400 md:scale-105"
+                    ? "border-transparent shadow-2xl shadow-violet-500/25 ring-2 ring-violet-400 md:scale-[1.06] animate-[popularPulse_4s_ease-in-out_infinite]"
                     : "border-gray-200 shadow-lg hover:shadow-xl"
                 }`}
               >
                 {plan.popular && (
                   <>
-                    {/* Glow effect */}
-                    <div className="absolute -inset-[2px] rounded-3xl bg-gradient-to-r from-cyan-500 via-violet-500 to-fuchsia-500 opacity-20 blur-md -z-10" />
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-500 to-violet-500 text-white text-xs font-bold px-5 py-1.5 rounded-full shadow-lg">
+                    {/* Animated glow effect */}
+                    <div className="absolute -inset-[3px] rounded-3xl bg-gradient-to-r from-cyan-500 via-violet-500 to-fuchsia-500 opacity-25 blur-lg -z-10 animate-[glowPulse_3s_ease-in-out_infinite]" />
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-500 to-violet-500 text-white text-xs font-bold px-5 py-1.5 rounded-full shadow-lg animate-[badgeBounce_2s_ease-in-out_infinite]">
                       🏆 人気No.1
                     </div>
                   </>
