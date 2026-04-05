@@ -154,7 +154,7 @@ export default function LpPage() {
               onClick={() => scrollTo("contact")}
               className="bg-gradient-to-r from-cyan-500 to-violet-500 text-white text-sm font-semibold px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity shadow-lg shadow-cyan-500/25"
             >
-              無料相談する
+              お問い合わせ
             </button>
           </nav>
 
@@ -205,7 +205,7 @@ export default function LpPage() {
               onClick={() => handleNav("contact")}
               className="mt-2 w-full bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-semibold py-3 rounded-full"
             >
-              無料相談する
+              お問い合わせ
             </button>
           </div>
         )}
@@ -276,7 +276,7 @@ export default function LpPage() {
               className="bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold px-10 py-5 rounded-full text-lg shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-all"
               style={{ animation: "heroPulse 3s ease-in-out infinite 1.5s" }}
             >
-              まずは無料相談
+              お問い合わせはこちら
             </button>
           </div>
           <p className="mt-5 text-sm text-gray-400">
@@ -620,7 +620,7 @@ export default function LpPage() {
                       : "border border-gray-300 text-gray-700 hover:bg-gray-50"
                   }`}
                 >
-                  無料相談する
+                  お問い合わせ
                 </button>
               </div>
             ))}
@@ -742,7 +742,7 @@ export default function LpPage() {
             </span>
           </h2>
           <p className="text-gray-300 mb-6 text-lg">
-            無料相談は1分で完了。まずはお気軽にお問い合わせください。
+            お問い合わせは1分で完了。お気軽にご連絡ください。
           </p>
           {/* Urgency badge */}
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-400/30 text-orange-300 font-bold text-sm px-5 py-2.5 rounded-full mb-10">
@@ -751,10 +751,10 @@ export default function LpPage() {
           </div>
           <div className="block">
             <a
-              href="/dashboard/contact"
+              href="/contact"
               className="inline-block bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold px-12 py-5 rounded-full text-lg shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-all"
             >
-              無料相談する
+              お問い合わせ
             </a>
           </div>
           <p className="mt-8 text-sm text-gray-400">
