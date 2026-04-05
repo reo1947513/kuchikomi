@@ -17,6 +17,9 @@ export default function FaqsPage() {
   const [answer, setAnswer] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editQuestion, setEditQuestion] = useState("");
+  const [editAnswer, setEditAnswer] = useState("");
 
   const fetchFaqs = () => {
     fetch("/api/admin/faqs")
@@ -63,6 +66,44 @@ export default function FaqsPage() {
       fetchFaqs();
     } catch {
       alert("削除に失敗しました");
+    }
+  };
+
+  const startEdit = (faq: Faq) => {
+    setEditingId(faq.id);
+    setEditQuestion(faq.question);
+    setEditAnswer(faq.answer);
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditQuestion("");
+    setEditAnswer("");
+  };
+
+  const handleUpdate = async (id: string) => {
+    if (!editQuestion.trim() || !editAnswer.trim()) {
+      setError("質問と回答を入力してください");
+      return;
+    }
+    setSubmitting(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/faqs/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: editQuestion.trim(), answer: editAnswer.trim() }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.error ?? "更新に失敗しました");
+      }
+      cancelEdit();
+      fetchFaqs();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "エラー");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -119,23 +160,71 @@ export default function FaqsPage() {
           <p className="p-6 text-center text-sm text-gray-400">質問がまだありません</p>
         ) : (
           faqs.map((faq) => (
-            <div key={faq.id} className="px-3 sm:px-5 py-4 flex items-start gap-3">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-r from-cyan-500 to-violet-500 flex items-center justify-center text-white text-xs font-bold">Q</span>
-                  <span className="text-sm font-medium text-gray-800">{faq.question}</span>
+            <div key={faq.id} className="px-3 sm:px-5 py-4">
+              {editingId === faq.id ? (
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">質問（Q）</label>
+                    <input
+                      type="text"
+                      value={editQuestion}
+                      onChange={(e) => setEditQuestion(e.target.value)}
+                      className={inputCls}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">回答（A）</label>
+                    <textarea
+                      value={editAnswer}
+                      onChange={(e) => setEditAnswer(e.target.value)}
+                      rows={3}
+                      className={inputCls}
+                    />
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <button
+                      onClick={cancelEdit}
+                      className="px-3 py-1.5 text-xs font-medium rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700 transition-colors"
+                    >
+                      キャンセル
+                    </button>
+                    <button
+                      onClick={() => handleUpdate(faq.id)}
+                      disabled={submitting}
+                      className="px-3 py-1.5 text-xs font-medium rounded-lg bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white transition-colors disabled:opacity-60"
+                    >
+                      {submitting ? "保存中..." : "保存"}
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-start gap-2 ml-0.5">
-                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 text-xs font-bold">A</span>
-                  <p className="text-sm text-gray-600 whitespace-pre-wrap">{faq.answer}</p>
+              ) : (
+                <div className="flex items-start gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-r from-cyan-500 to-violet-500 flex items-center justify-center text-white text-xs font-bold">Q</span>
+                      <span className="text-sm font-medium text-gray-800">{faq.question}</span>
+                    </div>
+                    <div className="flex items-start gap-2 ml-0.5">
+                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 text-xs font-bold">A</span>
+                      <p className="text-sm text-gray-600 whitespace-pre-wrap">{faq.answer}</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-1.5 flex-shrink-0">
+                    <button
+                      onClick={() => startEdit(faq)}
+                      className="px-3 py-1.5 text-xs font-medium rounded-lg bg-violet-500 hover:bg-violet-600 text-white transition-colors"
+                    >
+                      編集
+                    </button>
+                    <button
+                      onClick={() => handleDelete(faq)}
+                      className="px-3 py-1.5 text-xs font-medium rounded-lg bg-red-500 hover:bg-red-600 text-white transition-colors"
+                    >
+                      削除
+                    </button>
+                  </div>
                 </div>
-              </div>
-              <button
-                onClick={() => handleDelete(faq)}
-                className="flex-shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg bg-red-500 hover:bg-red-600 text-white transition-colors"
-              >
-                削除
-              </button>
+              )}
             </div>
           ))
         )}
