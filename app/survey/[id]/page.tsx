@@ -81,10 +81,11 @@ export default function SurveyPage({
   useEffect(() => {
     async function init() {
       try {
+        const isPreview = new URLSearchParams(window.location.search).get("preview") === "true";
         const res = await fetch("/api/sessions", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ surveyId }),
+          body: JSON.stringify({ surveyId, isTest: isPreview }),
         });
 
         if (!res.ok) {
@@ -303,11 +304,19 @@ export default function SurveyPage({
       ? Math.round((answeredCount / totalQuestions) * 100)
       : 0;
 
+  const isPreview = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("preview") === "true";
+
   return (
     <div
       className="min-h-screen flex flex-col"
       style={{ backgroundColor: "#F5F3FF" }}
     >
+      {/* Test mode banner */}
+      {isPreview && (
+        <div className="bg-amber-500 text-white text-center text-xs font-bold py-1.5 z-20">
+          テストモード — この回答はカウントされません
+        </div>
+      )}
       {/* Top bar */}
       <header className="sticky top-0 z-10 bg-white shadow-sm">
         <div className="max-w-lg mx-auto px-4 py-3">

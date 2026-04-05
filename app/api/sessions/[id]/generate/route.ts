@@ -56,9 +56,9 @@ export async function POST(
     return NextResponse.json({ error: "Session not found" }, { status: 404 });
   }
 
-  // Check monthly review limit (0 = unlimited, e.g. premium plan)
+  // Check monthly review limit (0 = unlimited, e.g. premium plan) — skip for test sessions
   let useAdditionalReview = false;
-  if (session.survey.monthlyReviewLimit > 0 && session.survey.monthlyReviewCount >= session.survey.monthlyReviewLimit) {
+  if (!session.isTest && session.survey.monthlyReviewLimit > 0 && session.survey.monthlyReviewCount >= session.survey.monthlyReviewLimit) {
     // Check if user has additional reviews
     const additionalReviews = session.survey.user?.additionalReviews ?? 0;
     if (additionalReviews > 0) {
@@ -147,19 +147,26 @@ export async function POST(
   }
 
   // Save the review text, mark session as completed, and increment monthly count
+  const isTest = session.isTest;
   const updates: Promise<any>[] = [
     prisma.reviewSession.update({
       where: { id: sessionId },
       data: { reviewText, status: "completed" },
     }),
-    prisma.survey.update({
-      where: { id: session.survey.id },
-      data: { monthlyReviewCount: { increment: 1 } },
-    }),
   ];
 
-  // Decrement additional reviews if used
-  if (useAdditionalReview && session.survey.user) {
+  // Only increment counts for real sessions
+  if (!isTest) {
+    updates.push(
+      prisma.survey.update({
+        where: { id: session.survey.id },
+        data: { monthlyReviewCount: { increment: 1 } },
+      })
+    );
+  }
+
+  // Decrement additional reviews if used (real sessions only)
+  if (!isTest && useAdditionalReview && session.survey.user) {
     updates.push(
       prisma.user.update({
         where: { id: session.survey.user.id },

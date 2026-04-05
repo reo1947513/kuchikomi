@@ -36,9 +36,9 @@ export async function GET() {
   const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
   const twelveMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 11, 1);
 
-  // All sessions (completed) in last 12 months
+  // All sessions (completed, non-test) in last 12 months
   const allSessions = await prisma.reviewSession.findMany({
-    where: { surveyId: survey.id, status: "completed", createdAt: { gte: twelveMonthsAgo } },
+    where: { surveyId: survey.id, status: "completed", isTest: false, createdAt: { gte: twelveMonthsAgo } },
     select: { id: true, createdAt: true },
     orderBy: { createdAt: "asc" },
   });
@@ -49,14 +49,14 @@ export async function GET() {
     return d >= startOfLastMonth && d < startOfThisMonth;
   }).length;
 
-  // Total completed sessions (all time)
+  // Total completed sessions (all time, non-test)
   const totalSessionCount = await prisma.reviewSession.count({
-    where: { surveyId: survey.id, status: "completed" },
+    where: { surveyId: survey.id, status: "completed", isTest: false },
   });
 
-  // Total access count (all sessions including in_progress)
+  // Total access count (all sessions including in_progress, non-test)
   const totalAccessCount = await prisma.reviewSession.count({
-    where: { surveyId: survey.id },
+    where: { surveyId: survey.id, isTest: false },
   });
 
   // Monthly counts for chart
@@ -71,17 +71,17 @@ export async function GET() {
     monthlyCounts.push({ label, count });
   }
 
-  // Recent completed sessions
+  // Recent completed sessions (non-test)
   const recentSessions = await prisma.reviewSession.findMany({
-    where: { surveyId: survey.id, status: "completed" },
+    where: { surveyId: survey.id, status: "completed", isTest: false },
     select: { id: true, reviewText: true, createdAt: true },
     orderBy: { createdAt: "desc" },
     take: 50,
   });
 
-  // Google review click count
+  // Google review click count (non-test)
   const googleClickCount = await prisma.reviewSession.count({
-    where: { surveyId: survey.id, status: "completed", googleClickedAt: { not: null } },
+    where: { surveyId: survey.id, status: "completed", isTest: false, googleClickedAt: { not: null } },
   });
 
   // AI advice

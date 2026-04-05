@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 
 export async function POST(request: NextRequest) {
-  let body: { surveyId: string };
+  let body: { surveyId: string; isTest?: boolean };
 
   try {
     body = await request.json();
@@ -54,6 +54,7 @@ export async function POST(request: NextRequest) {
   const session = await prisma.reviewSession.create({
     data: {
       surveyId,
+      isTest: body.isTest ?? false,
     },
     include: {
       survey: {

@@ -127,6 +127,7 @@ model ReviewSession {
   answers         Answer[]
   reviewText      String?
   status          String   @default("in_progress") // "in_progress" | "completed"
+  isTest          Boolean  @default(false)
   couponUsed      Boolean  @default(false)
   googleClickedAt DateTime?
   createdAt       DateTime @default(now())
