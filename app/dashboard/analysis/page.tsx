@@ -74,7 +74,7 @@ export default function AnalysisPage() {
       {/* Monthly bar chart */}
       <div className="bg-white rounded-xl shadow-sm p-5">
         <h2 className="text-sm font-semibold text-gray-800 mb-4">月別回答数</h2>
-        <div className="h-64">
+        <div className="h-64" style={{ minWidth: 0, minHeight: 0 }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data.monthlySessions}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -94,7 +94,7 @@ export default function AnalysisPage() {
           {item.data.every((d) => d.value === 0) ? (
             <p className="text-sm text-gray-400 text-center py-8">回答データがありません</p>
           ) : (
-            <div className="h-64">
+            <div className="h-64" style={{ minWidth: 0, minHeight: 0 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
