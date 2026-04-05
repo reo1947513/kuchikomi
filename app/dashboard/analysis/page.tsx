@@ -198,29 +198,61 @@ function LockedAnalysis() {
 
   return (
     <div className="space-y-6">
+      <style>{`
+        @keyframes lockFadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes lockPulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+        }
+        @keyframes lockIconFloat {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-6px); }
+        }
+        @keyframes modalSlideUp {
+          from { opacity: 0; transform: translateY(40px) scale(0.95); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes featureSlideIn {
+          from { opacity: 0; transform: translateX(-20px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes overlayFadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes shimmerBtn {
+          0% { background-position: -200% center; }
+          100% { background-position: 200% center; }
+        }
+      `}</style>
       <div>
         <h1 className="text-lg sm:text-2xl font-bold text-gray-900">アンケート分析</h1>
       </div>
-      <div className="relative bg-white rounded-xl shadow-sm p-8 sm:p-12 text-center overflow-hidden">
+      <div className="relative bg-white rounded-xl shadow-sm p-8 sm:p-12 text-center overflow-hidden" style={{ animation: "lockFadeIn 0.6s ease-out" }}>
         <div className="absolute inset-0 bg-gray-100/80 backdrop-blur-[2px]" />
         <div className="relative z-10 flex flex-col items-center gap-4">
-          <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center">
+          <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center" style={{ animation: "lockIconFloat 3s ease-in-out infinite" }}>
             <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          <h2 className="text-lg font-bold text-gray-700">分析機能はスタンダードプラン以上でご利用いただけます</h2>
-          <p className="text-sm text-gray-500 max-w-md">アンケートの回答データを可視化し、店舗改善に役立つインサイトを得られます。</p>
-          <div className="flex flex-col sm:flex-row gap-3 mt-2">
+          <h2 className="text-lg font-bold text-gray-700" style={{ animation: "lockFadeIn 0.6s ease-out 0.2s both" }}>分析機能はスタンダードプラン以上でご利用いただけます</h2>
+          <p className="text-sm text-gray-500 max-w-md" style={{ animation: "lockFadeIn 0.6s ease-out 0.4s both" }}>アンケートの回答データを可視化し、店舗改善に役立つインサイトを得られます。</p>
+          <div className="flex flex-col sm:flex-row gap-3 mt-2" style={{ animation: "lockFadeIn 0.6s ease-out 0.6s both" }}>
             <button
               onClick={() => setShowPreview(true)}
-              className="px-5 py-2.5 border-2 border-violet-400 text-violet-600 font-bold text-sm rounded-xl hover:bg-violet-50 transition-colors"
+              className="px-5 py-2.5 border-2 border-violet-400 text-violet-600 font-bold text-sm rounded-xl hover:bg-violet-50 transition-all hover:scale-105"
+              style={{ animation: "lockPulse 2s ease-in-out infinite 1s" }}
             >
               どんな分析ができる？
             </button>
             <a
               href="/dashboard/billing"
-              className="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white font-bold text-sm rounded-xl shadow transition-colors"
+              className="px-6 py-2.5 text-white font-bold text-sm rounded-xl shadow transition-all hover:scale-105"
+              style={{ background: "linear-gradient(90deg, #06b6d4, #8b5cf6, #06b6d4)", backgroundSize: "200% auto", animation: "shimmerBtn 3s linear infinite" }}
             >
               プランをアップグレード
             </a>
@@ -230,8 +262,8 @@ function LockedAnalysis() {
 
       {/* Preview modal */}
       {showPreview && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={() => setShowPreview(false)}>
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" style={{ animation: "overlayFadeIn 0.2s ease-out" }} onClick={() => setShowPreview(false)}>
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto" style={{ animation: "modalSlideUp 0.4s ease-out" }} onClick={(e) => e.stopPropagation()}>
             <div className="sticky top-0 bg-gradient-to-r from-cyan-500 to-violet-500 rounded-t-2xl px-5 py-4 flex items-center justify-between">
               <span className="text-white font-bold">スタンダード以上で使える分析機能</span>
               <button onClick={() => setShowPreview(false)} className="text-white/80 hover:text-white">
@@ -239,8 +271,8 @@ function LockedAnalysis() {
               </button>
             </div>
             <div className="p-5 space-y-4">
-              {features.map((f) => (
-                <div key={f.title} className="flex gap-4 p-4 bg-gray-50 rounded-xl">
+              {features.map((f, i) => (
+                <div key={f.title} className="flex gap-4 p-4 bg-gray-50 rounded-xl hover:bg-violet-50 transition-colors" style={{ animation: `featureSlideIn 0.4s ease-out ${i * 0.1}s both` }}>
                   <span className="text-3xl shrink-0">{f.icon}</span>
                   <div>
                     <h3 className="font-bold text-sm text-gray-800 mb-1">{f.title}</h3>
