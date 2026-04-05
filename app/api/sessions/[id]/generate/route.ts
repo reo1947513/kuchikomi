@@ -35,7 +35,7 @@ export async function POST(
       survey: {
         include: {
           tones: { where: { isActive: true }, orderBy: { order: "asc" } },
-          user: { select: { id: true, additionalReviews: true } },
+          user: { select: { id: true, additionalReviews: true, email: true, planType: true, shopName: true } },
         },
       },
       answers: {
@@ -176,6 +176,23 @@ export async function POST(
   }
 
   await Promise.all(updates);
+
+  // Send email notification for real sessions (Standard+ plans)
+  if (!isTest && session.survey.user?.email) {
+    const plan = session.survey.user.planType ?? "";
+    const notifyPlans = ["standard", "lifetime_standard", "premium", "lifetime_premium"];
+    if (notifyPlans.includes(plan)) {
+      import("@/lib/mail").then(({ sendReviewNotificationEmail }) => {
+        sendReviewNotificationEmail(
+          session.survey.user!.email!,
+          session.survey.user!.shopName || session.survey.title,
+          reviewText,
+          session.survey.monthlyReviewCount + 1,
+          session.survey.monthlyReviewLimit
+        ).catch((e) => console.error("Review notification email failed:", e));
+      });
+    }
+  }
 
   return NextResponse.json({
     reviewText,
