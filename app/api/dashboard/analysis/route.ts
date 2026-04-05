@@ -7,7 +7,7 @@ import Anthropic from "@anthropic-ai/sdk";
 const anthropic = new Anthropic();
 
 export async function GET() {
-  const session = getSessionForRole("admin");
+  const session = getSessionForRole("admin") || getSessionForRole("super");
   if (!session || session.role === "super") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
@@ -71,7 +71,7 @@ export async function GET() {
 }
 
 export async function POST() {
-  const session = getSessionForRole("admin");
+  const session = getSessionForRole("admin") || getSessionForRole("super");
   if (!session || session.role === "super") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }

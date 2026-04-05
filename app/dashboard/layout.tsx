@@ -5,7 +5,7 @@ import ExpiredNav from "./ExpiredNav";
 import { prisma } from "@/lib/db";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const session = getSessionForRole("admin");
+  const session = getSessionForRole("admin") || getSessionForRole("super");
   if (!session) redirect("/login");
 
   // agent role is removed — redirect to login
