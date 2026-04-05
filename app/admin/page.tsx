@@ -116,9 +116,9 @@ export default function SuperAdminDashboard() {
       `}</style>
 
       {/* Stats cards */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/50 p-6 anim-fade" style={{ animationDelay: "100ms" }}>
-          <div className="flex items-center gap-3 mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/50 p-4 md:p-6 anim-fade" style={{ animationDelay: "100ms" }}>
+          <div className="flex items-center gap-3 mb-3 md:mb-4">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-violet-500 flex items-center justify-center">
               <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -127,12 +127,12 @@ export default function SuperAdminDashboard() {
             </div>
             <span className="text-sm font-medium text-gray-500">総ショップ数</span>
           </div>
-          <span className="text-5xl font-bold text-gray-900"><AnimatedNumber value={stats.totalShops} /></span>
+          <span className="text-3xl md:text-5xl font-bold text-gray-900"><AnimatedNumber value={stats.totalShops} /></span>
           <p className="text-sm text-gray-400 mt-2">登録ショップ</p>
         </div>
 
-        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/50 p-6 anim-fade" style={{ animationDelay: "200ms" }}>
-          <div className="flex items-center gap-3 mb-4">
+        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/50 p-4 md:p-6 anim-fade" style={{ animationDelay: "200ms" }}>
+          <div className="flex items-center gap-3 mb-3 md:mb-4">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-violet-500 flex items-center justify-center">
               <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
@@ -141,13 +141,13 @@ export default function SuperAdminDashboard() {
             </div>
             <span className="text-sm font-medium text-gray-500">総レビュー数</span>
           </div>
-          <span className="text-5xl font-bold text-gray-900"><AnimatedNumber value={stats.totalReviews} /></span>
+          <span className="text-3xl md:text-5xl font-bold text-gray-900"><AnimatedNumber value={stats.totalReviews} /></span>
           <p className="text-sm text-gray-400 mt-2">生成されたレビュー</p>
         </div>
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-2 gap-4 relative" ref={chartRef}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative" ref={chartRef}>
         {tooltip && (
           <div
             className="absolute z-50 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg shadow-lg pointer-events-none whitespace-nowrap"
@@ -157,7 +157,7 @@ export default function SuperAdminDashboard() {
           </div>
         )}
         {/* Bar chart */}
-        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/50 p-6 anim-fade" style={{ animationDelay: "300ms" }}>
+        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/50 p-4 md:p-6 anim-fade" style={{ animationDelay: "300ms" }}>
           <div className="flex items-center gap-2 mb-4">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-violet-500 flex items-center justify-center">
               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -207,7 +207,7 @@ export default function SuperAdminDashboard() {
         </div>
 
         {/* Pie chart */}
-        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/50 p-6 anim-fade" style={{ animationDelay: "400ms" }}>
+        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/50 p-4 md:p-6 anim-fade" style={{ animationDelay: "400ms" }}>
           <div className="flex items-center gap-2 mb-4">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-violet-500 flex items-center justify-center">
               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -219,8 +219,8 @@ export default function SuperAdminDashboard() {
             </div>
             <span className="text-sm font-semibold text-gray-700">業種別ショップ分布</span>
           </div>
-          <div className="flex items-center gap-6 mt-2">
-            <svg viewBox="0 0 200 200" className="w-44 h-44 shrink-0 anim-pie" style={{ animationDelay: "500ms" }}>
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 mt-2">
+            <svg viewBox="0 0 200 200" className="w-32 h-32 sm:w-44 sm:h-44 shrink-0 anim-pie" style={{ animationDelay: "500ms" }}>
               {industryDistribution.length === 0 ? (
                 <circle cx={100} cy={100} r={80} fill="#F3F4F6" />
               ) : industryDistribution.length === 1 ? (

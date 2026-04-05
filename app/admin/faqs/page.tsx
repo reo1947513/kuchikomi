@@ -70,10 +70,10 @@ export default function FaqsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">質問管理（Q&A）</h1>
+      <h1 className="text-xl md:text-2xl font-bold text-gray-900">質問管理（Q&A）</h1>
 
       {/* Add form */}
-      <div className="bg-white rounded-xl shadow-sm p-5">
+      <div className="bg-white rounded-xl shadow-sm p-3 sm:p-5">
         <h2 className="text-sm font-semibold text-gray-800 mb-3">新規質問を追加</h2>
         <form onSubmit={handleAdd} className="space-y-3">
           {error && (
@@ -119,7 +119,7 @@ export default function FaqsPage() {
           <p className="p-6 text-center text-sm text-gray-400">質問がまだありません</p>
         ) : (
           faqs.map((faq) => (
-            <div key={faq.id} className="px-5 py-4 flex items-start gap-3">
+            <div key={faq.id} className="px-3 sm:px-5 py-4 flex items-start gap-3">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-r from-cyan-500 to-violet-500 flex items-center justify-center text-white text-xs font-bold">Q</span>
