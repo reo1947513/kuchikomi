@@ -14,6 +14,8 @@ type Contact = {
   content: string;
   source: string;
   status: string;
+  userId: string | null;
+  user: { loginId: string | null; shopName: string | null } | null;
   createdAt: string;
 };
 
@@ -119,7 +121,7 @@ export default function ContactsPage() {
         </div>
       ) : (
         <div className="bg-white rounded-xl shadow-sm overflow-x-auto">
-          <table className="w-full text-sm min-w-[900px]">
+          <table className="w-full text-sm min-w-[1100px]">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
                 <th className="text-left px-4 py-3 font-medium text-gray-600 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("createdAt")}>日時{sortKey === "createdAt" && (sortDir === "asc" ? " \u25B2" : " \u25BC")}</th>
@@ -128,6 +130,8 @@ export default function ContactsPage() {
                 <th className="text-left px-4 py-3 font-medium text-gray-600 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("companyName")}>会社名 / 店舗名{sortKey === "companyName" && (sortDir === "asc" ? " \u25B2" : " \u25BC")}</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-600 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("lastName")}>名前{sortKey === "lastName" && (sortDir === "asc" ? " \u25B2" : " \u25BC")}</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-600 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("email")}>メール{sortKey === "email" && (sortDir === "asc" ? " \u25B2" : " \u25BC")}</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-600">顧客ID</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-600">店舗名</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-600">経由</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-600 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("status")}>対応状況{sortKey === "status" && (sortDir === "asc" ? " \u25B2" : " \u25BC")}</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-600"></th>
@@ -146,6 +150,8 @@ export default function ContactsPage() {
                   <td className="px-4 py-3 text-gray-800">{c.companyName}</td>
                   <td className="px-4 py-3 text-gray-800">{c.lastName} {c.firstName}</td>
                   <td className="px-4 py-3 text-gray-500">{c.email}</td>
+                  <td className="px-4 py-3 text-gray-500 text-xs">{c.user?.loginId || "—"}</td>
+                  <td className="px-4 py-3 text-gray-800 text-xs">{c.user?.shopName || "—"}</td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${c.source === "hp" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"}`}>
                       {c.source === "hp" ? "HP" : "管理画面"}
@@ -185,6 +191,8 @@ export default function ContactsPage() {
               <div className="divide-y divide-gray-100">
                 {[
                   ["受信日時", formatDate(selected.createdAt)],
+                  ["顧客ID", selected.user?.loginId || "—"],
+                  ["店舗名", selected.user?.shopName || "—"],
                   ["お問い合わせ項目", selected.category],
                   ["ご契約状況", selected.contractStatus],
                   ["会社名 / 店舗名", selected.companyName],
