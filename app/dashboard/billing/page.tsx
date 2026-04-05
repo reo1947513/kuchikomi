@@ -194,6 +194,13 @@ export default function BillingPage() {
   const hasSubscription = !!user.stripeSubscriptionId;
   const hasPlan = !!user.planType;
 
+  const planRank: Record<string, number> = {
+    light: 1, lifetime_light: 1,
+    standard: 2, lifetime_standard: 2,
+    premium: 3, lifetime_premium: 3,
+  };
+  const currentRank = planRank[user.planType ?? ""] ?? 0;
+
   return (
     <div className="space-y-8">
       <h1 className="text-lg sm:text-2xl font-bold text-gray-900">プラン・お支払い</h1>
@@ -263,7 +270,7 @@ export default function BillingPage() {
                 <p className="text-sm text-gray-500 mt-1">{plan.reviews === 0 ? "無制限" : `月間 ${plan.reviews}件 まで`}</p>
                 <button
                   onClick={() => handleCheckout(plan.priceId, plan.mode)}
-                  disabled={!plan.priceId || isCurrent || isLifetime || !!checkoutLoading}
+                  disabled={!plan.priceId || isCurrent || isLifetime || (planRank[plan.planType] ?? 0) <= currentRank || !!checkoutLoading}
                   className="mt-4 w-full px-4 py-2.5 text-sm font-medium text-white bg-violet-600 rounded-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px]"
                 >
                   {checkoutLoading === plan.priceId
@@ -272,8 +279,10 @@ export default function BillingPage() {
                     ? "現在のプラン"
                     : isLifetime
                     ? "永年ライセンス利用中"
+                    : (planRank[plan.planType] ?? 0) < currentRank
+                    ? "ダウングレード不可"
                     : hasPlan
-                    ? "プラン変更"
+                    ? "アップグレード"
                     : "申し込む"}
                 </button>
               </div>
@@ -300,13 +309,15 @@ export default function BillingPage() {
                 <p className="text-sm text-gray-500 mt-1">{plan.reviews === 0 ? "無制限" : `月間 ${plan.reviews}件 まで`}</p>
                 <button
                   onClick={() => handleCheckout(plan.priceId, plan.mode)}
-                  disabled={!plan.priceId || isCurrent || !!checkoutLoading}
+                  disabled={!plan.priceId || isCurrent || (planRank[plan.planType] ?? 0) <= currentRank || !!checkoutLoading}
                   className="mt-4 w-full px-4 py-2.5 text-sm font-medium text-white bg-amber-600 rounded-lg hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px]"
                 >
                   {checkoutLoading === plan.priceId
                     ? "処理中..."
                     : isCurrent
                     ? "現在のプラン"
+                    : (planRank[plan.planType] ?? 0) < currentRank
+                    ? "ダウングレード不可"
                     : "購入する"}
                 </button>
               </div>
