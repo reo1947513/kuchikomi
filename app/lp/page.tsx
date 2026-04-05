@@ -214,10 +214,10 @@ export default function LpPage() {
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-indigo-950 to-violet-950" />
-        {/* Decorative blobs */}
-        <BgBlob className="w-[600px] h-[600px] bg-cyan-500 -top-40 -left-40 opacity-30" />
-        <BgBlob className="w-[500px] h-[500px] bg-violet-500 top-1/3 -right-40 opacity-25" />
-        <BgBlob className="w-[400px] h-[400px] bg-fuchsia-500 bottom-0 left-1/3 opacity-20" />
+        {/* Decorative blobs with animation */}
+        <BgBlob className="w-[600px] h-[600px] bg-cyan-500 -top-40 -left-40 opacity-30 animate-[float_8s_ease-in-out_infinite]" />
+        <BgBlob className="w-[500px] h-[500px] bg-violet-500 top-1/3 -right-40 opacity-25 animate-[float_10s_ease-in-out_infinite_1s]" />
+        <BgBlob className="w-[400px] h-[400px] bg-fuchsia-500 bottom-0 left-1/3 opacity-20 animate-[float_12s_ease-in-out_infinite_2s]" />
         {/* Dot grid overlay */}
         <div
           className="absolute inset-0 opacity-[0.03]"
@@ -227,30 +227,53 @@ export default function LpPage() {
             backgroundSize: "32px 32px",
           }}
         />
+        <style>{`
+          @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.05); }
+          }
+          @keyframes heroFadeUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes heroScale {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+          }
+          @keyframes heroPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(6,182,212,0.4); }
+            50% { box-shadow: 0 0 40px 10px rgba(6,182,212,0.2); }
+          }
+          @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+          }
+        `}</style>
         <div className="relative max-w-5xl mx-auto text-center px-4 py-24">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white/90 text-sm font-medium px-5 py-2 rounded-full mb-8">
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white/90 text-sm font-medium px-5 py-2 rounded-full mb-8" style={{ animation: "heroFadeUp 0.8s ease-out forwards", opacity: 0 }}>
             <span>🚀</span>
             <span>店舗集客の新常識</span>
           </div>
-          <h1 className="text-4xl md:text-6xl lg:text-8xl font-extrabold leading-tight tracking-tight">
-            <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-6xl lg:text-8xl font-extrabold leading-tight tracking-tight" style={{ animation: "heroScale 1s ease-out 0.3s forwards", opacity: 0 }}>
+            <span style={{ backgroundImage: "linear-gradient(90deg, #22d3ee, #a78bfa, #d946ef, #22d3ee)", backgroundSize: "200% auto", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", animation: "shimmer 4s linear infinite" }}>
               口コミが、
             </span>
             <br />
-            <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+            <span style={{ backgroundImage: "linear-gradient(90deg, #22d3ee, #a78bfa, #d946ef, #22d3ee)", backgroundSize: "200% auto", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", animation: "shimmer 4s linear infinite 0.5s" }}>
               勝手に増える。
             </span>
           </h1>
-          <p className="mt-8 text-lg md:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-8 text-lg md:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed" style={{ animation: "heroFadeUp 0.8s ease-out 0.6s forwards", opacity: 0 }}>
             たった3分のアンケートで、AIが高品質な口コミを自動生成。
             <br className="hidden md:block" />
             Googleマップの評価を劇的に改善します。
           </p>
-          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4" style={{ animation: "heroFadeUp 0.8s ease-out 0.9s forwards", opacity: 0 }}>
             <button
               onClick={() => scrollTo("contact")}
               className="bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold px-10 py-5 rounded-full text-lg shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-all"
+              style={{ animation: "heroPulse 3s ease-in-out infinite 1.5s" }}
             >
               まずは無料相談
             </button>
@@ -727,20 +750,14 @@ export default function LpPage() {
           </div>
           <div className="block">
             <a
-              href="mailto:conestkawakami@gmail.com"
+              href="/dashboard/contact"
               className="inline-block bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold px-12 py-5 rounded-full text-lg shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-all"
             >
               無料相談する
             </a>
           </div>
           <p className="mt-8 text-sm text-gray-400">
-            メールアドレス:{" "}
-            <a
-              href="mailto:conestkawakami@gmail.com"
-              className="underline hover:text-gray-200 transition-colors"
-            >
-              conestkawakami@gmail.com
-            </a>
+            お問い合わせフォームよりお気軽にご連絡ください
           </p>
         </div>
       </Section>
