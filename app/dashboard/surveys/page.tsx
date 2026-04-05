@@ -267,6 +267,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showLimitPopup, setShowLimitPopup] = useState(false);
+  const [limitPopupType, setLimitPopupType] = useState<"reached" | "warning">("reached");
 
   useEffect(() => {
     fetch("/api/dashboard")
@@ -277,12 +278,26 @@ export default function DashboardPage() {
         if (d.survey) {
           const limit = d.survey.monthlyReviewLimit;
           const count = d.survey.monthlyReviewCount ?? 0;
-          if (limit > 0 && count >= limit) {
-            const key = "limitPopupCount";
-            const shown = parseInt(sessionStorage.getItem(key) || "0", 10);
-            if (shown < 5) {
-              setShowLimitPopup(true);
-              sessionStorage.setItem(key, String(shown + 1));
+          if (limit > 0) {
+            const remaining = limit - count;
+            if (remaining <= 0) {
+              // Limit reached
+              const key = "limitReachedPopupCount";
+              const shown = parseInt(sessionStorage.getItem(key) || "0", 10);
+              if (shown < 5) {
+                setLimitPopupType("reached");
+                setShowLimitPopup(true);
+                sessionStorage.setItem(key, String(shown + 1));
+              }
+            } else if (remaining <= Math.max(3, Math.ceil(limit * 0.1))) {
+              // Warning: 10% or 3 remaining, whichever is larger
+              const key = "limitWarningPopupCount";
+              const shown = parseInt(sessionStorage.getItem(key) || "0", 10);
+              if (shown < 5) {
+                setLimitPopupType("warning");
+                setShowLimitPopup(true);
+                sessionStorage.setItem(key, String(shown + 1));
+              }
             }
           }
         }
@@ -392,21 +407,23 @@ export default function DashboardPage() {
 
       {data.survey && <RecentSessions sessions={data.recentSessions} shopName={shopName} />}
 
-      {/* Limit reached popup */}
+      {/* Limit warning/reached popup */}
       {showLimitPopup && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={() => setShowLimitPopup(false)}>
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden" onClick={(e) => e.stopPropagation()}>
-            <div className="bg-gradient-to-r from-red-500 to-orange-500 px-5 py-4">
+            <div className={`px-5 py-4 ${limitPopupType === "reached" ? "bg-gradient-to-r from-red-500 to-orange-500" : "bg-gradient-to-r from-amber-500 to-orange-400"}`}>
               <h3 className="text-white font-bold flex items-center gap-2">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
                 </svg>
-                口コミ生成の上限に達しました
+                {limitPopupType === "reached" ? "口コミ生成の上限に達しました" : "口コミ生成の上限が近づいています"}
               </h3>
             </div>
             <div className="p-5 space-y-4">
               <p className="text-sm text-gray-600">
-                今月の口コミ生成数が上限（{data.survey?.monthlyReviewLimit}件）に達しています。アンケートからの口コミ生成が一時停止中です。
+                {limitPopupType === "reached"
+                  ? `今月の口コミ生成数が上限（${data.survey?.monthlyReviewLimit}件）に達しています。アンケートからの口コミ生成が一時停止中です。`
+                  : `今月の口コミ生成数が ${thisMonthCount}/${data.survey?.monthlyReviewLimit}件 です。上限に達すると口コミの自動生成が停止します。`}
               </p>
               <div className="flex flex-col gap-2">
                 <a
