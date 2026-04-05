@@ -63,7 +63,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
     <div className="bg-white/60 backdrop-blur-sm border border-white/40 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-6 py-5 text-left font-semibold text-gray-800 hover:bg-white/40 transition-colors"
+        className="w-full flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 text-left text-sm sm:text-base font-semibold text-gray-800 hover:bg-white/40 transition-colors"
       >
         <span>{q}</span>
         <svg
@@ -88,7 +88,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
         }`}
       >
         <div className="overflow-hidden">
-          <p className="px-6 pb-5 text-gray-600 leading-relaxed">{a}</p>
+          <p className="px-4 sm:px-6 pb-4 sm:pb-5 text-sm sm:text-base text-gray-600 leading-relaxed">{a}</p>
         </div>
       </div>
     </div>
@@ -138,7 +138,7 @@ export default function LpPage() {
       {/* ───────── Header ───────── */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
-          <Image src="/logo.png" alt="ComiSta" width={160} height={48} />
+          <Image src="/logo.png" alt="ComiSta" width={120} height={36} className="sm:w-[160px]" />
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-8">
@@ -257,7 +257,7 @@ export default function LpPage() {
             <span>🚀</span>
             <span>店舗集客の新常識</span>
           </div>
-          <h1 className="text-4xl md:text-6xl lg:text-8xl font-extrabold leading-tight tracking-tight" style={{ animation: "heroScale 1s ease-out 0.3s forwards", opacity: 0 }}>
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold leading-tight tracking-tight" style={{ animation: "heroScale 1s ease-out 0.3s forwards", opacity: 0 }}>
             <span style={{ backgroundImage: "linear-gradient(90deg, #22d3ee, #a78bfa, #d946ef, #22d3ee)", backgroundSize: "200% auto", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", animation: "shimmer 4s linear infinite" }}>
               口コミが、
             </span>
@@ -266,15 +266,17 @@ export default function LpPage() {
               勝手に増える。
             </span>
           </h1>
-          <p className="mt-8 text-lg md:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed" style={{ animation: "heroFadeUp 0.8s ease-out 0.6s forwards", opacity: 0 }}>
-            たった3分のアンケートで、AIが高品質な口コミを自動生成。
-            <br className="hidden md:block" />
+          <p className="mt-6 sm:mt-8 text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed px-2" style={{ animation: "heroFadeUp 0.8s ease-out 0.6s forwards", opacity: 0 }}>
+            たった3分のアンケートで、
+            <br className="sm:hidden" />
+            AIが高品質な口コミを自動生成。
+            <br />
             Googleマップの評価を劇的に改善します。
           </p>
-          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4" style={{ animation: "heroFadeUp 0.8s ease-out 0.9s forwards", opacity: 0 }}>
+          <div className="mt-8 sm:mt-12 flex flex-col sm:flex-row items-center justify-center gap-4" style={{ animation: "heroFadeUp 0.8s ease-out 0.9s forwards", opacity: 0 }}>
             <button
               onClick={() => scrollTo("contact")}
-              className="bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold px-10 py-5 rounded-full text-lg shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-all"
+              className="bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold px-8 sm:px-10 py-4 sm:py-5 rounded-full text-base sm:text-lg shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-all"
               style={{ animation: "heroPulse 3s ease-in-out infinite 1.5s" }}
             >
               お問い合わせはこちら
@@ -289,12 +291,13 @@ export default function LpPage() {
       </section>
 
       {/* ───────── Problem ───────── */}
-      <Section className="relative py-24 md:py-32 bg-white overflow-hidden">
+      <Section className="relative py-16 sm:py-24 md:py-32 bg-white overflow-hidden">
         <BgBlob className="w-[500px] h-[500px] bg-red-300 -top-60 -right-60" />
         <BgBlob className="w-[400px] h-[400px] bg-orange-300 bottom-0 -left-40" />
         <div className="relative max-w-6xl mx-auto px-4">
-          <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-10 sm:mb-16 px-2">
             その悩み、
+            <br className="sm:hidden" />
             <span className="bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
               ComiSta
             </span>
@@ -339,7 +342,7 @@ export default function LpPage() {
       </Section>
 
       {/* ───────── Solution ───────── */}
-      <Section className="relative py-24 md:py-32 overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-violet-50">
+      <Section className="relative py-16 sm:py-24 md:py-32 overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-violet-50">
         <BgBlob className="w-[500px] h-[500px] bg-cyan-300 top-20 -left-60" />
         <BgBlob className="w-[400px] h-[400px] bg-violet-300 -bottom-40 -right-40" />
         {/* Dot grid overlay */}
@@ -352,14 +355,14 @@ export default function LpPage() {
           }}
         />
         <div className="relative max-w-5xl mx-auto px-4">
-          <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-4 px-2">
             仕組みはシンプル。
-            <br className="md:hidden" />
+            <br className="sm:hidden" />
             <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
               効果は絶大。
             </span>
           </h2>
-          <p className="text-center text-gray-500 mb-16 text-lg">
+          <p className="text-center text-gray-500 mb-10 sm:mb-16 text-base sm:text-lg">
             3ステップで口コミを簡単収集
           </p>
           <div className="grid md:grid-cols-3 gap-8">
@@ -405,7 +408,7 @@ export default function LpPage() {
       </Section>
 
       {/* ───────── Features ───────── */}
-      <Section id="features" className="relative py-24 md:py-32 overflow-hidden bg-gradient-to-br from-gray-950 via-indigo-950 to-violet-950">
+      <Section id="features" className="relative py-16 sm:py-24 md:py-32 overflow-hidden bg-gradient-to-br from-gray-950 via-indigo-950 to-violet-950">
         <BgBlob className="w-[600px] h-[600px] bg-cyan-500 -top-40 -right-60 opacity-15" />
         <BgBlob className="w-[500px] h-[500px] bg-violet-500 bottom-0 -left-40 opacity-15" />
         <div
@@ -417,7 +420,7 @@ export default function LpPage() {
           }}
         />
         <div className="relative max-w-6xl mx-auto px-4">
-          <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-10 sm:mb-16 px-2">
             <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
               選ばれ続ける、6つの理由
             </span>
@@ -481,13 +484,13 @@ export default function LpPage() {
       </Section>
 
       {/* ───────── Target Industries ───────── */}
-      <Section className="relative py-24 md:py-32 bg-white overflow-hidden">
+      <Section className="relative py-16 sm:py-24 md:py-32 bg-white overflow-hidden">
         <BgBlob className="w-[500px] h-[500px] bg-cyan-200 top-0 -right-60" />
         <BgBlob className="w-[400px] h-[400px] bg-violet-200 -bottom-40 left-0" />
         <div className="relative max-w-5xl mx-auto px-4">
-          <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-10 sm:mb-16 px-2">
             あらゆる店舗ビジネスに、
-            <br className="md:hidden" />
+            <br className="sm:hidden" />
             <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
               すぐ導入。
             </span>
@@ -514,7 +517,7 @@ export default function LpPage() {
       </Section>
 
       {/* ───────── Pricing ───────── */}
-      <Section id="pricing" className="relative py-24 md:py-32 overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-violet-50">
+      <Section id="pricing" className="relative py-16 sm:py-24 md:py-32 overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-violet-50">
         <BgBlob className="w-[600px] h-[600px] bg-cyan-300 -top-60 -left-60" />
         <BgBlob className="w-[500px] h-[500px] bg-violet-300 bottom-0 -right-60" />
         <div
@@ -526,13 +529,13 @@ export default function LpPage() {
           }}
         />
         <div className="relative max-w-6xl mx-auto px-4">
-          <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-3">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-3 px-2">
             始めやすい、
             <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
               続けやすい。
             </span>
           </h2>
-          <p className="text-center text-gray-500 mb-16 text-lg">
+          <p className="text-center text-gray-500 mb-10 sm:mb-16 text-base sm:text-lg">
             全プラン初期費用0円
           </p>
           <div className="grid md:grid-cols-3 gap-6 items-start">
@@ -579,7 +582,7 @@ export default function LpPage() {
                 <h3 className="font-bold text-lg mb-1">{plan.name}</h3>
                 <p className="text-xs text-gray-500 mb-4">{plan.target}</p>
                 <div className="mb-6">
-                  <span className="text-5xl font-black bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+                  <span className="text-4xl sm:text-5xl font-black bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
                     ¥{plan.price}
                   </span>
                   <span className="text-gray-500 text-sm">/月</span>
@@ -633,11 +636,11 @@ export default function LpPage() {
       </Section>
 
       {/* ───────── Flow ───────── */}
-      <Section id="flow" className="relative py-24 md:py-32 bg-white overflow-hidden">
+      <Section id="flow" className="relative py-16 sm:py-24 md:py-32 bg-white overflow-hidden">
         <BgBlob className="w-[500px] h-[500px] bg-cyan-200 -top-40 left-1/3" />
         <BgBlob className="w-[400px] h-[400px] bg-violet-200 -bottom-40 right-1/4" />
         <div className="relative max-w-5xl mx-auto px-4">
-          <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-10 sm:mb-16 px-2">
             最短即日、
             <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
               かんたん4ステップ
@@ -682,13 +685,13 @@ export default function LpPage() {
       </Section>
 
       {/* ───────── FAQ ───────── */}
-      <Section id="faq" className="relative py-24 md:py-32 overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-violet-50">
+      <Section id="faq" className="relative py-16 sm:py-24 md:py-32 overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-violet-50">
         <BgBlob className="w-[500px] h-[500px] bg-cyan-200 -top-60 -left-40" />
         <BgBlob className="w-[400px] h-[400px] bg-violet-200 bottom-0 -right-40" />
         <div className="relative max-w-3xl mx-auto px-4">
-          <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-10 sm:mb-16 px-2">
             気になるギモン、
-            <br className="md:hidden" />
+            <br className="sm:hidden" />
             <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
               すべて解消。
             </span>
@@ -723,7 +726,7 @@ export default function LpPage() {
       </Section>
 
       {/* ───────── CTA / Contact ───────── */}
-      <Section id="contact" className="relative py-24 md:py-32 overflow-hidden">
+      <Section id="contact" className="relative py-16 sm:py-24 md:py-32 overflow-hidden">
         {/* Dark gradient background */}
         <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-indigo-950 to-violet-950" />
         <BgBlob className="w-[600px] h-[600px] bg-cyan-500 -top-60 -left-40 opacity-25" />
@@ -737,7 +740,7 @@ export default function LpPage() {
           }}
         />
         <div className="relative max-w-3xl mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-5xl font-extrabold mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold mb-4 px-2">
             <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
               今日から、口コミで差をつけよう。
             </span>
@@ -753,7 +756,7 @@ export default function LpPage() {
           <div className="block">
             <a
               href="/contact"
-              className="inline-block bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold px-12 py-5 rounded-full text-lg shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-all"
+              className="inline-block bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold px-8 sm:px-12 py-4 sm:py-5 rounded-full text-base sm:text-lg shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-all"
             >
               お問い合わせ
             </a>
