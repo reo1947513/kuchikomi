@@ -759,6 +759,90 @@ export default function LpPage() {
         </div>
       </Section>
 
+      {/* ───────── Comparison ───────── */}
+      <Section className="relative py-16 sm:py-24 md:py-32 bg-white overflow-hidden">
+        <BgBlob className="w-[500px] h-[500px] bg-cyan-200 -top-40 -left-60" />
+        <BgBlob className="w-[400px] h-[400px] bg-violet-200 -bottom-40 -right-40" />
+        <div className="relative max-w-4xl mx-auto px-4">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-4 px-2">
+            他社サービスとの
+            <br className="sm:hidden" />
+            <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+              比較
+            </span>
+          </h2>
+          <p className="text-center text-gray-500 mb-10 sm:mb-14 text-sm sm:text-base">ComiStaが選ばれる理由をご確認ください</p>
+          <div className="overflow-x-auto rounded-2xl shadow-lg border border-gray-200">
+            <table className="w-full text-sm min-w-[600px]">
+              <thead>
+                <tr>
+                  <th className="text-left px-4 sm:px-6 py-4 bg-gray-50 font-semibold text-gray-600 w-1/3">比較項目</th>
+                  <th className="px-4 sm:px-6 py-4 bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold text-center">
+                    ComiSta
+                  </th>
+                  <th className="px-4 sm:px-6 py-4 bg-gray-100 text-gray-500 font-medium text-center">他社A</th>
+                  <th className="px-4 sm:px-6 py-4 bg-gray-100 text-gray-500 font-medium text-center">他社B</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {[
+                  { item: "初期費用", comista: "0円", a: "50,000円〜", b: "30,000円〜" },
+                  { item: "口コミ自動生成（AI）", comista: true, a: false, b: false },
+                  { item: "チャット形式アンケート", comista: true, a: false, b: true },
+                  { item: "QRコードで即導入", comista: true, a: true, b: false },
+                  { item: "リアルタイム分析", comista: true, a: true, b: false },
+                  { item: "月額料金", comista: "¥6,000〜", a: "¥15,000〜", b: "¥10,000〜" },
+                ].map((row) => (
+                  <tr key={row.item} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-4 sm:px-6 py-4 font-medium text-gray-800">{row.item}</td>
+                    <td className="px-4 sm:px-6 py-4 text-center">
+                      {typeof row.comista === "boolean" ? (
+                        row.comista ? (
+                          <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-cyan-100">
+                            <svg className="w-4 h-4 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                          </span>
+                        ) : (
+                          <span className="text-gray-300 text-lg">—</span>
+                        )
+                      ) : (
+                        <span className="font-bold text-cyan-600">{row.comista}</span>
+                      )}
+                    </td>
+                    <td className="px-4 sm:px-6 py-4 text-center">
+                      {typeof row.a === "boolean" ? (
+                        row.a ? (
+                          <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gray-100">
+                            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                          </span>
+                        ) : (
+                          <span className="text-gray-300 text-lg">—</span>
+                        )
+                      ) : (
+                        <span className="text-gray-500">{row.a}</span>
+                      )}
+                    </td>
+                    <td className="px-4 sm:px-6 py-4 text-center">
+                      {typeof row.b === "boolean" ? (
+                        row.b ? (
+                          <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gray-100">
+                            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                          </span>
+                        ) : (
+                          <span className="text-gray-300 text-lg">—</span>
+                        )
+                      ) : (
+                        <span className="text-gray-500">{row.b}</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-center text-xs text-gray-400 mt-4">※ 2026年4月時点の一般的な口コミ支援サービスとの比較です</p>
+        </div>
+      </Section>
+
       {/* ───────── Flow ───────── */}
       <Section id="flow" className="relative py-16 sm:py-24 md:py-32 bg-white overflow-hidden">
         <BgBlob className="w-[500px] h-[500px] bg-cyan-200 -top-40 left-1/3" />
