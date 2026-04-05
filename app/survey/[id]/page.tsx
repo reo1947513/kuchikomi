@@ -194,7 +194,14 @@ export default function SurveyPage({
       const nextQ = questions[nextIndex];
       const botMsg: Message = { role: "bot", text: nextQ.text };
 
-      setMessages((prev) => [...prev, userMsg, botMsg]);
+      // Show user answer first
+      setMessages((prev) => [...prev, userMsg]);
+      setPhase({ type: "loading_session" }); // temporarily disable input
+
+      // Delay before showing bot's next question
+      await new Promise((r) => setTimeout(r, 800));
+
+      setMessages((prev) => [...prev, botMsg]);
 
       if (nextQ.type === "text") {
         setPhase({ type: "text_input", questionIndex: nextIndex });
@@ -207,7 +214,9 @@ export default function SurveyPage({
         role: "bot",
         text: session?.survey?.closingMessage || "ありがとうございました！",
       };
-      setMessages((prev) => [...prev, userMsg, thankMsg]);
+      setMessages((prev) => [...prev, userMsg]);
+      await new Promise((r) => setTimeout(r, 800));
+      setMessages((prev) => [...prev, thankMsg]);
       setPhase({ type: "generating" });
       await generateReview();
     }
