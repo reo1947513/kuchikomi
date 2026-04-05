@@ -546,6 +546,11 @@ export default function LpPage() {
                 limit: "月50件",
                 target: "小規模店舗",
                 popular: false,
+                features: [
+                  "AIによる口コミ自動生成",
+                  "チャット形式アンケート",
+                  "QRコード発行",
+                ],
               },
               {
                 name: "スタンダードプラン",
@@ -553,6 +558,13 @@ export default function LpPage() {
                 limit: "月100件",
                 target: "中規模店舗",
                 popular: true,
+                features: [
+                  "AIによる口コミ自動生成",
+                  "チャット形式アンケート",
+                  "QRコード発行",
+                  "リアルタイム分析",
+                  "カスタマーサポート",
+                ],
               },
               {
                 name: "プレミアムプラン",
@@ -560,6 +572,14 @@ export default function LpPage() {
                 limit: "月300件",
                 target: "大規模・複数店舗",
                 popular: false,
+                features: [
+                  "AIによる口コミ自動生成",
+                  "チャット形式アンケート",
+                  "QRコード発行",
+                  "リアルタイム分析",
+                  "AI分析レポート",
+                  "優先カスタマーサポート",
+                ],
               },
             ].map((plan) => (
               <div
@@ -591,13 +611,7 @@ export default function LpPage() {
                   {plan.limit}
                 </p>
                 <ul className="space-y-3 text-sm text-gray-600">
-                  {[
-                    "AIによる口コミ自動生成",
-                    "チャット形式アンケート",
-                    "QRコード発行",
-                    "リアルタイム分析",
-                    "カスタマーサポート",
-                  ].map((feat) => (
+                  {plan.features.map((feat) => (
                     <li key={feat} className="flex items-center gap-2">
                       <svg
                         className="w-4 h-4 text-cyan-500 shrink-0"

@@ -13,14 +13,24 @@ type AnalysisData = {
   monthlySessions: MonthlySession[];
 };
 
+const LOCKED_PLANS = [null, "light", "lifetime_light"];
+
 export default function AnalysisPage() {
   const [data, setData] = useState<AnalysisData | null>(null);
   const [loading, setLoading] = useState(true);
   const [analysisText, setAnalysisText] = useState<string | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
+  const [planType, setPlanType] = useState<string | null>(null);
+  const [planLoaded, setPlanLoaded] = useState(false);
 
   useEffect(() => {
+    fetch("/api/auth/me")
+      .then((r) => r.json())
+      .then((d) => setPlanType(d.planType ?? null))
+      .catch(() => {})
+      .finally(() => setPlanLoaded(true));
+
     fetch("/api/dashboard/analysis")
       .then((r) => r.json())
       .then((d) => setData(d))
@@ -42,6 +52,34 @@ export default function AnalysisPage() {
       setAnalyzing(false);
     }
   };
+
+  if (planLoaded && LOCKED_PLANS.includes(planType)) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-lg sm:text-2xl font-bold text-gray-900">アンケート分析</h1>
+        </div>
+        <div className="relative bg-white rounded-xl shadow-sm p-8 sm:p-12 text-center overflow-hidden">
+          <div className="absolute inset-0 bg-gray-100/80 backdrop-blur-[2px]" />
+          <div className="relative z-10 flex flex-col items-center gap-4">
+            <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center">
+              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <h2 className="text-lg font-bold text-gray-700">分析機能はスタンダードプラン以上でご利用いただけます</h2>
+            <p className="text-sm text-gray-500 max-w-md">リアルタイム分析、月別回答数の推移、質問ごとの回答分布グラフ、AI分析レポートなどの機能をご利用いただけます。</p>
+            <a
+              href="/dashboard/billing"
+              className="mt-2 inline-block px-6 py-3 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white font-bold text-sm rounded-xl shadow transition-colors"
+            >
+              プランをアップグレード
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
