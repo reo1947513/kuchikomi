@@ -111,6 +111,13 @@ function BgBlob({
 /* ─── Main Page ─── */
 export default function LpPage() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showTop, setShowTop] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setShowTop(window.scrollY > 400);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const handleNav = useCallback((id: string) => {
     setMenuOpen(false);
@@ -127,9 +134,9 @@ export default function LpPage() {
   return (
     <div className="min-h-screen bg-gray-950 text-gray-900 overflow-x-hidden">
       {/* ───────── Header ───────── */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
-          <Image src="/logo.png" alt="ComiSta" width={120} height={36} />
+          <Image src="/logo.png" alt="ComiSta" width={160} height={48} />
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-8">
@@ -766,6 +773,17 @@ export default function LpPage() {
           </div>
         </div>
       </footer>
+
+      {/* ───────── Back to Top ───────── */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        className={`fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-gradient-to-r from-cyan-500 to-violet-500 text-white shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 ${showTop ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"}`}
+        aria-label="トップへ戻る"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 15l7-7 7 7" />
+        </svg>
+      </button>
     </div>
   );
 }
