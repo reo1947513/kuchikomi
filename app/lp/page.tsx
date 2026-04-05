@@ -190,44 +190,48 @@ export default function LpPage() {
           </button>
         </div>
 
-        {/* Mobile menu overlay */}
-        {menuOpen && (
-          <div
-            className="fixed inset-0 bg-black/50 z-40 md:hidden"
-            onClick={() => setMenuOpen(false)}
-          />
-        )}
-        {/* Mobile menu drawer */}
-        <div className={`fixed top-0 right-0 h-full w-72 bg-white z-50 shadow-2xl transition-transform duration-300 ease-out md:hidden ${menuOpen ? "translate-x-0" : "translate-x-full"}`}>
-          <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-            <span className="text-sm font-bold text-gray-800">メニュー</span>
-            <button onClick={() => setMenuOpen(false)} className="p-1 text-gray-400 hover:text-gray-600">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-          <nav className="px-5 py-4 space-y-1">
-            {navLinks.map((l) => (
-              <button
-                key={l.id}
-                onClick={() => handleNav(l.id)}
-                className="block w-full text-left py-3 px-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors"
-              >
-                {l.label}
-              </button>
-            ))}
-          </nav>
-          <div className="px-5 mt-2">
-            <button
-              onClick={() => window.location.href = "/contact"}
-              className="w-full bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-semibold py-3 rounded-full"
-            >
-              お問い合わせ
-            </button>
-          </div>
-        </div>
       </header>
+
+      {/* Mobile menu overlay */}
+      {menuOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-[60] md:hidden"
+          onClick={() => setMenuOpen(false)}
+        />
+      )}
+      {/* Mobile menu drawer */}
+      <div
+        className={`fixed top-0 right-0 h-full w-72 z-[70] shadow-2xl transition-transform duration-300 ease-out md:hidden ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
+        style={{ backgroundColor: "#ffffff" }}
+      >
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100" style={{ backgroundColor: "#ffffff" }}>
+          <span className="text-sm font-bold text-gray-800">メニュー</span>
+          <button onClick={() => setMenuOpen(false)} className="p-1 text-gray-400 hover:text-gray-600">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div className="px-5 py-4 space-y-1" style={{ backgroundColor: "#ffffff" }}>
+          {navLinks.map((l) => (
+            <button
+              key={l.id}
+              onClick={() => handleNav(l.id)}
+              className="block w-full text-left py-3 px-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors"
+            >
+              {l.label}
+            </button>
+          ))}
+        </div>
+        <div className="px-5 mt-2" style={{ backgroundColor: "#ffffff" }}>
+          <button
+            onClick={() => { setMenuOpen(false); window.location.href = "/contact"; }}
+            className="w-full bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-semibold py-3 rounded-full"
+          >
+            お問い合わせ
+          </button>
+        </div>
+      </div>
 
       {/* ───────── Hero ───────── */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
