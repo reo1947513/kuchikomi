@@ -48,6 +48,7 @@ type Message =
 
 type Phase =
   | { type: "loading_session" }
+  | { type: "waiting" }
   | { type: "questioning"; questionIndex: number }
   | { type: "text_input"; questionIndex: number }
   | { type: "generating" }
@@ -196,7 +197,7 @@ export default function SurveyPage({
 
       // Show user answer first
       setMessages((prev) => [...prev, userMsg]);
-      setPhase({ type: "loading_session" }); // temporarily disable input
+      setPhase({ type: "waiting" }); // temporarily disable input without showing spinner
 
       // Delay before showing bot's next question
       await new Promise((r) => setTimeout(r, 800));
@@ -245,17 +246,8 @@ export default function SurveyPage({
         completionMessage: string | null;
       } = await res.json();
 
-      // Open result in a new tab
-      window.open(`/survey/${surveyId}/result/${session.id}`, "_blank");
-
-      setReviewEditText(data.reviewText);
-      setPhase({
-        type: "done",
-        reviewText: data.reviewText,
-        googleBusinessUrl: data.googleBusinessUrl,
-        completionMessage: data.completionMessage ?? null,
-        sessionId: session.id,
-      });
+      // Redirect to result page
+      window.location.href = `/survey/${surveyId}/result/${session.id}`;
     } catch {
       setPhase({ type: "error", message: "口コミの生成に失敗しました。" });
     }
