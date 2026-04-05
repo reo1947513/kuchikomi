@@ -71,10 +71,13 @@ export async function GET() {
     monthlyCounts.push({ label, count });
   }
 
-  // Recent completed sessions (non-test)
+  // Recent completed sessions (non-test) with answers
   const recentSessions = await prisma.reviewSession.findMany({
     where: { surveyId: survey.id, status: "completed", isTest: false },
-    select: { id: true, reviewText: true, createdAt: true },
+    select: {
+      id: true, reviewText: true, createdAt: true,
+      answers: { select: { questionId: true, choiceId: true, textValue: true } },
+    },
     orderBy: { createdAt: "desc" },
     take: 50,
   });

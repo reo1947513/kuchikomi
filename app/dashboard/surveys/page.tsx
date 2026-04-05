@@ -9,7 +9,8 @@ type Survey = {
   id: string; title: string; monthlyReviewLimit: number; monthlyReviewCount: number;
   questions: Question[];
 };
-type Session = { id: string; reviewText: string | null; createdAt: string };
+type Answer = { questionId: string; choiceId: string | null; textValue: string | null };
+type Session = { id: string; reviewText: string | null; createdAt: string; answers: Answer[] };
 type MonthlyCount = { label: string; count: number };
 type AdviceItem = { id: string; content: string; dateFrom: string | null; dateTo: string | null; createdAt: string };
 type DashboardData = {
@@ -119,7 +120,7 @@ function LineChart({ data }: { data: MonthlyCount[] }) {
 }
 
 // ---- Recent Sessions ----
-function RecentSessions({ sessions, shopName }: { sessions: Session[]; shopName: string }) {
+function RecentSessions({ sessions, shopName, questions }: { sessions: Session[]; shopName: string; questions: Question[] }) {
   const PER_PAGE = 12;
   const [sort, setSort] = useState<"newest" | "oldest">("newest");
   const [dateFrom, setDateFrom] = useState("");
@@ -165,13 +166,38 @@ function RecentSessions({ sessions, shopName }: { sessions: Session[]; shopName:
               <div key={s.id} className="bg-white/70 backdrop-blur-sm rounded-xl shadow-sm border border-white/50 p-4">
                 <p className="font-medium text-gray-800 text-sm">{shopName}</p>
                 <p className="text-xs text-gray-400 mt-0.5">回答日時: {dateStr}</p>
-                {s.reviewText && (
-                  <button onClick={() => setExpanded(expanded === s.id ? null : s.id)}
-                    className="mt-2 text-xs font-medium text-violet-600 hover:text-violet-500 underline">
-                    関連する口コミ: 1件
-                  </button>
+                <div className="mt-2 flex gap-2">
+                  {s.answers?.length > 0 && (
+                    <button onClick={() => setExpanded(expanded === s.id + "-ans" ? null : s.id + "-ans")}
+                      className={`text-xs font-medium px-2 py-1 rounded-lg transition-colors ${expanded === s.id + "-ans" ? "bg-cyan-100 text-cyan-700" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}>
+                      アンケート回答
+                    </button>
+                  )}
+                  {s.reviewText && (
+                    <button onClick={() => setExpanded(expanded === s.id + "-rev" ? null : s.id + "-rev")}
+                      className={`text-xs font-medium px-2 py-1 rounded-lg transition-colors ${expanded === s.id + "-rev" ? "bg-violet-100 text-violet-700" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}>
+                      口コミ
+                    </button>
+                  )}
+                </div>
+                {expanded === s.id + "-ans" && s.answers && (
+                  <div className="mt-2 p-3 bg-cyan-50 border border-cyan-200 rounded-lg text-xs space-y-2">
+                    {questions.map((q) => {
+                      const ans = s.answers.find((a) => a.questionId === q.id);
+                      if (!ans) return null;
+                      const ansText = ans.choiceId
+                        ? q.choices.find((c) => c.id === ans.choiceId)?.text || "—"
+                        : ans.textValue || "—";
+                      return (
+                        <div key={q.id}>
+                          <p className="text-gray-500">{q.text}</p>
+                          <p className="font-medium text-gray-800">{ansText}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
                 )}
-                {expanded === s.id && s.reviewText && (
+                {expanded === s.id + "-rev" && s.reviewText && (
                   <div className="mt-2 p-3 bg-violet-50 border border-violet-200 rounded-lg text-xs text-gray-700 whitespace-pre-line">
                     {s.reviewText}
                   </div>
@@ -405,7 +431,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {data.survey && <RecentSessions sessions={data.recentSessions} shopName={shopName} />}
+      {data.survey && <RecentSessions sessions={data.recentSessions} shopName={shopName} questions={data.survey.questions} />}
 
       {/* Limit warning/reached popup */}
       {showLimitPopup && (
