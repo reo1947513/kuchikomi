@@ -77,10 +77,7 @@ export default function SignupPage() {
             </svg>
           </div>
           <h2 className="text-xl font-bold text-gray-900">アカウントが作成されました！</h2>
-          <div className="bg-gray-50 rounded-xl p-4 text-left space-y-2">
-            <p className="text-sm text-gray-600">ログインID: <span className="font-bold text-gray-900">{loginId}</span></p>
-            <p className="text-xs text-gray-400">このIDはログイン時に使用できます。メールアドレスでもログイン可能です。</p>
-          </div>
+          <p className="text-sm text-gray-500">登録いただいたメールアドレスでログインできます。</p>
           <a
             href="/login"
             className="inline-block w-full py-3 bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold text-sm rounded-xl"
