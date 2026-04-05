@@ -27,6 +27,12 @@ export async function GET(request: NextRequest) {
         contractEnd: true,
         noContractLimit: true,
         createdAt: true,
+        stripeCustomerId: true,
+        stripeSubscriptionId: true,
+        stripePriceId: true,
+        planType: true,
+        planReviewLimit: true,
+        additionalReviews: true,
       },
     });
 
