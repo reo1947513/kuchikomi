@@ -55,8 +55,8 @@ export async function POST(
     return NextResponse.json({ error: "Session not found" }, { status: 404 });
   }
 
-  // Check monthly review limit
-  if (session.survey.monthlyReviewCount >= session.survey.monthlyReviewLimit) {
+  // Check monthly review limit (0 = unlimited, e.g. premium plan)
+  if (session.survey.monthlyReviewLimit > 0 && session.survey.monthlyReviewCount >= session.survey.monthlyReviewLimit) {
     return NextResponse.json(
       { error: "今月の口コミ生成上限に達しました。プランのアップグレードまたは追加レビューの購入をご検討ください。" },
       { status: 429 }

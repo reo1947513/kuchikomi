@@ -48,8 +48,9 @@ model User {
   planReviewLimit      Int      @default(0)
   additionalReviews    Int      @default(0)
 
-  surveys      Survey[]
-  contacts     Contact[]
+  surveys        Survey[]
+  contacts       Contact[]
+  passwordResets PasswordReset[]
 }
 
 model Survey {
@@ -168,6 +169,16 @@ model Contact {
   userId         String?
   user           User?    @relation(fields: [userId], references: [id])
   createdAt      DateTime @default(now())
+}
+
+model PasswordReset {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  token     String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
 }
 
 model Faq {

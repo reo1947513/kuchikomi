@@ -25,7 +25,7 @@ const subscriptionPlans: PlanCard[] = [
   {
     name: "ライトプラン",
     priceLabel: "¥6,000/月",
-    reviews: 50,
+    reviews: 20,
     priceId: "", // Will be set from Stripe
     mode: "subscription",
     planType: "light",
@@ -33,7 +33,7 @@ const subscriptionPlans: PlanCard[] = [
   {
     name: "スタンダードプラン",
     priceLabel: "¥10,000/月",
-    reviews: 100,
+    reviews: 50,
     priceId: "",
     mode: "subscription",
     planType: "standard",
@@ -41,7 +41,7 @@ const subscriptionPlans: PlanCard[] = [
   {
     name: "プレミアムプラン",
     priceLabel: "¥20,000/月",
-    reviews: 300,
+    reviews: 0, // 0 = unlimited
     priceId: "",
     mode: "subscription",
     planType: "premium",
@@ -52,7 +52,7 @@ const lifetimePlans: PlanCard[] = [
   {
     name: "永年ライセンス ライト",
     priceLabel: "¥90,000（一括）",
-    reviews: 50,
+    reviews: 20,
     priceId: "",
     mode: "payment",
     planType: "lifetime_light",
@@ -60,7 +60,7 @@ const lifetimePlans: PlanCard[] = [
   {
     name: "永年ライセンス スタンダード",
     priceLabel: "¥150,000（一括）",
-    reviews: 100,
+    reviews: 50,
     priceId: "",
     mode: "payment",
     planType: "lifetime_standard",
@@ -260,7 +260,7 @@ export default function BillingPage() {
               >
                 <h3 className="text-base font-semibold text-gray-900">{plan.name}</h3>
                 <p className="text-xl sm:text-2xl font-bold text-gray-900 mt-2">{plan.priceLabel}</p>
-                <p className="text-sm text-gray-500 mt-1">月間 {plan.reviews}件 まで</p>
+                <p className="text-sm text-gray-500 mt-1">{plan.reviews === 0 ? "無制限" : `月間 ${plan.reviews}件 まで`}</p>
                 <button
                   onClick={() => handleCheckout(plan.priceId, plan.mode)}
                   disabled={!plan.priceId || isCurrent || isLifetime || !!checkoutLoading}
@@ -297,7 +297,7 @@ export default function BillingPage() {
               >
                 <h3 className="text-base font-semibold text-gray-900">{plan.name}</h3>
                 <p className="text-xl sm:text-2xl font-bold text-gray-900 mt-2">{plan.priceLabel}</p>
-                <p className="text-sm text-gray-500 mt-1">月間 {plan.reviews}件 まで</p>
+                <p className="text-sm text-gray-500 mt-1">{plan.reviews === 0 ? "無制限" : `月間 ${plan.reviews}件 まで`}</p>
                 <button
                   onClick={() => handleCheckout(plan.priceId, plan.mode)}
                   disabled={!plan.priceId || isCurrent || !!checkoutLoading}

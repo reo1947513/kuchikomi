@@ -152,7 +152,7 @@ export default function LpPage() {
               </button>
             ))}
             <button
-              onClick={() => scrollTo("contact")}
+              onClick={() => window.location.href = "/contact"}
               className="bg-gradient-to-r from-cyan-500 to-violet-500 text-white text-sm font-semibold px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity shadow-lg shadow-cyan-500/25"
             >
               お問い合わせ
@@ -203,7 +203,7 @@ export default function LpPage() {
               </button>
             ))}
             <button
-              onClick={() => handleNav("contact")}
+              onClick={() => window.location.href = "/contact"}
               className="mt-2 w-full bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-semibold py-3 rounded-full"
             >
               お問い合わせ
@@ -543,7 +543,7 @@ export default function LpPage() {
               {
                 name: "ライトプラン",
                 price: "6,000",
-                limit: "月50件",
+                limit: "月20件",
                 target: "小規模店舗",
                 popular: false,
                 features: [
@@ -555,7 +555,7 @@ export default function LpPage() {
               {
                 name: "スタンダードプラン",
                 price: "10,000",
-                limit: "月100件",
+                limit: "月50件",
                 target: "中規模店舗",
                 popular: true,
                 features: [
@@ -569,7 +569,7 @@ export default function LpPage() {
               {
                 name: "プレミアムプラン",
                 price: "20,000",
-                limit: "月300件",
+                limit: "無制限",
                 target: "大規模・複数店舗",
                 popular: false,
                 features: [
@@ -581,7 +581,7 @@ export default function LpPage() {
                   "CSVデータエクスポート",
                   "カスタムプロンプト",
                   "メール通知",
-                  "優先カスタマーサポート",
+                  "口コミ生成 無制限",
                 ],
               },
             ].map((plan) => (
@@ -654,9 +654,9 @@ export default function LpPage() {
           <p className="text-center text-sm text-gray-500 mb-8">月額不要・一括払いでずっと使える</p>
           <div className="grid md:grid-cols-3 gap-6 items-start">
             {[
-              { name: "ライト", price: "90,000", limit: "月50件", features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行"] },
-              { name: "スタンダード", price: "150,000", limit: "月100件", features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行", "リアルタイム分析", "カスタマーサポート"] },
-              { name: "プレミアム", price: "250,000", limit: "月300件", features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行", "リアルタイム分析", "AI分析レポート", "CSVデータエクスポート", "カスタムプロンプト", "メール通知", "優先カスタマーサポート"] },
+              { name: "ライト", price: "90,000", limit: "月20件", features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行"] },
+              { name: "スタンダード", price: "150,000", limit: "月50件", features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行", "リアルタイム分析", "カスタマーサポート"] },
+              { name: "プレミアム", price: "250,000", limit: "無制限", features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行", "リアルタイム分析", "AI分析レポート", "CSVデータエクスポート", "カスタムプロンプト", "メール通知", "口コミ生成 無制限"] },
             ].map((plan) => (
               <div key={plan.name} className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 border border-amber-200 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
                 <h3 className="font-bold text-lg mb-1">{plan.name}</h3>

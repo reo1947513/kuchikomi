@@ -172,6 +172,12 @@ export default function LoginPage() {
           >
             {isSubmitting ? "ログイン中..." : "ログイン"}
           </button>
+
+          <div className="text-center mt-4">
+            <a href="/forgot-password" className="text-sm text-gray-400 hover:text-violet-500 transition-colors">
+              パスワードをお忘れの方
+            </a>
+          </div>
         </form>
       </div>
       <footer className="text-center text-xs text-white/60 mt-6">
