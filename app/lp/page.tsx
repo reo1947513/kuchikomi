@@ -114,6 +114,7 @@ export default function LpPage() {
   const [showTop, setShowTop] = useState(false);
 
   useEffect(() => {
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
     window.scrollTo(0, 0);
     const onScroll = () => setShowTop(window.scrollY > 400);
     window.addEventListener("scroll", onScroll);

@@ -12,13 +12,14 @@ const contactSchema = z.object({
   email: z.string().email(),
   phone: z.string().min(1),
   content: z.string().min(1),
+  source: z.string().optional(),
 });
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const data = contactSchema.parse(body);
-    const contact = await prisma.contact.create({ data });
+    const contact = await prisma.contact.create({ data: { ...data, source: data.source || "dashboard" } });
     return NextResponse.json(contact, { status: 201 });
   } catch (e) {
     if (e instanceof z.ZodError) {

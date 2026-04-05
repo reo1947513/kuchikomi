@@ -69,6 +69,7 @@ export default function PublicContactPage() {
           email,
           phone: `${phone1}-${phone2}-${phone3}`,
           content,
+          source: "hp",
         }),
       });
       if (!res.ok) throw new Error();

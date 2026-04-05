@@ -12,6 +12,7 @@ type Contact = {
   email: string;
   phone: string;
   content: string;
+  source: string;
   status: string;
   createdAt: string;
 };
@@ -127,6 +128,7 @@ export default function ContactsPage() {
                 <th className="text-left px-4 py-3 font-medium text-gray-600 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("companyName")}>会社名 / 店舗名{sortKey === "companyName" && (sortDir === "asc" ? " \u25B2" : " \u25BC")}</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-600 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("lastName")}>名前{sortKey === "lastName" && (sortDir === "asc" ? " \u25B2" : " \u25BC")}</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-600 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("email")}>メール{sortKey === "email" && (sortDir === "asc" ? " \u25B2" : " \u25BC")}</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-600">経由</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-600 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("status")}>対応状況{sortKey === "status" && (sortDir === "asc" ? " \u25B2" : " \u25BC")}</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-600"></th>
               </tr>
@@ -144,6 +146,11 @@ export default function ContactsPage() {
                   <td className="px-4 py-3 text-gray-800">{c.companyName}</td>
                   <td className="px-4 py-3 text-gray-800">{c.lastName} {c.firstName}</td>
                   <td className="px-4 py-3 text-gray-500">{c.email}</td>
+                  <td className="px-4 py-3">
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${c.source === "hp" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"}`}>
+                      {c.source === "hp" ? "HP" : "管理画面"}
+                    </span>
+                  </td>
                   <td className="px-4 py-3">
                     <select
                       value={c.status || "未対応"}
