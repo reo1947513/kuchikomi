@@ -62,6 +62,8 @@ export default function ResultPage({
     } catch {
       // ignore
     }
+    // Track the click
+    fetch(`/api/sessions/${sessionId}/google-click`, { method: "POST" }).catch(() => {});
     window.open(url, "_blank");
   }
 

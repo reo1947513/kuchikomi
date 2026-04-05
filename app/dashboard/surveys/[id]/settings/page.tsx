@@ -137,6 +137,7 @@ export default function SurveySettingsPage() {
   const [chatIconPreset, setChatIconPreset] = useState<string>("home");
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState<string>("");
+  const [userPlanType, setUserPlanType] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -189,6 +190,7 @@ export default function SurveySettingsPage() {
   useEffect(() => {
     fetch("/api/auth/me").then(r => r.json()).then(d => {
       setUserRole(d.role ?? "");
+      setUserPlanType(d.planType ?? null);
       if (d.role === "super") setActiveTab("basic");
     }).catch(() => {});
   }, []);
@@ -693,15 +695,27 @@ export default function SurveySettingsPage() {
             </div>
 
             <Field label="AIプロンプトテンプレート（カスタム部分）">
-              <p className="text-xs text-gray-400 mb-1">
-                変数: &#123;tone&#125;, &#123;keywords&#125;
-              </p>
-              <textarea
-                value={promptTemplate}
-                onChange={(e) => setPromptTemplate(e.target.value)}
-                rows={12}
-                className={`${textareaCls} font-mono`}
-              />
+              {(userPlanType === "premium" || userPlanType === "lifetime_premium" || userRole === "super") ? (
+                <>
+                  <p className="text-xs text-gray-400 mb-1">
+                    変数: &#123;tone&#125;, &#123;keywords&#125;
+                  </p>
+                  <textarea
+                    value={promptTemplate}
+                    onChange={(e) => setPromptTemplate(e.target.value)}
+                    rows={12}
+                    className={`${textareaCls} font-mono`}
+                  />
+                </>
+              ) : (
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
+                  <svg className="w-6 h-6 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                  <p className="text-sm text-gray-500">プレミアムプランでカスタマイズ可能</p>
+                  <a href="/dashboard/billing" className="text-xs text-violet-500 hover:underline">プランをアップグレード</a>
+                </div>
+              )}
             </Field>
 
             <div>

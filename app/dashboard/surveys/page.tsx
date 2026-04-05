@@ -22,6 +22,7 @@ type DashboardData = {
   lastMonthCount: number;
   totalSessionCount: number;
   totalAccessCount: number;
+  googleClickCount: number;
 };
 
 // ---- Animated Number ----
@@ -286,6 +287,8 @@ export default function DashboardPage() {
   const questionCount = data.survey?.questions?.length ?? 0;
   const usageRate = data.survey ? Math.round((thisMonthCount / data.survey.monthlyReviewLimit) * 100) : 0;
   const completionRate = totalAccess > 0 ? Math.round((totalSessions / totalAccess) * 100) : 0;
+  const googleClickCount = data.googleClickCount ?? 0;
+  const googleClickRate = totalSessions > 0 ? Math.round((googleClickCount / totalSessions) * 100) : 0;
 
   const monthDiff = thisMonthCount - lastMonthCount;
   const monthDiffLabel = monthDiff > 0 ? `+${monthDiff}` : `${monthDiff}`;
@@ -297,6 +300,7 @@ export default function DashboardPage() {
     { label: "設問数", value: questionCount, suffix: "問", icon: "M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
     { label: "月間利用率", value: usageRate, suffix: "%", icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" },
     { label: "回答完了率", value: completionRate, suffix: "%", icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" },
+    { label: "口コミ投稿率", value: googleClickRate, suffix: "%", sub: `${googleClickCount}/${totalSessions}件`, subColor: "text-gray-500", icon: "M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 4.674h4.914c.969 0 1.371 1.24.588 1.81l-3.976 2.888 1.518 4.674c.3.921-.755 1.688-1.538 1.118L12 15.203l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914l1.518-4.674z" },
   ];
 
   return (

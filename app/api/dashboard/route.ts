@@ -79,6 +79,11 @@ export async function GET() {
     take: 50,
   });
 
+  // Google review click count
+  const googleClickCount = await prisma.reviewSession.count({
+    where: { surveyId: survey.id, status: "completed", googleClickedAt: { not: null } },
+  });
+
   // AI advice
   const adviceCount = await prisma.advice.count({
     where: { surveyId: survey.id, createdAt: { gte: startOfThisMonth } },
@@ -95,6 +100,6 @@ export async function GET() {
   return NextResponse.json({
     user, survey: surveyWithCount, monthlyCounts, recentSessions,
     adviceCount, adviceList,
-    lastMonthCount, totalSessionCount, totalAccessCount,
+    lastMonthCount, totalSessionCount, totalAccessCount, googleClickCount,
   });
 }
