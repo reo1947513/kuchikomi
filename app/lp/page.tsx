@@ -576,6 +576,7 @@ export default function LpPage() {
               {
                 name: "ライトプラン",
                 price: "6,000",
+                installmentPrice: "6,600",
                 limit: "月20件",
                 target: "小規模店舗",
                 popular: false,
@@ -588,6 +589,7 @@ export default function LpPage() {
               {
                 name: "スタンダードプラン",
                 price: "10,000",
+                installmentPrice: "11,000",
                 limit: "月50件",
                 target: "中規模店舗",
                 popular: true,
@@ -603,6 +605,7 @@ export default function LpPage() {
               {
                 name: "プレミアムプラン",
                 price: "20,000",
+                installmentPrice: "22,000",
                 limit: "無制限",
                 target: "大規模・複数店舗",
                 popular: false,
@@ -639,11 +642,14 @@ export default function LpPage() {
                 )}
                 <h3 className="font-bold text-lg mb-1">{plan.name}</h3>
                 <p className="text-xs text-gray-500 mb-4">{plan.target}</p>
-                <div className="mb-6">
-                  <span className="text-4xl sm:text-5xl font-black bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
-                    ¥{plan.price}
-                  </span>
-                  <span className="text-gray-500 text-sm">/月</span>
+                <div className="mb-4">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl sm:text-5xl font-black bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+                      ¥{plan.price}
+                    </span>
+                    <span className="text-gray-500 text-sm">/月</span>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">一括払いの場合（分割: ¥{plan.installmentPrice}/月）</p>
                 </div>
                 <p className="text-sm text-cyan-600 font-semibold mb-6">
                   {plan.limit}
@@ -787,11 +793,15 @@ export default function LpPage() {
               <tbody className="divide-y divide-gray-100">
                 {[
                   { item: "初期費用", comista: "0円", a: "50,000円〜", b: "30,000円〜" },
+                  { item: "月額料金", comista: "¥6,000〜", a: "¥15,000〜", b: "¥10,000〜" },
                   { item: "口コミ自動生成（AI）", comista: true, a: false, b: false },
                   { item: "チャット形式アンケート", comista: true, a: false, b: true },
                   { item: "QRコードで即導入", comista: true, a: true, b: false },
-                  { item: "リアルタイム分析", comista: true, a: true, b: false },
-                  { item: "月額料金", comista: "¥6,000〜", a: "¥15,000〜", b: "¥10,000〜" },
+                  { item: "リアルタイム分析・レポート", comista: true, a: true, b: false },
+                  { item: "カスタムブランディング", comista: true, a: false, b: true },
+                  { item: "アプリ不要（ブラウザ完結）", comista: true, a: false, b: true },
+                  { item: "最短導入期間", comista: "即日", a: "1〜2週間", b: "3〜5日" },
+                  { item: "契約期間の縛り", comista: "6ヶ月〜", a: "12ヶ月〜", b: "6ヶ月〜" },
                 ].map((row) => (
                   <tr key={row.item} className="hover:bg-gray-50 transition-colors">
                     <td className="px-4 sm:px-6 py-4 font-medium text-gray-800">{row.item}</td>

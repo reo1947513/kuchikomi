@@ -24,7 +24,7 @@ interface PlanCard {
 const subscriptionPlans: PlanCard[] = [
   {
     name: "ライトプラン",
-    priceLabel: "¥6,000/月",
+    priceLabel: "¥6,000/月（一括）",
     reviews: 20,
     priceId: "", // Will be set from Stripe
     mode: "subscription",
@@ -32,7 +32,7 @@ const subscriptionPlans: PlanCard[] = [
   },
   {
     name: "スタンダードプラン",
-    priceLabel: "¥10,000/月",
+    priceLabel: "¥10,000/月（一括）",
     reviews: 50,
     priceId: "",
     mode: "subscription",
@@ -40,7 +40,7 @@ const subscriptionPlans: PlanCard[] = [
   },
   {
     name: "プレミアムプラン",
-    priceLabel: "¥20,000/月",
+    priceLabel: "¥20,000/月（一括）",
     reviews: 0, // 0 = unlimited
     priceId: "",
     mode: "subscription",
@@ -254,7 +254,8 @@ export default function BillingPage() {
 
       {/* Subscription Plans */}
       <section>
-        <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-4">月額サブスクリプション</h2>
+        <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-1">月額サブスクリプション</h2>
+        <p className="text-xs text-gray-400 mb-4">※ 表示価格は一括払いの場合です。分割払いの場合は10%上乗せとなります。</p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {prices.subscriptions.map((plan) => {
             const isCurrent = user.planType === plan.planType;
