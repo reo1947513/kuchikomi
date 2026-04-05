@@ -191,12 +191,14 @@ export default function LpPage() {
         </div>
 
         {/* Mobile menu overlay */}
-        <div
-          className={`fixed inset-0 bg-black/40 z-40 transition-opacity duration-300 md:hidden ${menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
-          onClick={() => setMenuOpen(false)}
-        />
+        {menuOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            onClick={() => setMenuOpen(false)}
+          />
+        )}
         {/* Mobile menu drawer */}
-        <div className={`fixed top-0 right-0 h-full w-72 bg-white z-50 shadow-2xl transform transition-transform duration-300 ease-out md:hidden ${menuOpen ? "translate-x-0" : "translate-x-full"}`}>
+        <div className={`fixed top-0 right-0 h-full w-72 bg-white z-50 shadow-2xl transition-transform duration-300 ease-out md:hidden ${menuOpen ? "translate-x-0" : "translate-x-full"}`}>
           <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
             <span className="text-sm font-bold text-gray-800">メニュー</span>
             <button onClick={() => setMenuOpen(false)} className="p-1 text-gray-400 hover:text-gray-600">
