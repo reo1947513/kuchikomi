@@ -13,6 +13,9 @@ const items = [
 
 export default function DashboardNav() {
   const pathname = usePathname();
+
+  if (pathname === "/dashboard/contact") return null;
+
   return (
     <div className="bg-white border-b border-gray-200 sticky top-14 z-10">
       <div className="max-w-4xl mx-auto px-3 md:px-6 flex gap-0 overflow-x-auto scrollbar-hide">
