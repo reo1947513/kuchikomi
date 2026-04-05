@@ -104,7 +104,7 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6 max-w-2xl">
-      <h1 className="text-xl font-bold text-gray-900">アカウント設定</h1>
+      <h1 className="text-lg sm:text-xl font-bold text-gray-900">アカウント設定</h1>
 
       {error && (
         <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">{error}</div>
@@ -117,7 +117,7 @@ export default function SettingsPage() {
         <div className="bg-white rounded-xl shadow p-12 text-center text-gray-400 text-sm">読み込み中...</div>
       ) : (
         <>
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 space-y-4">
             <h2 className="text-sm font-semibold text-gray-700">プロフィール</h2>
             {me?.loginId && (
               <div>
@@ -159,7 +159,7 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 space-y-4">
             <h2 className="text-sm font-semibold text-gray-700">パスワード変更</h2>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">現在のパスワード</label>

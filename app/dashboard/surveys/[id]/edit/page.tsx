@@ -440,7 +440,7 @@ function QuestionBlock({
   onUpdateChoice,
 }: QuestionBlockProps) {
   return (
-    <div className="bg-white rounded-xl shadow p-5 space-y-4 border border-gray-100">
+    <div className="bg-white rounded-xl shadow p-3 sm:p-5 space-y-4 border border-gray-100">
       {/* Question header */}
       <div className="flex items-center justify-between">
         <span className="text-sm font-semibold text-violet-600 bg-violet-500/20 px-2.5 py-0.5 rounded-full">
@@ -522,7 +522,7 @@ function QuestionBlock({
             選択肢
           </label>
           {question.choices.map((choice, cIdx) => (
-            <div key={cIdx} className="flex items-center gap-2">
+            <div key={cIdx} className="flex flex-wrap sm:flex-nowrap items-center gap-2">
               <input
                 type="text"
                 value={choice.text}
@@ -530,7 +530,7 @@ function QuestionBlock({
                   onUpdateChoice(cIdx, { text: e.target.value })
                 }
                 placeholder={`選択肢 ${cIdx + 1}`}
-                className="flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent"
+                className="flex-1 min-w-0 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent"
               />
               <div className="flex items-center gap-1.5 shrink-0">
                 <label className="text-xs text-gray-500 whitespace-nowrap">
@@ -541,13 +541,13 @@ function QuestionBlock({
                   onChange={(e) =>
                     onUpdateChoice(cIdx, { score: Number(e.target.value) })
                   }
-                  className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent bg-white"
+                  className="border border-gray-300 rounded-lg px-2 py-1.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent bg-white"
                 >
-                  <option value={2}>+2（非常に満足）</option>
-                  <option value={1}>+1（満足）</option>
-                  <option value={0}>0（どちらとも）</option>
-                  <option value={-1}>-1（やや不満）</option>
-                  <option value={-2}>-2（不満）</option>
+                  <option value={2}>+2</option>
+                  <option value={1}>+1</option>
+                  <option value={0}>0</option>
+                  <option value={-1}>-1</option>
+                  <option value={-2}>-2</option>
                 </select>
               </div>
               <button

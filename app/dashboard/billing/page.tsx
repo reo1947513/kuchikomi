@@ -196,14 +196,14 @@ export default function BillingPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl font-bold text-gray-900">プラン・お支払い</h1>
+      <h1 className="text-lg sm:text-2xl font-bold text-gray-900">プラン・お支払い</h1>
 
       {/* Success/Cancel messages from URL params */}
       <SuccessMessage />
 
       {/* Current Plan */}
-      <section className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">現在のプラン</h2>
+      <section className="bg-white rounded-lg shadow p-4 sm:p-6">
+        <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-4">現在のプラン</h2>
         {hasPlan ? (
           <div className="space-y-3">
             <div className="flex items-center gap-3">
@@ -236,7 +236,7 @@ export default function BillingPage() {
 
       {/* Subscription Plans */}
       <section>
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">月額サブスクリプション</h2>
+        <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-4">月額サブスクリプション</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {prices.subscriptions.map((plan) => {
             const isCurrent = user.planType === plan.planType;
@@ -248,12 +248,12 @@ export default function BillingPage() {
                 }`}
               >
                 <h3 className="text-base font-semibold text-gray-900">{plan.name}</h3>
-                <p className="text-2xl font-bold text-gray-900 mt-2">{plan.priceLabel}</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900 mt-2">{plan.priceLabel}</p>
                 <p className="text-sm text-gray-500 mt-1">月間 {plan.reviews}件 まで</p>
                 <button
                   onClick={() => handleCheckout(plan.priceId, plan.mode)}
                   disabled={!plan.priceId || isCurrent || isLifetime || !!checkoutLoading}
-                  className="mt-4 w-full px-4 py-2 text-sm font-medium text-white bg-violet-600 rounded-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="mt-4 w-full px-4 py-2.5 text-sm font-medium text-white bg-violet-600 rounded-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px]"
                 >
                   {checkoutLoading === plan.priceId
                     ? "処理中..."
@@ -273,7 +273,7 @@ export default function BillingPage() {
 
       {/* Lifetime Licenses */}
       <section>
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">永年ライセンス（買い切り）</h2>
+        <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-4">永年ライセンス（買い切り）</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {prices.lifetime.map((plan) => {
             const isCurrent = user.planType === plan.planType;
@@ -285,12 +285,12 @@ export default function BillingPage() {
                 }`}
               >
                 <h3 className="text-base font-semibold text-gray-900">{plan.name}</h3>
-                <p className="text-2xl font-bold text-gray-900 mt-2">{plan.priceLabel}</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900 mt-2">{plan.priceLabel}</p>
                 <p className="text-sm text-gray-500 mt-1">月間 {plan.reviews}件 まで</p>
                 <button
                   onClick={() => handleCheckout(plan.priceId, plan.mode)}
                   disabled={!plan.priceId || isCurrent || !!checkoutLoading}
-                  className="mt-4 w-full px-4 py-2 text-sm font-medium text-white bg-amber-600 rounded-lg hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="mt-4 w-full px-4 py-2.5 text-sm font-medium text-white bg-amber-600 rounded-lg hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px]"
                 >
                   {checkoutLoading === plan.priceId
                     ? "処理中..."
@@ -306,17 +306,17 @@ export default function BillingPage() {
 
       {/* Additional Reviews */}
       <section>
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">追加レビュー購入</h2>
+        <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-4">追加レビュー購入</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {prices.additional.map((pack) => (
             <div key={pack.name} className="bg-white rounded-lg shadow p-6">
               <h3 className="text-base font-semibold text-gray-900">{pack.name}</h3>
-              <p className="text-2xl font-bold text-gray-900 mt-2">{pack.priceLabel}</p>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900 mt-2">{pack.priceLabel}</p>
               <p className="text-sm text-gray-500 mt-1">レビュー {pack.reviews}件 追加</p>
               <button
                 onClick={() => handleCheckout(pack.priceId, pack.mode)}
                 disabled={!pack.priceId || !!checkoutLoading}
-                className="mt-4 w-full px-4 py-2 text-sm font-medium text-white bg-cyan-600 rounded-lg hover:bg-cyan-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="mt-4 w-full px-4 py-2.5 text-sm font-medium text-white bg-cyan-600 rounded-lg hover:bg-cyan-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px]"
               >
                 {checkoutLoading === pack.priceId ? "処理中..." : "購入する"}
               </button>

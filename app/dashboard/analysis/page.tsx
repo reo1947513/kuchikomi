@@ -62,19 +62,19 @@ export default function AnalysisPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">アンケート分析</h1>
+        <h1 className="text-lg sm:text-2xl font-bold text-gray-900">アンケート分析</h1>
         <p className="text-sm text-gray-500 mt-1">回答データに基づくグラフとAI分析レポート</p>
       </div>
 
       {/* Summary */}
-      <div className="bg-white rounded-xl shadow-sm p-5">
+      <div className="bg-white rounded-xl shadow-sm p-3 sm:p-5">
         <p className="text-sm text-gray-700">総回答数: <span className="text-lg font-bold text-violet-600">{data.totalSessions}</span>件</p>
       </div>
 
       {/* Monthly bar chart */}
-      <div className="bg-white rounded-xl shadow-sm p-5">
+      <div className="bg-white rounded-xl shadow-sm p-3 sm:p-5">
         <h2 className="text-sm font-semibold text-gray-800 mb-4">月別回答数</h2>
-        <div className="h-64" style={{ minWidth: 0, minHeight: 0 }}>
+        <div className="h-48 sm:h-64 overflow-x-auto" style={{ minWidth: 0, minHeight: 0 }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data.monthlySessions}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -89,12 +89,12 @@ export default function AnalysisPage() {
 
       {/* Pie charts for each question */}
       {data.chartData.map((item, idx) => (
-        <div key={idx} className="bg-white rounded-xl shadow-sm p-5">
+        <div key={idx} className="bg-white rounded-xl shadow-sm p-3 sm:p-5">
           <h2 className="text-sm font-semibold text-gray-800 mb-4">{item.question}</h2>
           {item.data.every((d) => d.value === 0) ? (
             <p className="text-sm text-gray-400 text-center py-8">回答データがありません</p>
           ) : (
-            <div className="h-64" style={{ minWidth: 0, minHeight: 0 }}>
+            <div className="h-48 sm:h-64" style={{ minWidth: 0, minHeight: 0 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -123,8 +123,8 @@ export default function AnalysisPage() {
       ))}
 
       {/* AI Analysis */}
-      <div className="bg-white rounded-xl shadow-sm p-5 space-y-4">
-        <div className="flex items-center justify-between">
+      <div className="bg-white rounded-xl shadow-sm p-3 sm:p-5 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h2 className="text-sm font-semibold text-gray-800">AI分析レポート</h2>
             <p className="text-xs text-gray-400 mt-0.5">月1回のみ実行可能です</p>
@@ -132,7 +132,7 @@ export default function AnalysisPage() {
           <button
             onClick={runAnalysis}
             disabled={analyzing}
-            className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white text-sm font-semibold rounded-xl shadow transition-colors disabled:opacity-60"
+            className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white text-sm font-semibold rounded-xl shadow transition-colors disabled:opacity-60"
           >
             {analyzing ? "分析中..." : "AI分析を実行"}
           </button>

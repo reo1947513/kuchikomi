@@ -110,13 +110,13 @@ export default function ContactPage() {
     ];
     return (
       <div className="max-w-2xl mx-auto py-10 px-4">
-        <div className="bg-white rounded-2xl shadow-sm p-8">
-          <h1 className="text-2xl font-bold text-gray-900 text-center mb-4">ComiSta お問い合わせ</h1>
+        <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-8">
+          <h1 className="text-lg sm:text-2xl font-bold text-gray-900 text-center mb-4">ComiSta お問い合わせ</h1>
           <p className="text-sm text-gray-600 mb-8 whitespace-pre-line">送信前に入力内容をご確認ください。\nボタンをクリックすると、入力内容が送信されます。</p>
           <div className="divide-y divide-gray-200">
             {rows.map(([label, value]) => (
-              <div key={label} className="flex py-4">
-                <span className="w-40 shrink-0 text-sm font-bold text-gray-700">{label}</span>
+              <div key={label} className="flex flex-col sm:flex-row py-3 sm:py-4 gap-1 sm:gap-0">
+                <span className="sm:w-40 shrink-0 text-sm font-bold text-gray-700">{label}</span>
                 <span className="text-sm text-gray-800 whitespace-pre-wrap">{value}</span>
               </div>
             ))}
@@ -136,8 +136,8 @@ export default function ContactPage() {
 
   return (
     <div className="max-w-2xl mx-auto py-10 px-4">
-      <div className="bg-white rounded-2xl shadow-sm p-8">
-        <h1 className="text-2xl font-bold text-gray-900 text-center mb-2">ComiSta お問い合わせ</h1>
+      <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-8">
+        <h1 className="text-lg sm:text-2xl font-bold text-gray-900 text-center mb-2">ComiSta お問い合わせ</h1>
         <p className="text-sm text-gray-500 text-center mb-6">サービスに関するお問い合わせ・解約申請につきましては、下記のフォームよりご連絡ください。</p>
         <hr className="mb-6" />
         <div className="space-y-6">

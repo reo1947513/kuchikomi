@@ -39,7 +39,7 @@ export default function FAQPage() {
       `}</style>
 
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">よくある質問</h1>
+        <h1 className="text-lg sm:text-2xl font-bold text-gray-900">よくある質問</h1>
         <p className="text-sm text-gray-500 mt-1">ComiStaに関するよくある質問をまとめました</p>
       </div>
 
@@ -48,7 +48,7 @@ export default function FAQPage() {
           <div key={faq.id}>
             <button
               onClick={() => setOpenIndex(openIndex === i ? null : i)}
-              className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors"
+              className="w-full flex items-center justify-between px-3 sm:px-5 py-3 sm:py-4 text-left hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center gap-3">
                 <span className={`flex-shrink-0 w-7 h-7 rounded-full bg-gradient-to-r from-cyan-500 to-violet-500 flex items-center justify-center text-white text-xs font-bold transition-transform duration-300 ${openIndex === i ? "scale-110" : ""}`}>Q</span>
@@ -64,7 +64,7 @@ export default function FAQPage() {
               </svg>
             </button>
             {openIndex === i && (
-              <div className="px-5 pb-4 answer-enter">
+              <div className="px-3 sm:px-5 pb-4 answer-enter">
                 <div className="flex gap-3 ml-0.5">
                   <span className="flex-shrink-0 w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 text-xs font-bold">A</span>
                   <p className="text-sm text-gray-600 leading-relaxed pt-1">{faq.answer}</p>

@@ -223,7 +223,7 @@ export default function NewSurveyPage() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">新規アンケート作成</h1>
+          <h1 className="text-lg sm:text-2xl font-bold text-gray-900">新規アンケート作成</h1>
           <p className="text-sm text-gray-500 mt-1">アンケートの基本情報と質問を設定してください</p>
         </div>
 
@@ -235,7 +235,7 @@ export default function NewSurveyPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* ===== 基本情報 ===== */}
-          <div className="bg-white rounded-xl shadow p-6 space-y-4">
+          <div className="bg-white rounded-xl shadow p-4 sm:p-6 space-y-4">
             <h2 className="text-base font-semibold text-gray-800">基本情報</h2>
 
             <div>
@@ -337,7 +337,7 @@ export default function NewSurveyPage() {
           </div>
 
           {/* ===== AI設定 ===== */}
-          <div className="bg-white rounded-xl shadow p-6 space-y-4">
+          <div className="bg-white rounded-xl shadow p-4 sm:p-6 space-y-4">
             <h2 className="text-base font-semibold text-gray-800">AI設定</h2>
 
             <div>
@@ -425,10 +425,10 @@ export default function NewSurveyPage() {
           </div>
 
           {/* Submit */}
-          <div className="flex gap-3 justify-end">
+          <div className="flex flex-col-reverse sm:flex-row gap-3 sm:justify-end">
             <Link
               href="/dashboard"
-              className="px-5 py-2.5 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              className="px-5 py-2.5 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors text-center"
             >
               キャンセル
             </Link>
@@ -469,7 +469,7 @@ function QuestionBlock({
   onUpdateChoice,
 }: QuestionBlockProps) {
   return (
-    <div className="bg-white rounded-xl shadow p-5 space-y-4 border border-gray-100">
+    <div className="bg-white rounded-xl shadow p-3 sm:p-5 space-y-4 border border-gray-100">
       {/* Question header */}
       <div className="flex items-center justify-between">
         <span className="text-sm font-semibold text-violet-600 bg-violet-500/20 px-2.5 py-0.5 rounded-full">
@@ -550,26 +550,26 @@ function QuestionBlock({
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">選択肢</label>
           {question.choices.map((choice, cIdx) => (
-            <div key={cIdx} className="flex items-center gap-2">
+            <div key={cIdx} className="flex flex-wrap sm:flex-nowrap items-center gap-2">
               <input
                 type="text"
                 value={choice.text}
                 onChange={(e) => onUpdateChoice(cIdx, { text: e.target.value })}
                 placeholder={`選択肢 ${cIdx + 1}`}
-                className="flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent"
+                className="flex-1 min-w-0 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent"
               />
               <div className="flex items-center gap-1.5 shrink-0">
                 <label className="text-xs text-gray-500 whitespace-nowrap">スコア</label>
                 <select
                   value={choice.score}
                   onChange={(e) => onUpdateChoice(cIdx, { score: Number(e.target.value) })}
-                  className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent bg-white"
+                  className="border border-gray-300 rounded-lg px-2 py-1.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent bg-white"
                 >
-                  <option value={2}>+2（非常に満足）</option>
-                  <option value={1}>+1（満足）</option>
-                  <option value={0}>0（どちらとも）</option>
-                  <option value={-1}>-1（やや不満）</option>
-                  <option value={-2}>-2（不満）</option>
+                  <option value={2}>+2</option>
+                  <option value={1}>+1</option>
+                  <option value={0}>0</option>
+                  <option value={-1}>-1</option>
+                  <option value={-2}>-2</option>
                 </select>
               </div>
               <button
