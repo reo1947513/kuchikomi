@@ -315,7 +315,8 @@ export default function BillingPage() {
         </div>
       </section>
 
-      {/* Additional Reviews */}
+      {/* Additional Reviews - hide for premium (unlimited) */}
+      {user.planType !== "premium" && user.planType !== "lifetime_premium" && (
       <section>
         <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-4">追加レビュー購入</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -335,6 +336,7 @@ export default function BillingPage() {
           ))}
         </div>
       </section>
+      )}
     </div>
   );
 }
