@@ -28,7 +28,6 @@ function BotAvatar({ mainColor, chatIconType, chatIconPreset, logoUrl }: {
   chatIconPreset?: string | null;
   logoUrl?: string | null;
 }) {
-  // Use logo image
   if (chatIconType === "logo" && logoUrl) {
     return (
       <img
@@ -39,7 +38,6 @@ function BotAvatar({ mainColor, chatIconType, chatIconPreset, logoUrl }: {
     );
   }
 
-  // Use preset icon
   const iconName = chatIconPreset || "home";
   const paths = PRESET_ICONS[iconName] || PRESET_ICONS.home;
   const isStroke = iconName === "smile" || iconName === "scissors";
@@ -68,26 +66,53 @@ export default function ChatMessage({
 }: ChatMessageProps) {
   if (type === "bot") {
     return (
-      <div className="flex items-start gap-2 mb-4">
-        <BotAvatar mainColor={mainColor} chatIconType={chatIconType} chatIconPreset={chatIconPreset} logoUrl={logoUrl} />
+      <div className="flex items-start gap-2 mb-4 animate-[chatSlideLeft_0.4s_ease-out]">
+        <div className="animate-[chatBounce_0.5s_ease-out]">
+          <BotAvatar mainColor={mainColor} chatIconType={chatIconType} chatIconPreset={chatIconPreset} logoUrl={logoUrl} />
+        </div>
         <div
-          className="max-w-xs md:max-w-md lg:max-w-lg px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm text-sm leading-relaxed text-gray-800"
+          className="max-w-xs md:max-w-md lg:max-w-lg px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm text-sm leading-relaxed text-gray-800 animate-[chatFadeIn_0.3s_ease-out_0.1s_both]"
           style={{ backgroundColor: "#FFFFFF" }}
         >
           {message}
         </div>
+        <style>{`
+          @keyframes chatSlideLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+          }
+          @keyframes chatBounce {
+            0% { transform: scale(0); }
+            60% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+          }
+          @keyframes chatFadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes chatSlideRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+          }
+        `}</style>
       </div>
     );
   }
 
   return (
-    <div className="flex justify-end mb-4">
+    <div className="flex justify-end mb-4 animate-[chatSlideRight_0.4s_ease-out]">
       <div
         className="max-w-xs md:max-w-md lg:max-w-lg px-4 py-3 rounded-2xl rounded-tr-sm shadow-sm text-sm leading-relaxed text-gray-800"
         style={{ backgroundColor: userColor }}
       >
         {message}
       </div>
+      <style>{`
+        @keyframes chatSlideRight {
+          from { opacity: 0; transform: translateX(20px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+      `}</style>
     </div>
   );
 }
