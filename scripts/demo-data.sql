@@ -14,8 +14,8 @@ DELETE FROM "User" WHERE id LIKE 'demo-%';
 -- ============================================
 -- Shop 1: デモ飲食店
 -- ============================================
-INSERT INTO "User" (id, email, "loginId", password, name, role, "shopName", address, industry, "noContractLimit", "createdAt", "updatedAt")
-VALUES ('demo-user-1', 'demo1@kuchikomi.jp', 'AG-000001', '$2a$10$V5h/b24p0tNw34DJ9T7TkOxGaOubUwBnvLOALbMPZFtvr2wsIJi0y', 'デモ飲食店管理者', 'admin', 'デモ飲食店', '東京都渋谷区demo1', '飲食店', true, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z');
+INSERT INTO "User" (id, email, "loginId", password, name, role, "shopName", address, industry, "noContractLimit", "planType", "planReviewLimit", "createdAt", "updatedAt")
+VALUES ('demo-user-1', 'demo1@kuchikomi.jp', 'AG-000001', '$2a$10$V5h/b24p0tNw34DJ9T7TkOxGaOubUwBnvLOALbMPZFtvr2wsIJi0y', 'デモ飲食店管理者', 'admin', 'デモ飲食店', '東京都渋谷区demo1', '飲食店', true, 'premium', 300, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z');
 
 INSERT INTO "Survey" (id, title, "openingMessage", "closingMessage", "completionMessage", keywords, "toneRandom", "googleBusinessUrl", "minRandomQuestions", "maxRandomQuestions", "isActive", "monthlyReviewLimit", "monthlyReviewCount", "createdAt", "updatedAt", "userId")
 VALUES ('demo-survey-1', 'デモ飲食店アンケート', 'ご来店ありがとうございます。サービス向上のため、簡単なアンケートにご協力ください。', 'アンケートにご協力いただきありがとうございました。', 'ご回答ありがとうございました。またのご来店をお待ちしております。', '美味しい,料理,接客,雰囲気,コスパ', true, 'https://g.page/demo-restaurant', 1, 1, true, 100, 0, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z', 'demo-user-1');
@@ -669,8 +669,8 @@ VALUES ('demo-answer-231', 'demo-session-33', 'demo-q6a-1', 'demo-choice-21', NU
 -- ============================================
 -- Shop 2: デモ整骨院
 -- ============================================
-INSERT INTO "User" (id, email, "loginId", password, name, role, "shopName", address, industry, "noContractLimit", "createdAt", "updatedAt")
-VALUES ('demo-user-2', 'demo2@kuchikomi.jp', 'AG-000002', '$2a$10$V5h/b24p0tNw34DJ9T7TkOxGaOubUwBnvLOALbMPZFtvr2wsIJi0y', 'デモ整骨院管理者', 'admin', 'デモ整骨院', '東京都渋谷区demo2', '整骨院', true, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z');
+INSERT INTO "User" (id, email, "loginId", password, name, role, "shopName", address, industry, "noContractLimit", "planType", "planReviewLimit", "createdAt", "updatedAt")
+VALUES ('demo-user-2', 'demo2@kuchikomi.jp', 'AG-000002', '$2a$10$V5h/b24p0tNw34DJ9T7TkOxGaOubUwBnvLOALbMPZFtvr2wsIJi0y', 'デモ整骨院管理者', 'admin', 'デモ整骨院', '東京都渋谷区demo2', '整骨院', true, 'premium', 300, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z');
 
 INSERT INTO "Survey" (id, title, "openingMessage", "closingMessage", "completionMessage", keywords, "toneRandom", "googleBusinessUrl", "minRandomQuestions", "maxRandomQuestions", "isActive", "monthlyReviewLimit", "monthlyReviewCount", "createdAt", "updatedAt", "userId")
 VALUES ('demo-survey-2', 'デモ整骨院アンケート', 'ご来院ありがとうございます。サービス向上のため、簡単なアンケートにご協力ください。', 'アンケートにご協力いただきありがとうございました。', 'ご回答ありがとうございました。お体のお悩みがありましたらいつでもご相談ください。', '施術,効果,丁寧,清潔,改善', true, 'https://g.page/demo-seikotsuin', 1, 1, true, 100, 0, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z', 'demo-user-2');
@@ -1344,8 +1344,8 @@ VALUES ('demo-answer-462', 'demo-session-66', 'demo-q6a-2', 'demo-choice-61', NU
 -- ============================================
 -- Shop 3: デモ美容室
 -- ============================================
-INSERT INTO "User" (id, email, "loginId", password, name, role, "shopName", address, industry, "noContractLimit", "createdAt", "updatedAt")
-VALUES ('demo-user-3', 'demo3@kuchikomi.jp', 'AG-000003', '$2a$10$V5h/b24p0tNw34DJ9T7TkOxGaOubUwBnvLOALbMPZFtvr2wsIJi0y', 'デモ美容室管理者', 'admin', 'デモ美容室', '東京都渋谷区demo3', '美容室', true, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z');
+INSERT INTO "User" (id, email, "loginId", password, name, role, "shopName", address, industry, "noContractLimit", "planType", "planReviewLimit", "createdAt", "updatedAt")
+VALUES ('demo-user-3', 'demo3@kuchikomi.jp', 'AG-000003', '$2a$10$V5h/b24p0tNw34DJ9T7TkOxGaOubUwBnvLOALbMPZFtvr2wsIJi0y', 'デモ美容室管理者', 'admin', 'デモ美容室', '東京都渋谷区demo3', '美容室', true, 'premium', 300, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z');
 
 INSERT INTO "Survey" (id, title, "openingMessage", "closingMessage", "completionMessage", keywords, "toneRandom", "googleBusinessUrl", "minRandomQuestions", "maxRandomQuestions", "isActive", "monthlyReviewLimit", "monthlyReviewCount", "createdAt", "updatedAt", "userId")
 VALUES ('demo-survey-3', 'デモ美容室アンケート', 'ご来店ありがとうございます。サービス向上のため、簡単なアンケートにご協力ください。', 'アンケートにご協力いただきありがとうございました。', 'ご回答ありがとうございました。またのご来店をお待ちしております。', 'カット,カラー,仕上がり,接客,おしゃれ', true, 'https://g.page/demo-biyoushitsu', 1, 1, true, 100, 0, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z', 'demo-user-3');

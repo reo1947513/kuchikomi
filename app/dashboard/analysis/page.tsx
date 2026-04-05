@@ -54,31 +54,7 @@ export default function AnalysisPage() {
   };
 
   if (planLoaded && LOCKED_PLANS.includes(planType)) {
-    return (
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-lg sm:text-2xl font-bold text-gray-900">アンケート分析</h1>
-        </div>
-        <div className="relative bg-white rounded-xl shadow-sm p-8 sm:p-12 text-center overflow-hidden">
-          <div className="absolute inset-0 bg-gray-100/80 backdrop-blur-[2px]" />
-          <div className="relative z-10 flex flex-col items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center">
-              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-            </div>
-            <h2 className="text-lg font-bold text-gray-700">分析機能はスタンダードプラン以上でご利用いただけます</h2>
-            <p className="text-sm text-gray-500 max-w-md">リアルタイム分析、月別回答数の推移、質問ごとの回答分布グラフ、AI分析レポートなどの機能をご利用いただけます。</p>
-            <a
-              href="/dashboard/billing"
-              className="mt-2 inline-block px-6 py-3 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white font-bold text-sm rounded-xl shadow transition-colors"
-            >
-              プランをアップグレード
-            </a>
-          </div>
-        </div>
-      </div>
-    );
+    return <LockedAnalysis />;
   }
 
   if (loading) {
@@ -184,6 +160,99 @@ export default function AnalysisPage() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+/* ─── Locked state for free / light plan ─── */
+function LockedAnalysis() {
+  const [showPreview, setShowPreview] = useState(false);
+
+  const features = [
+    {
+      icon: "📈",
+      title: "月別回答数の推移",
+      desc: "月ごとの回答数をグラフで可視化。繁忙期やキャンペーンの効果を一目で把握できます。",
+    },
+    {
+      icon: "📊",
+      title: "質問ごとの回答分布",
+      desc: "各質問の回答をパイチャートで表示。お客様の傾向をデータで確認できます。",
+    },
+    {
+      icon: "🤖",
+      title: "AI分析レポート",
+      desc: "蓄積されたアンケートデータをAIが分析し、改善提案を含むレポートを自動生成します。（プレミアムプラン）",
+    },
+    {
+      icon: "🔢",
+      title: "総回答数・統計",
+      desc: "アンケートの総回答数やトレンドを一画面でまとめて確認できます。",
+    },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-lg sm:text-2xl font-bold text-gray-900">アンケート分析</h1>
+      </div>
+      <div className="relative bg-white rounded-xl shadow-sm p-8 sm:p-12 text-center overflow-hidden">
+        <div className="absolute inset-0 bg-gray-100/80 backdrop-blur-[2px]" />
+        <div className="relative z-10 flex flex-col items-center gap-4">
+          <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center">
+            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </div>
+          <h2 className="text-lg font-bold text-gray-700">分析機能はスタンダードプラン以上でご利用いただけます</h2>
+          <p className="text-sm text-gray-500 max-w-md">アンケートの回答データを可視化し、店舗改善に役立つインサイトを得られます。</p>
+          <div className="flex flex-col sm:flex-row gap-3 mt-2">
+            <button
+              onClick={() => setShowPreview(true)}
+              className="px-5 py-2.5 border-2 border-violet-400 text-violet-600 font-bold text-sm rounded-xl hover:bg-violet-50 transition-colors"
+            >
+              どんな分析ができる？
+            </button>
+            <a
+              href="/dashboard/billing"
+              className="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white font-bold text-sm rounded-xl shadow transition-colors"
+            >
+              プランをアップグレード
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Preview modal */}
+      {showPreview && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={() => setShowPreview(false)}>
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="sticky top-0 bg-gradient-to-r from-cyan-500 to-violet-500 rounded-t-2xl px-5 py-4 flex items-center justify-between">
+              <span className="text-white font-bold">スタンダード以上で使える分析機能</span>
+              <button onClick={() => setShowPreview(false)} className="text-white/80 hover:text-white">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            <div className="p-5 space-y-4">
+              {features.map((f) => (
+                <div key={f.title} className="flex gap-4 p-4 bg-gray-50 rounded-xl">
+                  <span className="text-3xl shrink-0">{f.icon}</span>
+                  <div>
+                    <h3 className="font-bold text-sm text-gray-800 mb-1">{f.title}</h3>
+                    <p className="text-xs text-gray-500 leading-relaxed">{f.desc}</p>
+                  </div>
+                </div>
+              ))}
+              <a
+                href="/dashboard/billing"
+                className="block w-full text-center px-6 py-3 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white font-bold text-sm rounded-xl shadow transition-colors"
+              >
+                プランをアップグレード
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

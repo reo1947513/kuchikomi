@@ -643,9 +643,44 @@ export default function LpPage() {
               </div>
             ))}
           </div>
-          <p className="text-center text-sm text-gray-500 mt-10">
-            永年ライセンスもご用意しています。詳しくはお問い合わせください。
-          </p>
+          {/* Lifetime Licenses */}
+          <h3 className="text-xl sm:text-2xl font-extrabold text-center mt-16 mb-3 px-2">
+            永年ライセンス
+            <span className="text-base sm:text-lg font-medium text-gray-500 ml-2">（買い切り）</span>
+          </h3>
+          <p className="text-center text-sm text-gray-500 mb-8">月額不要・一括払いでずっと使える</p>
+          <div className="grid md:grid-cols-3 gap-6 items-start">
+            {[
+              { name: "ライト", price: "90,000", limit: "月50件", features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行"] },
+              { name: "スタンダード", price: "150,000", limit: "月100件", features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行", "リアルタイム分析", "カスタマーサポート"] },
+              { name: "プレミアム", price: "250,000", limit: "月300件", features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行", "リアルタイム分析", "AI分析レポート", "優先カスタマーサポート"] },
+            ].map((plan) => (
+              <div key={plan.name} className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 border border-amber-200 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
+                <h3 className="font-bold text-lg mb-1">{plan.name}</h3>
+                <div className="mb-6">
+                  <span className="text-3xl sm:text-4xl font-black bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">¥{plan.price}</span>
+                  <span className="text-gray-500 text-sm ml-1">一括</span>
+                </div>
+                <p className="text-sm text-amber-600 font-semibold mb-6">{plan.limit}</p>
+                <ul className="space-y-2.5 text-sm text-gray-600">
+                  {plan.features.map((f) => (
+                    <li key={f} className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  onClick={() => scrollTo("contact")}
+                  className="mt-8 w-full py-3.5 rounded-full font-semibold border border-amber-400 text-amber-700 hover:bg-amber-50 transition-all"
+                >
+                  お問い合わせ
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       </Section>
 
@@ -756,11 +791,15 @@ export default function LpPage() {
         <div className="relative max-w-3xl mx-auto px-4 text-center">
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold mb-4 px-2">
             <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-              今日から、口コミで差をつけよう。
+              今日から、
+              <br className="sm:hidden" />
+              口コミで差をつけよう。
             </span>
           </h2>
-          <p className="text-gray-300 mb-6 text-lg">
-            お問い合わせは1分で完了。お気軽にご連絡ください。
+          <p className="text-gray-300 mb-6 text-base sm:text-lg px-2">
+            お問い合わせは1分で完了。
+            <br className="sm:hidden" />
+            お気軽にご連絡ください。
           </p>
           {/* Urgency badge */}
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-400/30 text-orange-300 font-bold text-sm px-5 py-2.5 rounded-full mb-10">
