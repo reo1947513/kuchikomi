@@ -34,9 +34,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
               ← ショップ管理に戻る
             </a>
           ) : (
-            <a href="/api/auth/logout" className="text-sm text-white/80 hover:text-white underline">
-              ログアウト
-            </a>
+            <div className="flex items-center gap-3">
+              <a href="/dashboard/contact" className="text-sm text-white/80 hover:text-white underline">
+                お問い合わせ
+              </a>
+              <a href="/api/auth/logout" className="text-sm text-white/80 hover:text-white underline">
+                ログアウト
+              </a>
+            </div>
           )}
         </div>
       </header>

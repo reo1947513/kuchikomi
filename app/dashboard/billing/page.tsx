@@ -230,7 +230,18 @@ export default function BillingPage() {
             )}
           </div>
         ) : (
-          <p className="text-gray-500 text-sm">プランが設定されていません。下記のプランからお選びください。</p>
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700">
+                無料プラン
+              </span>
+            </div>
+            <div className="text-sm text-gray-600">
+              <p>月間レビュー上限: <strong>{user.planReviewLimit}件</strong></p>
+              <p>追加レビュー残: <strong>{user.additionalReviews}件</strong></p>
+            </div>
+            <p className="text-xs text-gray-400">有料プランにアップグレードすると、より多くのレビューを生成できます。</p>
+          </div>
         )}
       </section>
 
