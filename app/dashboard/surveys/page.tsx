@@ -89,7 +89,7 @@ function LineChart({ data }: { data: MonthlyCount[] }) {
   const polyline = data.map((d, i) => `${px(i)},${py(d.count)}`).join(" ");
 
   return (
-    <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/50 p-6">
+    <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/50 p-3 sm:p-6">
       <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
         <svg className="w-4 h-4 text-violet-500" fill="currentColor" viewBox="0 0 20 20">
           <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
@@ -183,10 +183,10 @@ function RecentSessions({ sessions, shopName }: { sessions: Session[]; shopName:
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-3 mt-4">
           <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1}
-            className="px-4 py-2 text-sm border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors">前へ</button>
+            className="px-4 py-2.5 text-sm border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors min-h-[44px]">前へ</button>
           <span className="text-sm text-gray-600">{page} / {totalPages}</span>
           <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page >= totalPages}
-            className="px-4 py-2 text-sm border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors">次へ</button>
+            className="px-4 py-2.5 text-sm border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors min-h-[44px]">次へ</button>
         </div>
       )}
     </div>
@@ -221,7 +221,7 @@ function AdviceSection({ initialCount, initialList }: { initialCount: number; in
   };
 
   return (
-    <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/50 p-6">
+    <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/50 p-3 sm:p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2">
           AI改善アドバイス
@@ -315,13 +315,13 @@ export default function DashboardPage() {
       <ContractBanner />
 
       {/* Welcome Card */}
-      <div className="rounded-2xl bg-gradient-to-r from-cyan-500 to-violet-500 p-6 text-white shadow-lg">
+      <div className="rounded-2xl bg-gradient-to-r from-cyan-500 to-violet-500 p-4 md:p-6 text-white shadow-lg">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm opacity-90">ようこそ</p>
-            <h1 className="text-2xl font-bold mt-1">{shopName}</h1>
+            <h1 className="text-lg md:text-2xl font-bold mt-1">{shopName}</h1>
             <p className="text-sm opacity-80 mt-2">
-              今月の生成数: <span className="font-bold text-lg">{thisMonthCount}</span> / {data.survey?.monthlyReviewLimit ?? 0}件
+              今月の生成数: <span className="font-bold text-base md:text-lg">{thisMonthCount}</span> / {data.survey?.monthlyReviewLimit ?? 0}件
             </p>
           </div>
           <div className="hidden sm:block">
@@ -349,7 +349,7 @@ export default function DashboardPage() {
                 </div>
                 <span className="text-xs text-gray-500">{card.label}</span>
               </div>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-xl md:text-2xl font-bold text-gray-900">
                 <AnimatedNumber value={card.value} /><span className="text-sm font-normal text-gray-500 ml-1">{card.suffix}</span>
               </p>
               {card.sub && (

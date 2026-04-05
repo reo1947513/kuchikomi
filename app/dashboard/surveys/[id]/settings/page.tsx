@@ -517,16 +517,16 @@ export default function SurveySettingsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
-        <div className="mb-6 flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">アンケート設定</h1>
+        <div className="mb-6 flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="text-lg sm:text-2xl font-bold text-gray-900">アンケート設定</h1>
             <p className="text-sm text-gray-500 mt-1 truncate">{title}</p>
           </div>
           <a
             href={`/survey/${surveyId}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="shrink-0 flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-xl text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+            className="shrink-0 flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 rounded-xl text-sm text-white font-semibold shadow-sm transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -549,17 +549,19 @@ export default function SurveySettingsPage() {
         )}
 
         {/* Survey URL & QR Code */}
-        <div className="bg-white rounded-xl shadow-sm p-5 mb-6">
+        <div className="bg-white rounded-xl shadow-sm p-3 sm:p-5 mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">アンケートURL</label>
-          <div className="flex flex-wrap gap-2 mb-3">
-            <input type="text" value={surveyUrl} readOnly className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm bg-gray-50 text-gray-600 select-all" />
-            <button type="button" onClick={handleCopyUrl} className="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap">{copying ? "コピー済み!" : "コピー"}</button>
-            <button type="button" onClick={generateQR} disabled={qrGenerating} className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap disabled:opacity-50">{qrGenerating ? "生成中..." : "QRコード作成"}</button>
+          <div className="flex flex-col sm:flex-row gap-2 mb-3">
+            <input type="text" value={surveyUrl} readOnly className="w-full sm:flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm bg-gray-50 text-gray-600 select-all" />
+            <div className="flex gap-2">
+              <button type="button" onClick={handleCopyUrl} className="flex-1 sm:flex-none px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap">{copying ? "コピー済み!" : "コピー"}</button>
+              <button type="button" onClick={generateQR} disabled={qrGenerating} className="flex-1 sm:flex-none px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap disabled:opacity-50">{qrGenerating ? "生成中..." : "QRコード作成"}</button>
+            </div>
           </div>
           {qrDataUrl && (
-            <div className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
+            <div className="flex flex-col sm:flex-row items-center gap-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
               <img src={qrDataUrl} alt="QR Code" className="w-32 h-32 rounded" />
-              <div>
+              <div className="text-center sm:text-left">
                 <p className="text-sm text-gray-600 mb-2">QRコードが生成されました</p>
                 <button type="button" onClick={downloadQR} className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white text-sm font-medium rounded-lg transition-colors">ダウンロード</button>
               </div>
@@ -569,13 +571,13 @@ export default function SurveySettingsPage() {
 
         {/* Tabs */}
         <div className="border-b border-gray-200 mb-6">
-          <nav className="flex gap-0">
+          <nav className="flex gap-0 overflow-x-auto scrollbar-hide">
             {tabs.map((tab) => (
               <button
                 key={tab.key}
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
-                className={`px-5 py-3 text-sm font-medium transition-colors border-b-2 -mb-px ${
+                className={`px-3 sm:px-5 py-3 text-xs sm:text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
                   activeTab === tab.key
                     ? "border-violet-500 text-gray-900"
                     : "border-transparent text-gray-500 hover:text-gray-700"
@@ -589,7 +591,7 @@ export default function SurveySettingsPage() {
 
         {/* ===== Tab: 基本設定 ===== */}
         {activeTab === "basic" && (
-          <div className="bg-white rounded-xl shadow p-6 space-y-4">
+          <div className="bg-white rounded-xl shadow p-4 sm:p-6 space-y-4">
             <Field label="アンケートタイトル" required>
               <input
                 type="text"
@@ -681,7 +683,7 @@ export default function SurveySettingsPage() {
 
         {/* ===== Tab: AI設定 ===== */}
         {activeTab === "ai" && (
-          <div className="bg-white rounded-xl shadow p-6 space-y-4">
+          <div className="bg-white rounded-xl shadow p-4 sm:p-6 space-y-4">
             {/* 固定プロンプト表示 */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">固定部分（編集不可）</label>
