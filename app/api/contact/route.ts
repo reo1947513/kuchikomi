@@ -20,9 +20,11 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const data = contactSchema.parse(body);
-    const session = getSession();
+    const source = data.source || "dashboard";
+    // Only attach userId for dashboard contacts, not HP (public) contacts
+    const session = source === "dashboard" ? getSession() : null;
     const userId = session?.userId || null;
-    const contact = await prisma.contact.create({ data: { ...data, source: data.source || "dashboard", userId } });
+    const contact = await prisma.contact.create({ data: { ...data, source, userId } });
     return NextResponse.json(contact, { status: 201 });
   } catch (e) {
     if (e instanceof z.ZodError) {

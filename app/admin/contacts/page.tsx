@@ -41,6 +41,17 @@ export default function ContactsPage() {
     return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
   };
 
+  const deleteContact = async (id: string) => {
+    if (!confirm("このお問い合わせを削除しますか？")) return;
+    try {
+      await fetch(`/api/admin/contacts/${id}`, { method: "DELETE" });
+      setContacts((prev) => prev.filter((c) => c.id !== id));
+      if (selected?.id === id) setSelected(null);
+    } catch {
+      alert("削除に失敗しました");
+    }
+  };
+
   const updateStatus = async (id: string, status: string) => {
     try {
       const res = await fetch(`/api/admin/contacts/${id}`, {
@@ -169,7 +180,10 @@ export default function ContactsPage() {
                     </select>
                   </td>
                   <td className="px-4 py-3">
-                    <button onClick={() => setSelected(c)} className="text-violet-500 hover:text-violet-700 text-xs font-medium">詳細</button>
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => setSelected(c)} className="text-violet-500 hover:text-violet-700 text-xs font-medium">詳細</button>
+                      <button onClick={() => deleteContact(c.id)} className="text-red-400 hover:text-red-600 text-xs font-medium">削除</button>
+                    </div>
                   </td>
                 </tr>
               ))}

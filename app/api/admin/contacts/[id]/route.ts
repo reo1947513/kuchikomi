@@ -30,3 +30,13 @@ export async function PUT(request: NextRequest, { params }: Params) {
 
   return NextResponse.json(updated);
 }
+
+export async function DELETE(_request: NextRequest, { params }: Params) {
+  const session = getSessionForRole("super");
+  if (!session || session.role !== "super") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  await prisma.contact.delete({ where: { id: params.id } });
+  return NextResponse.json({ ok: true });
+}
