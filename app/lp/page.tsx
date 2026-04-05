@@ -60,10 +60,10 @@ function scrollTo(id: string) {
 function FaqItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
+    <div className="bg-white/60 backdrop-blur-sm border border-white/40 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-6 py-5 text-left font-semibold text-gray-800 hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-6 py-5 text-left font-semibold text-gray-800 hover:bg-white/40 transition-colors"
       >
         <span>{q}</span>
         <svg
@@ -95,6 +95,19 @@ function FaqItem({ q, a }: { q: string; a: string }) {
   );
 }
 
+/* ─── Floating decoration blobs ─── */
+function BgBlob({
+  className,
+}: {
+  className: string;
+}) {
+  return (
+    <div
+      className={`absolute rounded-full blur-3xl opacity-20 pointer-events-none ${className}`}
+    />
+  );
+}
+
 /* ─── Main Page ─── */
 export default function LpPage() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -112,7 +125,7 @@ export default function LpPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 overflow-x-hidden">
+    <div className="min-h-screen bg-gray-950 text-gray-900 overflow-x-hidden">
       {/* ───────── Header ───────── */}
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
@@ -131,7 +144,7 @@ export default function LpPage() {
             ))}
             <button
               onClick={() => scrollTo("contact")}
-              className="bg-gradient-to-r from-cyan-500 to-violet-500 text-white text-sm font-semibold px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity"
+              className="bg-gradient-to-r from-cyan-500 to-violet-500 text-white text-sm font-semibold px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity shadow-lg shadow-cyan-500/25"
             >
               無料相談する
             </button>
@@ -191,38 +204,69 @@ export default function LpPage() {
       </header>
 
       {/* ───────── Hero ───────── */}
-      <section className="relative py-24 md:py-36 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-50 via-white to-violet-50" />
-        <div className="relative max-w-4xl mx-auto text-center px-4">
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight">
-            <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
-              たった3分のアンケートで
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-indigo-950 to-violet-950" />
+        {/* Decorative blobs */}
+        <BgBlob className="w-[600px] h-[600px] bg-cyan-500 -top-40 -left-40 opacity-30" />
+        <BgBlob className="w-[500px] h-[500px] bg-violet-500 top-1/3 -right-40 opacity-25" />
+        <BgBlob className="w-[400px] h-[400px] bg-fuchsia-500 bottom-0 left-1/3 opacity-20" />
+        {/* Dot grid overlay */}
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, white 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
+          }}
+        />
+        <div className="relative max-w-5xl mx-auto text-center px-4 py-24">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white/90 text-sm font-medium px-5 py-2 rounded-full mb-8">
+            <span>🚀</span>
+            <span>店舗集客の新常識</span>
+          </div>
+          <h1 className="text-4xl md:text-6xl lg:text-8xl font-extrabold leading-tight tracking-tight">
+            <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+              口コミが、
             </span>
             <br />
-            高品質な口コミを自動生成
+            <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+              勝手に増える。
+            </span>
           </h1>
-          <p className="mt-6 text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            AIが自動でお客様の声を口コミに。Googleマップの評価アップで集客力を高めます。
+          <p className="mt-8 text-lg md:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+            たった3分のアンケートで、AIが高品質な口コミを自動生成。
+            <br className="hidden md:block" />
+            Googleマップの評価を劇的に改善します。
           </p>
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={() => scrollTo("contact")}
-              className="bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold px-8 py-4 rounded-full text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all"
+              className="bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold px-10 py-5 rounded-full text-lg shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-all"
             >
               まずは無料相談
             </button>
           </div>
-          <p className="mt-4 text-sm text-gray-500">
+          <p className="mt-5 text-sm text-gray-400">
             初期費用0円・最短即日導入
           </p>
         </div>
+        {/* Bottom fade to white */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent" />
       </section>
 
       {/* ───────── Problem ───────── */}
-      <Section className="py-20 md:py-28 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-2xl md:text-4xl font-bold text-center mb-14">
-            こんなお悩みありませんか？
+      <Section className="relative py-24 md:py-32 bg-white overflow-hidden">
+        <BgBlob className="w-[500px] h-[500px] bg-red-300 -top-60 -right-60" />
+        <BgBlob className="w-[400px] h-[400px] bg-orange-300 bottom-0 -left-40" />
+        <div className="relative max-w-6xl mx-auto px-4">
+          <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-16">
+            その悩み、
+            <span className="bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
+              ComiSta
+            </span>
+            が終わらせます。
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
@@ -249,10 +293,12 @@ export default function LpPage() {
             ].map((item) => (
               <div
                 key={item.title}
-                className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 text-center"
+                className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-red-100 text-center hover:shadow-xl hover:-translate-y-1 transition-all"
               >
-                <div className="text-4xl mb-4">{item.icon}</div>
-                <h3 className="font-bold text-lg mb-2">{item.title}</h3>
+                <div className="text-5xl mb-4">{item.icon}</div>
+                <h3 className="font-bold text-lg mb-2 text-gray-900">
+                  {item.title}
+                </h3>
                 <p className="text-gray-500 text-sm">{item.desc}</p>
               </div>
             ))}
@@ -261,15 +307,27 @@ export default function LpPage() {
       </Section>
 
       {/* ───────── Solution ───────── */}
-      <Section className="py-20 md:py-28">
-        <div className="max-w-5xl mx-auto px-4">
-          <h2 className="text-2xl md:text-4xl font-bold text-center mb-4">
+      <Section className="relative py-24 md:py-32 overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-violet-50">
+        <BgBlob className="w-[500px] h-[500px] bg-cyan-300 top-20 -left-60" />
+        <BgBlob className="w-[400px] h-[400px] bg-violet-300 -bottom-40 -right-40" />
+        {/* Dot grid overlay */}
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, #6366f1 1px, transparent 1px)",
+            backgroundSize: "28px 28px",
+          }}
+        />
+        <div className="relative max-w-5xl mx-auto px-4">
+          <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-4">
+            仕組みはシンプル。
+            <br className="md:hidden" />
             <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
-              ComiSta
+              効果は絶大。
             </span>
-            が全て解決します
           </h2>
-          <p className="text-center text-gray-500 mb-14">
+          <p className="text-center text-gray-500 mb-16 text-lg">
             3ステップで口コミを簡単収集
           </p>
           <div className="grid md:grid-cols-3 gap-8">
@@ -279,28 +337,34 @@ export default function LpPage() {
                 icon: "📱",
                 title: "アンケートに回答",
                 desc: "QRコードを読み取って簡単なアンケートに回答",
+                gradient: "from-cyan-500 to-blue-500",
               },
               {
                 num: "02",
                 icon: "🤖",
                 title: "AIが口コミを自動生成",
                 desc: "回答内容をもとにAIが自然な口コミ文章を作成",
+                gradient: "from-violet-500 to-purple-500",
               },
               {
                 num: "03",
                 icon: "📍",
                 title: "Googleマップに投稿",
                 desc: "ワンタップでGoogleマップに口コミを投稿",
+                gradient: "from-fuchsia-500 to-pink-500",
               },
             ].map((step) => (
-              <div key={step.num} className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-50 to-violet-50 text-3xl mb-4">
+              <div
+                key={step.num}
+                className="text-center bg-white/60 backdrop-blur-sm rounded-3xl p-8 border border-white/60 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
+              >
+                <div className={`inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br ${step.gradient} text-4xl mb-5 shadow-lg`}>
                   {step.icon}
                 </div>
-                <div className="text-xs font-bold text-cyan-500 tracking-widest mb-2">
-                  STEP {step.num}
+                <div className={`text-5xl font-black bg-gradient-to-r ${step.gradient} bg-clip-text text-transparent mb-3`}>
+                  {step.num}
                 </div>
-                <h3 className="font-bold text-lg mb-2">{step.title}</h3>
+                <h3 className="font-bold text-xl mb-2">{step.title}</h3>
                 <p className="text-gray-500 text-sm">{step.desc}</p>
               </div>
             ))}
@@ -309,10 +373,22 @@ export default function LpPage() {
       </Section>
 
       {/* ───────── Features ───────── */}
-      <Section id="features" className="py-20 md:py-28 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-2xl md:text-4xl font-bold text-center mb-14">
-            ComiStaが選ばれる理由
+      <Section id="features" className="relative py-24 md:py-32 overflow-hidden bg-gradient-to-br from-gray-950 via-indigo-950 to-violet-950">
+        <BgBlob className="w-[600px] h-[600px] bg-cyan-500 -top-40 -right-60 opacity-15" />
+        <BgBlob className="w-[500px] h-[500px] bg-violet-500 bottom-0 -left-40 opacity-15" />
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, white 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
+          }}
+        />
+        <div className="relative max-w-6xl mx-auto px-4">
+          <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-16">
+            <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+              選ばれ続ける、6つの理由
+            </span>
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
@@ -320,40 +396,50 @@ export default function LpPage() {
                 icon: "✨",
                 title: "AIによる自然な文章生成",
                 desc: "実際のお客様の声に基づいた自然な口コミを自動生成",
+                gradient: "from-cyan-500 to-blue-500",
               },
               {
                 icon: "💬",
                 title: "チャット形式のアンケート",
                 desc: "LINEのようなUIで回答率90%以上",
+                gradient: "from-violet-500 to-purple-500",
               },
               {
                 icon: "📷",
                 title: "QRコードで簡単導入",
                 desc: "お客様はQRコードを読み取るだけ。アプリ不要",
+                gradient: "from-fuchsia-500 to-pink-500",
               },
               {
                 icon: "📊",
                 title: "リアルタイム分析",
                 desc: "回答データをリアルタイムで分析。改善点が一目瞭然",
+                gradient: "from-amber-500 to-orange-500",
               },
               {
                 icon: "🎨",
                 title: "カスタマイズ自由",
                 desc: "ロゴ、カラー、質問内容を自由にカスタマイズ",
+                gradient: "from-emerald-500 to-teal-500",
               },
               {
                 icon: "🏪",
                 title: "複数業種対応",
                 desc: "飲食店、美容室、整骨院、バー、エステ、ラウンジなど幅広く対応",
+                gradient: "from-rose-500 to-red-500",
               },
             ].map((f) => (
               <div
                 key={f.title}
-                className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+                className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:bg-white/10 hover:-translate-y-1 transition-all group"
               >
-                <div className="text-3xl mb-4">{f.icon}</div>
-                <h3 className="font-bold text-lg mb-2">{f.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">
+                <div className={`inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br ${f.gradient} text-2xl mb-4 shadow-lg`}>
+                  {f.icon}
+                </div>
+                <h3 className="font-bold text-lg mb-2 text-white">
+                  {f.title}
+                </h3>
+                <p className="text-gray-400 text-sm leading-relaxed">
                   {f.desc}
                 </p>
               </div>
@@ -363,10 +449,16 @@ export default function LpPage() {
       </Section>
 
       {/* ───────── Target Industries ───────── */}
-      <Section className="py-20 md:py-28">
-        <div className="max-w-5xl mx-auto px-4">
-          <h2 className="text-2xl md:text-4xl font-bold text-center mb-14">
-            幅広い業種に対応
+      <Section className="relative py-24 md:py-32 bg-white overflow-hidden">
+        <BgBlob className="w-[500px] h-[500px] bg-cyan-200 top-0 -right-60" />
+        <BgBlob className="w-[400px] h-[400px] bg-violet-200 -bottom-40 left-0" />
+        <div className="relative max-w-5xl mx-auto px-4">
+          <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-16">
+            あらゆる店舗ビジネスに、
+            <br className="md:hidden" />
+            <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+              すぐ導入。
+            </span>
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {[
@@ -379,10 +471,10 @@ export default function LpPage() {
             ].map((ind) => (
               <div
                 key={ind.label}
-                className="flex items-center gap-3 bg-gradient-to-br from-cyan-50 to-violet-50 rounded-xl p-5 border border-gray-100"
+                className="flex items-center gap-3 bg-white/70 backdrop-blur-sm rounded-2xl p-5 border border-gray-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all"
               >
-                <span className="text-2xl">{ind.icon}</span>
-                <span className="font-semibold text-sm">{ind.label}</span>
+                <span className="text-3xl">{ind.icon}</span>
+                <span className="font-bold text-sm">{ind.label}</span>
               </div>
             ))}
           </div>
@@ -390,13 +482,28 @@ export default function LpPage() {
       </Section>
 
       {/* ───────── Pricing ───────── */}
-      <Section id="pricing" className="py-20 md:py-28 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-2xl md:text-4xl font-bold text-center mb-2">
-            シンプルな料金プラン
+      <Section id="pricing" className="relative py-24 md:py-32 overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-violet-50">
+        <BgBlob className="w-[600px] h-[600px] bg-cyan-300 -top-60 -left-60" />
+        <BgBlob className="w-[500px] h-[500px] bg-violet-300 bottom-0 -right-60" />
+        <div
+          className="absolute inset-0 opacity-[0.02]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, #6366f1 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+          }}
+        />
+        <div className="relative max-w-6xl mx-auto px-4">
+          <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-3">
+            始めやすい、
+            <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+              続けやすい。
+            </span>
           </h2>
-          <p className="text-center text-gray-500 mb-14">全プラン初期費用0円</p>
-          <div className="grid md:grid-cols-3 gap-6">
+          <p className="text-center text-gray-500 mb-16 text-lg">
+            全プラン初期費用0円
+          </p>
+          <div className="grid md:grid-cols-3 gap-6 items-start">
             {[
               {
                 name: "ライトプラン",
@@ -422,21 +529,25 @@ export default function LpPage() {
             ].map((plan) => (
               <div
                 key={plan.name}
-                className={`relative bg-white rounded-2xl p-8 shadow-sm border ${
+                className={`relative bg-white/70 backdrop-blur-sm rounded-3xl p-8 border transition-all hover:-translate-y-1 ${
                   plan.popular
-                    ? "border-cyan-400 ring-2 ring-cyan-400/30"
-                    : "border-gray-100"
+                    ? "border-transparent shadow-2xl shadow-violet-500/20 ring-2 ring-violet-400 md:scale-105"
+                    : "border-gray-200 shadow-lg hover:shadow-xl"
                 }`}
               >
                 {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-500 to-violet-500 text-white text-xs font-bold px-4 py-1 rounded-full">
-                    POPULAR
-                  </div>
+                  <>
+                    {/* Glow effect */}
+                    <div className="absolute -inset-[2px] rounded-3xl bg-gradient-to-r from-cyan-500 via-violet-500 to-fuchsia-500 opacity-20 blur-md -z-10" />
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-500 to-violet-500 text-white text-xs font-bold px-5 py-1.5 rounded-full shadow-lg">
+                      🏆 人気No.1
+                    </div>
+                  </>
                 )}
                 <h3 className="font-bold text-lg mb-1">{plan.name}</h3>
                 <p className="text-xs text-gray-500 mb-4">{plan.target}</p>
                 <div className="mb-6">
-                  <span className="text-4xl font-extrabold">
+                  <span className="text-5xl font-black bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
                     ¥{plan.price}
                   </span>
                   <span className="text-gray-500 text-sm">/月</span>
@@ -472,9 +583,9 @@ export default function LpPage() {
                 </ul>
                 <button
                   onClick={() => scrollTo("contact")}
-                  className={`mt-8 w-full py-3 rounded-full font-semibold transition-all ${
+                  className={`mt-8 w-full py-3.5 rounded-full font-semibold transition-all ${
                     plan.popular
-                      ? "bg-gradient-to-r from-cyan-500 to-violet-500 text-white hover:opacity-90"
+                      ? "bg-gradient-to-r from-cyan-500 to-violet-500 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:scale-105"
                       : "border border-gray-300 text-gray-700 hover:bg-gray-50"
                   }`}
                 >
@@ -483,17 +594,22 @@ export default function LpPage() {
               </div>
             ))}
           </div>
-          <p className="text-center text-sm text-gray-500 mt-8">
+          <p className="text-center text-sm text-gray-500 mt-10">
             永年ライセンスもご用意しています。詳しくはお問い合わせください。
           </p>
         </div>
       </Section>
 
       {/* ───────── Flow ───────── */}
-      <Section id="flow" className="py-20 md:py-28">
-        <div className="max-w-5xl mx-auto px-4">
-          <h2 className="text-2xl md:text-4xl font-bold text-center mb-14">
-            導入の流れ
+      <Section id="flow" className="relative py-24 md:py-32 bg-white overflow-hidden">
+        <BgBlob className="w-[500px] h-[500px] bg-cyan-200 -top-40 left-1/3" />
+        <BgBlob className="w-[400px] h-[400px] bg-violet-200 -bottom-40 right-1/4" />
+        <div className="relative max-w-5xl mx-auto px-4">
+          <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-16">
+            最短即日、
+            <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+              かんたん4ステップ
+            </span>
           </h2>
           <div className="grid md:grid-cols-4 gap-8">
             {[
@@ -520,12 +636,12 @@ export default function LpPage() {
             ].map((s, i) => (
               <div key={s.num} className="text-center relative">
                 {i < 3 && (
-                  <div className="hidden md:block absolute top-6 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-cyan-200 to-violet-200" />
+                  <div className="hidden md:block absolute top-8 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-cyan-300 to-violet-300" />
                 )}
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-violet-500 text-white font-bold text-lg mb-4 relative z-10">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-cyan-500 to-violet-500 text-white font-black text-2xl mb-4 relative z-10 shadow-lg shadow-violet-500/25">
                   {s.num}
                 </div>
-                <h3 className="font-bold mb-2">{s.title}</h3>
+                <h3 className="font-bold text-lg mb-2">{s.title}</h3>
                 <p className="text-gray-500 text-sm">{s.desc}</p>
               </div>
             ))}
@@ -534,10 +650,16 @@ export default function LpPage() {
       </Section>
 
       {/* ───────── FAQ ───────── */}
-      <Section id="faq" className="py-20 md:py-28 bg-gray-50">
-        <div className="max-w-3xl mx-auto px-4">
-          <h2 className="text-2xl md:text-4xl font-bold text-center mb-14">
-            よくある質問
+      <Section id="faq" className="relative py-24 md:py-32 overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-violet-50">
+        <BgBlob className="w-[500px] h-[500px] bg-cyan-200 -top-60 -left-40" />
+        <BgBlob className="w-[400px] h-[400px] bg-violet-200 bottom-0 -right-40" />
+        <div className="relative max-w-3xl mx-auto px-4">
+          <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-16">
+            気になるギモン、
+            <br className="md:hidden" />
+            <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+              すべて解消。
+            </span>
           </h2>
           <div className="space-y-4">
             <FaqItem
@@ -569,25 +691,46 @@ export default function LpPage() {
       </Section>
 
       {/* ───────── CTA / Contact ───────── */}
-      <Section id="contact" className="py-20 md:py-28">
-        <div className="max-w-3xl mx-auto px-4 text-center">
-          <h2 className="text-2xl md:text-4xl font-bold mb-4">
-            まずは無料相談から
+      <Section id="contact" className="relative py-24 md:py-32 overflow-hidden">
+        {/* Dark gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-indigo-950 to-violet-950" />
+        <BgBlob className="w-[600px] h-[600px] bg-cyan-500 -top-60 -left-40 opacity-25" />
+        <BgBlob className="w-[500px] h-[500px] bg-fuchsia-500 -bottom-40 -right-40 opacity-20" />
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, white 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
+          }}
+        />
+        <div className="relative max-w-3xl mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-5xl font-extrabold mb-4">
+            <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+              今日から、口コミで差をつけよう。
+            </span>
           </h2>
-          <p className="text-gray-500 mb-10">
-            ComiStaの導入についてお気軽にご相談ください
+          <p className="text-gray-300 mb-6 text-lg">
+            無料相談は1分で完了。まずはお気軽にお問い合わせください。
           </p>
-          <a
-            href="mailto:conestkawakami@gmail.com"
-            className="inline-block bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold px-10 py-4 rounded-full text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all"
-          >
-            無料相談する
-          </a>
-          <p className="mt-6 text-sm text-gray-500">
+          {/* Urgency badge */}
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-400/30 text-orange-300 font-bold text-sm px-5 py-2.5 rounded-full mb-10">
+            <span>🔥</span>
+            <span>今なら初月50%OFF キャンペーン実施中</span>
+          </div>
+          <div className="block">
+            <a
+              href="mailto:conestkawakami@gmail.com"
+              className="inline-block bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold px-12 py-5 rounded-full text-lg shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-all"
+            >
+              無料相談する
+            </a>
+          </div>
+          <p className="mt-8 text-sm text-gray-400">
             メールアドレス:{" "}
             <a
               href="mailto:conestkawakami@gmail.com"
-              className="underline hover:text-gray-700"
+              className="underline hover:text-gray-200 transition-colors"
             >
               conestkawakami@gmail.com
             </a>
@@ -596,7 +739,7 @@ export default function LpPage() {
       </Section>
 
       {/* ───────── Footer ───────── */}
-      <footer className="bg-gray-900 text-gray-400 py-12">
+      <footer className="bg-gray-950 text-gray-400 py-12 border-t border-white/5">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <Image src="/logo.png" alt="ComiSta" width={100} height={30} />
