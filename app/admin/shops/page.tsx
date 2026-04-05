@@ -251,15 +251,33 @@ export default function ShopsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <h1 className="text-xl md:text-2xl font-bold text-gray-900">ショップ管理</h1>
-        <button
-          onClick={() => setAddOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white font-semibold rounded-xl shadow transition-colors text-sm w-full sm:w-auto justify-center sm:justify-start"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          新規ショップ登録
-        </button>
+        <div className="flex gap-2 w-full sm:w-auto">
+          <button
+            onClick={async () => {
+              try {
+                const res = await fetch("/api/admin/invite");
+                const d = await res.json();
+                await navigator.clipboard.writeText(d.url);
+                alert("招待リンクをコピーしました");
+              } catch { alert("コピーに失敗しました"); }
+            }}
+            className="flex items-center gap-2 px-4 py-2 border border-violet-400 text-violet-600 font-semibold rounded-xl hover:bg-violet-50 transition-colors text-sm flex-1 sm:flex-none justify-center"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+            </svg>
+            招待リンクをコピー
+          </button>
+          <button
+            onClick={() => setAddOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white font-semibold rounded-xl shadow transition-colors text-sm flex-1 sm:flex-none justify-center"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            新規ショップ登録
+          </button>
+        </div>
       </div>
 
       {/* Stats + Search */}
