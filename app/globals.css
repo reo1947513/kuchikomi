@@ -11,3 +11,40 @@
     display: none;
   }
 }
+
+/* Premium lock animations */
+@keyframes premiumFadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes premiumLockFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+@keyframes premiumShimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+@keyframes premiumModalSlide {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes premiumOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes premiumPulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(139,92,246,0.3); }
+  50% { transform: scale(1.02); box-shadow: 0 0 20px 5px rgba(139,92,246,0.15); }
+}
+@keyframes premiumGlow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+.premium-fade-in { animation: premiumFadeIn 0.5s ease-out both; }
+.premium-lock-float { animation: premiumLockFloat 3s ease-in-out infinite; }
+.premium-shimmer-btn { background: linear-gradient(90deg, #06b6d4, #8b5cf6, #06b6d4); background-size: 200% auto; animation: premiumShimmer 3s linear infinite; }
+.premium-modal { animation: premiumModalSlide 0.35s ease-out; }
+.premium-overlay { animation: premiumOverlay 0.2s ease-out; }
+.premium-pulse { animation: premiumPulse 2.5s ease-in-out infinite; }
+.premium-glow { animation: premiumGlow 2s ease-in-out infinite; }

@@ -696,17 +696,17 @@ export default function SurveySettingsPage() {
 
         {/* ===== Tab: AI設定 ===== */}
         {activeTab === "ai" && !isPremiumUser && userRole !== "super" && (
-          <div className="bg-white rounded-xl shadow p-6 sm:p-10 text-center space-y-4">
-            <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center mx-auto">
+          <div className="bg-white rounded-xl shadow p-6 sm:p-10 text-center space-y-4 premium-fade-in">
+            <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center mx-auto premium-lock-float">
               <svg className="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
-            <h3 className="text-lg font-bold text-gray-700">AI設定はプレミアムプラン限定です</h3>
-            <p className="text-sm text-gray-500 max-w-md mx-auto">
+            <h3 className="text-lg font-bold text-gray-700" style={{ animation: "premiumFadeIn 0.5s ease-out 0.2s both" }}>AI設定はプレミアムプラン限定です</h3>
+            <p className="text-sm text-gray-500 max-w-md mx-auto" style={{ animation: "premiumFadeIn 0.5s ease-out 0.4s both" }}>
               プレミアムプランにアップグレードすると、AIが口コミを生成する際のプロンプトを自由にカスタマイズできます。業種や店舗の特徴に合わせた文章スタイルで、より効果的な口コミを生成できます。
             </p>
-            <div className="bg-gray-50 rounded-xl p-4 text-left max-w-md mx-auto">
+            <div className="bg-gray-50 rounded-xl p-4 text-left max-w-md mx-auto" style={{ animation: "premiumFadeIn 0.5s ease-out 0.6s both" }}>
               <p className="text-xs font-semibold text-gray-500 mb-2">カスタマイズできる項目:</p>
               <ul className="text-xs text-gray-400 space-y-1">
                 <li>・ AIプロンプトテンプレートの編集</li>
@@ -714,7 +714,7 @@ export default function SurveySettingsPage() {
                 <li>・ キーワード設定</li>
               </ul>
             </div>
-            <a href="/dashboard/billing" className="inline-block px-6 py-3 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white font-bold text-sm rounded-xl shadow transition-colors">
+            <a href="/dashboard/billing" className="inline-block px-6 py-3 text-white font-bold text-sm rounded-xl shadow premium-shimmer-btn premium-pulse" style={{ animation: "premiumFadeIn 0.5s ease-out 0.8s both, premiumPulse 2.5s ease-in-out infinite 1.3s" }}>
               プランをアップグレード
             </a>
           </div>

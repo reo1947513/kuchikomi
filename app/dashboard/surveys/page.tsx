@@ -304,9 +304,9 @@ function PremiumShortcuts({ surveyId }: { surveyId: string }) {
             <button
               key={s.label}
               onClick={() => setPopup(s.label)}
-              className="relative rounded-xl p-4 transition-all hover:-translate-y-0.5 bg-gray-50 border border-dashed border-gray-200 text-left"
+              className="relative rounded-xl p-4 transition-all hover:-translate-y-0.5 hover:shadow-md bg-gray-50 border border-dashed border-gray-200 text-left premium-fade-in"
             >
-              <div className="absolute top-2 right-2">
+              <div className="absolute top-2 right-2 premium-lock-float">
                 <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
@@ -332,8 +332,8 @@ function PremiumShortcuts({ surveyId }: { surveyId: string }) {
 
       {/* Feature detail popup */}
       {popup && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={() => setPopup(null)}>
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 premium-overlay" onClick={() => setPopup(null)}>
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden premium-modal" onClick={(e) => e.stopPropagation()}>
             <div className="bg-gradient-to-r from-violet-500 to-purple-500 px-5 py-4">
               <h3 className="text-white font-bold">{popup}</h3>
             </div>
@@ -343,7 +343,7 @@ function PremiumShortcuts({ surveyId }: { surveyId: string }) {
               </p>
               <div className="flex flex-col gap-2">
                 <a href="/dashboard/billing"
-                  className="w-full text-center py-2.5 bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold text-sm rounded-xl">
+                  className="w-full text-center py-2.5 text-white font-bold text-sm rounded-xl premium-shimmer-btn premium-pulse">
                   プランをアップグレード
                 </a>
                 <button onClick={() => setPopup(null)} className="text-xs text-gray-400 hover:text-gray-600 mt-1">

@@ -307,8 +307,7 @@ function LockedAnalysis() {
             </button>
             <a
               href="/dashboard/billing"
-              className="px-6 py-2.5 text-white font-bold text-sm rounded-xl shadow transition-all hover:scale-105"
-              style={{ background: "linear-gradient(90deg, #06b6d4, #8b5cf6, #06b6d4)", backgroundSize: "200% auto", animation: "shimmerBtn 3s linear infinite" }}
+              className="px-6 py-2.5 text-white font-bold text-sm rounded-xl shadow premium-shimmer-btn premium-pulse hover:scale-105 transition-transform"
             >
               プランをアップグレード
             </a>
@@ -338,7 +337,7 @@ function LockedAnalysis() {
               ))}
               <a
                 href="/dashboard/billing"
-                className="block w-full text-center px-6 py-3 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white font-bold text-sm rounded-xl shadow transition-colors"
+                className="block w-full text-center px-6 py-3 text-white font-bold text-sm rounded-xl shadow premium-shimmer-btn premium-pulse"
               >
                 プランをアップグレード
               </a>
