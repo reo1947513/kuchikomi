@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     const lastNum = lastUser?.loginId ? parseInt(lastUser.loginId.replace("AG-", ""), 10) : 0;
     const loginId = "AG-" + String(lastNum + 1).padStart(6, "0");
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 12);
 
     const user = await prisma.user.create({
       data: {
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ ok: true, loginId: user.loginId }, { status: 201 });
   } catch (error) {
-    console.error("Signup error:", error);
+    console.error("Signup error:", error instanceof Error ? error.message : "Unknown error");
     return NextResponse.json({ error: "アカウント作成に失敗しました" }, { status: 500 });
   }
 }

@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 const prisma = new PrismaClient();
 
@@ -15,7 +16,7 @@ async function main() {
   });
 
   // Create super admin
-  const superPassword = await bcrypt.hash("Zq8$mNv!2wXpL#7r", 10);
+  const superPassword = await bcrypt.hash(process.env.SEED_SUPER_PASSWORD || crypto.randomUUID(), 12);
   await prisma.user.upsert({
     where: { email: "x9kv-admin@sys.internal" },
     update: {},
@@ -28,7 +29,7 @@ async function main() {
   });
 
   // Create admin user (shop owner)
-  const adminPassword = await bcrypt.hash("admin1234", 10);
+  const adminPassword = await bcrypt.hash(process.env.SEED_ADMIN_PASSWORD || crypto.randomUUID(), 12);
   const admin = await prisma.user.upsert({
     where: { email: "admin@kuchikomi.jp" },
     update: {},
@@ -182,7 +183,7 @@ async function main() {
     },
   });
 
-  console.log("Seed completed:", { agency, admin, survey });
+  console.log("Seed completed successfully");
 }
 
 main()

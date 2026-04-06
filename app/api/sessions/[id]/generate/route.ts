@@ -139,7 +139,7 @@ export async function POST(
     }
     reviewText = content.text.trim();
   } catch (error) {
-    console.error("Claude API error:", error);
+    console.error("Claude API error:", error instanceof Error ? error.message : "Unknown error");
     return NextResponse.json(
       { error: "Failed to generate review text" },
       { status: 500 }

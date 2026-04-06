@@ -95,7 +95,7 @@ export async function GET() {
 
     return NextResponse.json({ subscriptions, lifetime, additional });
   } catch (error) {
-    console.error("Failed to fetch Stripe prices:", error);
+    console.error("Failed to fetch Stripe prices:", error instanceof Error ? error.message : "Unknown error");
     return NextResponse.json(
       { error: "Failed to fetch prices" },
       { status: 500 }

@@ -5,7 +5,7 @@ import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
 import { randomUUID } from "crypto";
 
-const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"];
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 
 export async function POST(request: NextRequest) {
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ url: `/uploads/${filename}` });
   } catch (error) {
-    console.error("Upload error:", error);
+    console.error("Upload error:", error instanceof Error ? error.message : "Unknown error");
     return NextResponse.json({ error: "アップロードに失敗しました" }, { status: 500 });
   }
 }

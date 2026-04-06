@@ -106,7 +106,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
   if (contractEnd !== undefined) updateData.contractEnd = contractEnd ? new Date(contractEnd) : null;
   if (noContractLimit !== undefined) updateData.noContractLimit = noContractLimit;
   if (password && password.length > 0) {
-    updateData.password = await bcrypt.hash(password, 10);
+    updateData.password = await bcrypt.hash(password, 12);
   }
 
   // Update first survey's googleBusinessUrl and monthlyReviewLimit if provided

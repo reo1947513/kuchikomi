@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error("Password reset error:", error);
+    console.error("Password reset error:", error instanceof Error ? error.message : "Unknown error");
     return NextResponse.json({ error: "送信に失敗しました" }, { status: 500 });
   }
 }
@@ -65,7 +65,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "このリンクは無効または期限切れです" }, { status: 400 });
     }
 
-    const hashed = await bcrypt.hash(password, 10);
+    const hashed = await bcrypt.hash(password, 12);
 
     await Promise.all([
       prisma.user.update({
@@ -80,7 +80,7 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error("Password reset confirm error:", error);
+    console.error("Password reset confirm error:", error instanceof Error ? error.message : "Unknown error");
     return NextResponse.json({ error: "パスワードの再設定に失敗しました" }, { status: 500 });
   }
 }

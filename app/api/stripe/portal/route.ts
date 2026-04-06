@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ url: portalSession.url });
   } catch (error) {
-    console.error("Stripe portal error:", error);
+    console.error("Stripe portal error:", error instanceof Error ? error.message : "Unknown error");
     return NextResponse.json(
       { error: "Failed to create portal session" },
       { status: 500 }

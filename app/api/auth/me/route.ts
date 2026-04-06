@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(user);
   } catch (error) {
-    console.error("Me endpoint error:", error);
+    console.error("Me endpoint error:", error instanceof Error ? error.message : "Unknown error");
     return NextResponse.json({ error: "サーバーエラーが発生しました" }, { status: 500 });
   }
 }
@@ -82,7 +82,7 @@ export async function PUT(request: NextRequest) {
     if (!valid) {
       return NextResponse.json({ error: "現在のパスワードが正しくありません" }, { status: 400 });
     }
-    const hashed = await bcrypt.hash(newPassword, 10);
+    const hashed = await bcrypt.hash(newPassword, 12);
     await prisma.user.update({ where: { id: session.userId }, data: { password: hashed } });
     return NextResponse.json({ success: true });
   }
