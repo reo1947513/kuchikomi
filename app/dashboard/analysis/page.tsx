@@ -78,9 +78,12 @@ export default function AnalysisPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-lg sm:text-2xl font-bold text-gray-900">アンケート分析</h1>
-        <p className="text-sm text-gray-500 mt-1">回答データに基づくグラフとAI分析レポート</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-lg sm:text-2xl font-bold text-gray-900">アンケート分析</h1>
+          <p className="text-sm text-gray-500 mt-1">回答データに基づくグラフとAI分析レポート</p>
+        </div>
+        <AnalysisCsvButton />
       </div>
 
       {/* Summary */}
@@ -170,6 +173,55 @@ export default function AnalysisPage() {
         )}
       </div>
     </div>
+  );
+}
+
+/* ─── CSV Export Button for Analysis ─── */
+function AnalysisCsvButton() {
+  const [pt, setPt] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/auth/me").then((r) => r.json()).then((d) => setPt(d.planType ?? null)).catch(() => {});
+  }, []);
+
+  const isPremium = pt === "premium" || pt === "lifetime_premium";
+
+  const handleExport = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/dashboard/export");
+      if (!res.ok) {
+        const d = await res.json();
+        alert(d.error || "エクスポートに失敗しました");
+        return;
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `kuchikomi-export-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      alert("エクスポートに失敗しました");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleExport}
+      disabled={!isPremium || loading}
+      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors disabled:opacity-40 disabled:cursor-not-allowed border-gray-300 text-gray-600 hover:bg-gray-50"
+      title={isPremium ? undefined : "プレミアムプランでご利用いただけます"}
+    >
+      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+      {loading ? "出力中..." : "CSV出力"}
+    </button>
   );
 }
 
