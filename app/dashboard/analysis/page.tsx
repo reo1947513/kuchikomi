@@ -6,11 +6,11 @@ import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tool
 const COLORS = ["#06B6D4", "#8B5CF6", "#F59E0B", "#EF4444", "#10B981", "#EC4899", "#6366F1", "#14B8A6"];
 
 type ChartItem = { question: string; data: { name: string; value: number }[] };
-type MonthlySession = { month: string; count: number };
+type MonthlyItem = { month: string; access: number; completed: number; googleClick: number };
 type AnalysisData = {
   totalSessions: number;
   chartData: ChartItem[];
-  monthlySessions: MonthlySession[];
+  monthlyData: MonthlyItem[];
 };
 
 const LOCKED_PLANS = [null, "light", "lifetime_light"];
@@ -88,17 +88,21 @@ export default function AnalysisPage() {
         <p className="text-sm text-gray-700">総回答数: <span className="text-lg font-bold text-violet-600">{data.totalSessions}</span>件</p>
       </div>
 
-      {/* Monthly bar chart */}
+      {/* Monthly trend chart */}
       <div className="bg-white rounded-xl shadow-sm p-3 sm:p-5">
-        <h2 className="text-sm font-semibold text-gray-800 mb-4">月別回答数</h2>
-        <div className="h-48 sm:h-64 overflow-x-auto" style={{ minWidth: 0, minHeight: 0 }}>
+        <h2 className="text-sm font-semibold text-gray-800 mb-1">月別推移</h2>
+        <p className="text-xs text-gray-400 mb-4">アクセス数・回答完了数・口コミ投稿数の推移</p>
+        <div className="h-56 sm:h-72" style={{ minWidth: 0, minHeight: 0 }}>
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data.monthlySessions}>
+            <LineChart data={data.monthlyData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" fontSize={12} />
-              <YAxis allowDecimals={false} fontSize={12} />
+              <XAxis dataKey="month" fontSize={11} />
+              <YAxis allowDecimals={false} fontSize={11} />
               <Tooltip />
-              <Line type="monotone" dataKey="count" name="回答数" stroke="#8B5CF6" strokeWidth={2} dot={{ fill: "#8B5CF6", r: 4 }} activeDot={{ r: 6 }} />
+              <Legend fontSize={12} />
+              <Line type="monotone" dataKey="access" name="アクセス数" stroke="#06B6D4" strokeWidth={2} dot={{ fill: "#06B6D4", r: 3 }} activeDot={{ r: 5 }} />
+              <Line type="monotone" dataKey="completed" name="回答完了数" stroke="#8B5CF6" strokeWidth={2} dot={{ fill: "#8B5CF6", r: 3 }} activeDot={{ r: 5 }} />
+              <Line type="monotone" dataKey="googleClick" name="口コミ投稿数" stroke="#10B981" strokeWidth={2} dot={{ fill: "#10B981", r: 3 }} activeDot={{ r: 5 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
