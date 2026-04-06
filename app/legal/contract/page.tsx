@@ -1,9 +1,4 @@
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "サービス利用契約書 - ComiSta",
-  description: "ComiStaのサービス利用契約書です。",
-};
+"use client";
 
 export default function ContractPage() {
   return (
