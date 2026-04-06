@@ -129,6 +129,7 @@ export default function LpPage() {
   const navLinks = [
     { label: "特徴", id: "features" },
     { label: "料金", id: "pricing" },
+    { label: "他社比較", id: "comparison" },
     { label: "導入の流れ", id: "flow" },
     { label: "FAQ", id: "faq" },
   ];
@@ -336,6 +337,7 @@ export default function LpPage() {
             </span>
             が終わらせます。
           </h2>
+          <p className="text-center text-gray-500 mb-10 sm:mb-16 text-sm sm:text-base">口コミ集めに悩む店舗オーナー様のよくあるお悩み</p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
@@ -458,6 +460,7 @@ export default function LpPage() {
               選ばれ続ける、6つの理由
             </span>
           </h2>
+          <p className="text-center text-gray-400 mb-10 sm:mb-16 text-sm sm:text-base">シンプルなのに高機能。ComiStaの強みをご紹介</p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
@@ -528,6 +531,7 @@ export default function LpPage() {
               すぐ導入。
             </span>
           </h2>
+          <p className="text-center text-gray-500 mb-10 sm:mb-16 text-sm sm:text-base">幅広い業種のお客様にご利用いただいています</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {[
               { icon: "🍽️", label: "飲食店・レストラン" },
@@ -864,6 +868,7 @@ export default function LpPage() {
               かんたん4ステップ
             </span>
           </h2>
+          <p className="text-center text-gray-500 mb-10 sm:mb-16 text-sm sm:text-base">お問い合わせから運用開始まで最短即日で完了します</p>
           <div className="grid md:grid-cols-4 gap-8">
             {[
               {
@@ -914,6 +919,7 @@ export default function LpPage() {
               すべて解消。
             </span>
           </h2>
+          <p className="text-center text-gray-500 mb-10 sm:mb-14 text-sm sm:text-base">ComiStaに関するよくある質問をまとめました</p>
           <div className="space-y-4">
             <FaqItem
               q="初期費用はかかりますか？"
