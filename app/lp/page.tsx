@@ -1032,6 +1032,18 @@ export default function LpPage() {
                 特定商取引法に基づく表記
               </a>
               <a
+                href="/legal/privacy"
+                className="hover:text-white transition-colors"
+              >
+                プライバシーポリシー
+              </a>
+              <a
+                href="/legal/terms"
+                className="hover:text-white transition-colors"
+              >
+                利用規約
+              </a>
+              <a
                 href="https://lin.ee/6C7mwFK"
                 target="_blank"
                 rel="noopener noreferrer"
