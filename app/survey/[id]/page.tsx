@@ -206,6 +206,7 @@ export default function SurveyPage({
       setMessages((prev) => [...prev, botMsg]);
 
       if (nextQ.type === "text") {
+        setTextInput("");
         setPhase({ type: "text_input", questionIndex: nextIndex });
       } else {
         setPhase({ type: "questioning", questionIndex: nextIndex });
