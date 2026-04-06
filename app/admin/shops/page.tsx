@@ -318,8 +318,8 @@ export default function ShopsPage() {
 
       {error && <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">{error}</div>}
 
-      {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
+      {/* Table - Desktop */}
+      <div className="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
         <table className="w-full text-sm min-w-[800px]">
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50">
@@ -420,6 +420,57 @@ export default function ShopsPage() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Cards */}
+      <div className="md:hidden space-y-3">
+        {loading && <p className="text-center py-8 text-gray-400 text-sm">読み込み中...</p>}
+        {!loading && shops.length === 0 && <p className="text-center py-8 text-gray-400 text-sm">ショップが見つかりません</p>}
+        {!loading && shops.map((shop) => {
+          const planLabelsM: Record<string, { label: string; cls: string }> = {
+            light: { label: "ライト", cls: "bg-blue-100 text-blue-700" },
+            standard: { label: "スタンダード", cls: "bg-violet-100 text-violet-700" },
+            premium: { label: "プレミアム", cls: "bg-amber-100 text-amber-700" },
+            lifetime_light: { label: "永年ライト", cls: "bg-blue-100 text-blue-700" },
+            lifetime_standard: { label: "永年スタンダード", cls: "bg-violet-100 text-violet-700" },
+            lifetime_premium: { label: "永年プレミアム", cls: "bg-amber-100 text-amber-700" },
+          };
+          const planInfo = shop.planType ? planLabelsM[shop.planType] || { label: shop.planType, cls: "bg-gray-100 text-gray-600" } : { label: "無料", cls: "bg-gray-100 text-gray-500" };
+          const contractLabel = shop.noContractLimit ? "無期限" : shop.contractEnd ? (() => {
+            const days = Math.ceil((new Date(shop.contractEnd).getTime() - Date.now()) / 86400000);
+            return days > 0 ? `残り${days}日` : "契約終了";
+          })() : "未設定";
+
+          return (
+            <div key={shop.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+              <div className="flex items-start justify-between mb-2">
+                <div>
+                  <p className="font-bold text-gray-900">{shop.shopName ?? shop.name}</p>
+                  <p className="text-xs text-gray-400">{shop.loginId}</p>
+                </div>
+                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${planInfo.cls}`}>{planInfo.label}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs mb-3">
+                <div><span className="text-gray-400">担当者: </span><span className="text-gray-700">{shop.name}</span></div>
+                <div><span className="text-gray-400">アクセス: </span><span className="text-gray-700">{shop.sessionCount ?? 0}回</span></div>
+                <div><span className="text-gray-400">契約: </span><span className="text-gray-700">{contractLabel}</span></div>
+                <div><span className="text-gray-400">メール: </span><span className="text-gray-700 truncate">{shop.email ?? "—"}</span></div>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {shop.firstSurveyId && (
+                  <button onClick={() => router.push(`/dashboard/surveys/${shop.firstSurveyId}/settings`)}
+                    className="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-blue-500 text-white">アンケート</button>
+                )}
+                <button onClick={() => openEdit(shop)}
+                  className="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-gradient-to-r from-cyan-500 to-violet-500 text-white">編集</button>
+                <button onClick={() => handleCancelContract(shop)} disabled={!shop.stripeSubscriptionId && !shop.planType}
+                  className="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-orange-500 text-white disabled:opacity-40">解約</button>
+                <button onClick={() => handleDelete(shop)}
+                  className="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-red-500 text-white">削除</button>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* Pagination */}
