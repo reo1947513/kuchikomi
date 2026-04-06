@@ -129,6 +129,7 @@ export default function LpPage() {
   const navLinks = [
     { label: "特徴", id: "features" },
     { label: "料金", id: "pricing" },
+    { label: "導入事例", id: "cases" },
     { label: "他社比較", id: "comparison" },
     { label: "導入の流れ", id: "flow" },
     { label: "FAQ", id: "faq" },
@@ -765,6 +766,86 @@ export default function LpPage() {
                 </ul>
               </div>
             </div>
+          </div>
+        </div>
+      </Section>
+
+      {/* ───────── Case Studies ───────── */}
+      <Section id="cases" className="relative py-16 sm:py-24 md:py-32 overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-violet-50">
+        <BgBlob className="w-[500px] h-[500px] bg-violet-200 -top-40 -right-60" />
+        <BgBlob className="w-[400px] h-[400px] bg-cyan-200 -bottom-40 -left-40" />
+        <div className="relative max-w-5xl mx-auto px-4">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-4 px-2">
+            導入店舗の
+            <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+              リアルな声
+            </span>
+          </h2>
+          <p className="text-center text-gray-500 mb-10 sm:mb-14 text-sm sm:text-base">ComiStaを導入した店舗オーナー様の実際の成果をご紹介</p>
+          <div className="grid md:grid-cols-2 gap-6">
+            {[
+              {
+                shop: "焼肉 花火",
+                industry: "飲食店",
+                stars: 5,
+                title: "口コミ数が3ヶ月で4倍に",
+                content: "以前はお客様に口コミをお願いするのが申し訳なく、月に2〜3件程度でした。ComiSta導入後はアンケートに答えるだけで口コミが自動生成されるので、お客様の負担もなく自然に口コミが集まるようになりました。",
+                result: "口コミ数: 月3件 → 月12件 / Google評価: ★3.8 → ★4.5",
+              },
+              {
+                shop: "HAIR SALON Luce",
+                industry: "美容室",
+                stars: 5,
+                title: "新規のお客様が30%増加",
+                content: "SNSでの集客に限界を感じていました。ComiStaを導入してGoogleマップの口コミが増えたことで、「口コミを見て来ました」というお客様が明らかに増えました。",
+                result: "新規客数: 月20名 → 月26名 / リピート率も5%向上",
+              },
+              {
+                shop: "ほねつぎ やまと",
+                industry: "整骨院",
+                stars: 4,
+                title: "スタッフの負担なしで口コミ対策",
+                content: "施術後にQRコードを渡すだけで完結するので、受付スタッフの手間がほとんどありません。チャット形式のアンケートは患者さんからも「答えやすい」と好評です。",
+                result: "口コミ数: 月1件 → 月8件 / Googleマップからの予約が2倍に",
+              },
+              {
+                shop: "Bar CROSS",
+                industry: "バー",
+                stars: 5,
+                title: "常連さんが口コミを書いてくれるように",
+                content: "バーという業態上、口コミを書いてもらうハードルが高かったのですが、会計時にQRコードを見せるだけで自然な流れで口コミを書いてもらえるようになりました。",
+                result: "口コミ数: ほぼ0件 → 月6件 / 新規来店のきっかけ1位に",
+              },
+              {
+                shop: "Nail Salon Petite",
+                industry: "ネイルサロン",
+                stars: 5,
+                title: "AIが書く口コミの自然さに驚き",
+                content: "最初は「AIが書いた口コミって不自然じゃないの？」と心配でしたが、実際にお客様のアンケート回答をもとに生成された文章は、本当にお客様が書いたような自然な口コミでした。",
+                result: "Google評価: ★4.0 → ★4.7 / 口コミの文章品質が大幅向上",
+              },
+            ].map((c, i) => (
+              <div
+                key={i}
+                className={`bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-white/60 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all ${i === 4 ? "md:col-span-2 md:max-w-lg md:mx-auto" : ""}`}
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-violet-500 flex items-center justify-center text-white font-bold text-sm">
+                    {c.shop.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="font-bold text-sm text-gray-800">{c.shop}</p>
+                    <span className="text-xs text-gray-500">{c.industry}</span>
+                  </div>
+                  <span className="ml-auto text-amber-400 text-sm">{"★".repeat(c.stars)}</span>
+                </div>
+                <h3 className="font-bold text-base text-gray-900 mb-2">{c.title}</h3>
+                <p className="text-sm text-gray-600 leading-relaxed mb-3">{c.content}</p>
+                <div className="bg-gradient-to-r from-cyan-50 to-violet-50 rounded-xl p-3">
+                  <p className="text-xs font-semibold text-violet-700">{c.result}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </Section>
