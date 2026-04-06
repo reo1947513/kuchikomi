@@ -179,6 +179,53 @@ function AnnouncementBanner() {
   );
 }
 
+// ---- Campaign Banner ----
+type CampaignItem = { id: string; title: string; content: string; target: string; startAt: string; endAt: string | null };
+
+function CampaignBanner() {
+  const [items, setItems] = useState<CampaignItem[]>([]);
+  const [dismissed, setDismissed] = useState<Set<string>>(new Set());
+  const [expanded, setExpanded] = useState<string | null>(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("dismissedCampaigns");
+    if (stored) setDismissed(new Set(JSON.parse(stored)));
+
+    fetch("/api/campaigns").then((r) => r.json()).then((d) => setItems(Array.isArray(d) ? d : [])).catch(() => {});
+  }, []);
+
+  const dismiss = (id: string) => {
+    const next = new Set(dismissed);
+    next.add(id);
+    setDismissed(next);
+    localStorage.setItem("dismissedCampaigns", JSON.stringify(Array.from(next)));
+  };
+
+  const visible = items.filter((i) => !dismissed.has(i.id));
+  if (visible.length === 0) return null;
+
+  return (
+    <div className="space-y-2">
+      {visible.slice(0, 2).map((item) => (
+        <div key={item.id} className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl shadow-sm border border-amber-200 overflow-hidden">
+          <div className="flex items-center gap-3 px-4 py-3 cursor-pointer" onClick={() => setExpanded(expanded === item.id ? null : item.id)}>
+            <span className="text-lg">🎁</span>
+            <span className="flex-1 text-sm font-bold text-amber-800 truncate">{item.title}</span>
+            <button onClick={(e) => { e.stopPropagation(); dismiss(item.id); }} className="shrink-0 text-amber-300 hover:text-amber-500">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+          </div>
+          {expanded === item.id && (
+            <div className="px-4 pb-3">
+              <p className="text-sm text-amber-700 whitespace-pre-wrap leading-relaxed">{item.content}</p>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // ---- Premium Feature Shortcuts ----
 function PremiumShortcuts({ surveyId }: { surveyId: string }) {
   const [planType, setPlanType] = useState<string | null>(null);
@@ -614,6 +661,9 @@ export default function DashboardPage() {
 
       {/* Announcements */}
       <AnnouncementBanner />
+
+      {/* Campaigns */}
+      <CampaignBanner />
 
       {/* Welcome Card */}
       <div className="rounded-2xl bg-gradient-to-r from-cyan-500 to-violet-500 p-4 md:p-6 text-white shadow-lg">
