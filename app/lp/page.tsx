@@ -778,16 +778,16 @@ export default function LpPage() {
             </span>
           </h2>
           <p className="text-center text-gray-500 mb-10 sm:mb-14 text-sm sm:text-base">ComiStaが選ばれる理由をご確認ください</p>
-          <div className="overflow-x-auto rounded-2xl shadow-lg border border-gray-200">
-            <table className="w-full text-sm min-w-[600px]">
+          <div className="rounded-2xl shadow-lg border border-gray-200">
+            <table className="w-full text-xs sm:text-sm">
               <thead>
                 <tr>
-                  <th className="text-left px-4 sm:px-6 py-4 bg-gray-50 font-semibold text-gray-600 w-1/3">比較項目</th>
-                  <th className="px-4 sm:px-6 py-4 bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold text-center">
+                  <th className="text-left px-2 sm:px-6 py-3 sm:py-4 bg-gray-50 font-semibold text-gray-600">比較項目</th>
+                  <th className="px-2 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold text-center">
                     ComiSta
                   </th>
-                  <th className="px-4 sm:px-6 py-4 bg-gray-100 text-gray-500 font-medium text-center">他社A</th>
-                  <th className="px-4 sm:px-6 py-4 bg-gray-100 text-gray-500 font-medium text-center">他社B</th>
+                  <th className="px-2 sm:px-6 py-3 sm:py-4 bg-gray-100 text-gray-500 font-medium text-center">他社A</th>
+                  <th className="px-2 sm:px-6 py-3 sm:py-4 bg-gray-100 text-gray-500 font-medium text-center">他社B</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -804,8 +804,8 @@ export default function LpPage() {
                   { item: "契約期間の縛り", comista: "6ヶ月〜", a: "12ヶ月〜", b: "6ヶ月〜" },
                 ].map((row) => (
                   <tr key={row.item} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 sm:px-6 py-4 font-medium text-gray-800">{row.item}</td>
-                    <td className="px-4 sm:px-6 py-4 text-center">
+                    <td className="px-2 sm:px-6 py-3 sm:py-4 font-medium text-gray-800">{row.item}</td>
+                    <td className="px-2 sm:px-6 py-3 sm:py-4 text-center">
                       {typeof row.comista === "boolean" ? (
                         row.comista ? (
                           <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-cyan-100">
@@ -818,7 +818,7 @@ export default function LpPage() {
                         <span className="font-bold text-cyan-600">{row.comista}</span>
                       )}
                     </td>
-                    <td className="px-4 sm:px-6 py-4 text-center">
+                    <td className="px-2 sm:px-6 py-3 sm:py-4 text-center">
                       {typeof row.a === "boolean" ? (
                         row.a ? (
                           <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gray-100">
@@ -831,7 +831,7 @@ export default function LpPage() {
                         <span className="text-gray-500">{row.a}</span>
                       )}
                     </td>
-                    <td className="px-4 sm:px-6 py-4 text-center">
+                    <td className="px-2 sm:px-6 py-3 sm:py-4 text-center">
                       {typeof row.b === "boolean" ? (
                         row.b ? (
                           <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gray-100">
