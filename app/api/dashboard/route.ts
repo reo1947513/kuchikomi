@@ -39,14 +39,34 @@ export async function GET() {
   // All sessions (completed, non-test) in last 12 months
   const allSessions = await prisma.reviewSession.findMany({
     where: { surveyId: survey.id, status: "completed", isTest: false, createdAt: { gte: twelveMonthsAgo } },
-    select: { id: true, createdAt: true },
+    select: { id: true, createdAt: true, googleClickedAt: true },
     orderBy: { createdAt: "asc" },
+  });
+
+  // All sessions including in_progress (for access count)
+  const allAccessSessions = await prisma.reviewSession.findMany({
+    where: { surveyId: survey.id, isTest: false, createdAt: { gte: startOfLastMonth } },
+    select: { id: true, createdAt: true },
   });
 
   const thisMonthCount = allSessions.filter((s) => new Date(s.createdAt) >= startOfThisMonth).length;
   const lastMonthCount = allSessions.filter((s) => {
     const d = new Date(s.createdAt);
     return d >= startOfLastMonth && d < startOfThisMonth;
+  }).length;
+
+  // Access counts (this/last month)
+  const thisMonthAccess = allAccessSessions.filter((s) => new Date(s.createdAt) >= startOfThisMonth).length;
+  const lastMonthAccess = allAccessSessions.filter((s) => {
+    const d = new Date(s.createdAt);
+    return d >= startOfLastMonth && d < startOfThisMonth;
+  }).length;
+
+  // Google click counts (this/last month)
+  const thisMonthGoogleClick = allSessions.filter((s) => new Date(s.createdAt) >= startOfThisMonth && s.googleClickedAt).length;
+  const lastMonthGoogleClick = allSessions.filter((s) => {
+    const d = new Date(s.createdAt);
+    return d >= startOfLastMonth && d < startOfThisMonth && s.googleClickedAt;
   }).length;
 
   // Total completed sessions (all time, non-test)
@@ -104,5 +124,6 @@ export async function GET() {
     user, survey: surveyWithCount, monthlyCounts, recentSessions,
     adviceCount, adviceList,
     lastMonthCount, totalSessionCount, totalAccessCount, googleClickCount,
+    thisMonthAccess, lastMonthAccess, thisMonthGoogleClick, lastMonthGoogleClick,
   });
 }
