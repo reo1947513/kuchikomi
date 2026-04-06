@@ -182,6 +182,7 @@ function AnnouncementBanner() {
 // ---- Premium Feature Shortcuts ----
 function PremiumShortcuts({ surveyId }: { surveyId: string }) {
   const [planType, setPlanType] = useState<string | null>(null);
+  const [popup, setPopup] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/auth/me").then((r) => r.json()).then((d) => setPlanType(d.planType ?? null)).catch(() => {});
@@ -194,62 +195,115 @@ function PremiumShortcuts({ surveyId }: { surveyId: string }) {
     {
       label: "AI分析レポート",
       desc: "AIがアンケートデータを分析",
+      detail: "蓄積されたアンケートの回答データをAIが分析し、お客様の傾向や改善提案を含むレポートを自動生成します。月1回実行でき、店舗運営の改善に活用いただけます。",
       href: "/dashboard/analysis",
       icon: "M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z",
       available: isPremium,
-      badge: "Premium",
+      badge: "Premium限定",
       color: "from-violet-500 to-purple-500",
     },
     {
       label: "カスタムプロンプト",
       desc: "AI口コミ生成を自由にカスタマイズ",
+      detail: "AIが口コミを生成する際のプロンプト（指示文）を自由に編集できます。業種や店舗の特徴に合わせた口コミ文を生成させることで、より自然で効果的な口コミを作成できます。",
       href: `/dashboard/surveys/${surveyId}/settings`,
       icon: "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z",
       available: isPremium,
-      badge: "Premium",
+      badge: "Premium限定",
       color: "from-fuchsia-500 to-pink-500",
     },
     {
       label: "リアルタイム分析",
       desc: "回答データをグラフで可視化",
+      detail: "月別の回答数推移や、質問ごとの回答分布をグラフで確認できます。繁忙期の把握やサービス改善のヒントをデータから読み取れます。",
       href: "/dashboard/analysis",
       icon: "M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z",
       available: isStandardPlus,
-      badge: "Standard+",
+      badge: "Standard以上",
       color: "from-cyan-500 to-blue-500",
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-      {shortcuts.map((s) => (
-        <a
-          key={s.label}
-          href={s.available ? s.href : "/dashboard/billing"}
-          className={`relative rounded-xl p-4 transition-all hover:-translate-y-0.5 ${s.available ? "bg-white shadow-sm border border-gray-100 hover:shadow-md" : "bg-gray-50 border border-dashed border-gray-200"}`}
-        >
-          <div className="flex items-start gap-3">
-            <div className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center bg-gradient-to-br ${s.available ? s.color : "from-gray-300 to-gray-400"}`}>
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={s.icon} />
-              </svg>
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <p className={`text-sm font-bold ${s.available ? "text-gray-800" : "text-gray-400"}`}>{s.label}</p>
-                <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${s.available ? "bg-violet-100 text-violet-600" : "bg-gray-200 text-gray-400"}`}>{s.badge}</span>
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {shortcuts.map((s) => (
+          s.available ? (
+            <a
+              key={s.label}
+              href={s.href}
+              className="relative rounded-xl p-4 transition-all hover:-translate-y-0.5 bg-white shadow-sm border border-gray-100 hover:shadow-md"
+            >
+              <div className="absolute top-2 right-2">
+                <span className="text-[10px] px-1.5 py-0.5 rounded font-bold bg-gradient-to-r from-violet-500 to-purple-500 text-white">{s.badge}</span>
               </div>
-              <p className={`text-xs mt-0.5 ${s.available ? "text-gray-500" : "text-gray-300"}`}>{s.available ? s.desc : "プランをアップグレード"}</p>
+              <div className="flex items-start gap-3">
+                <div className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center bg-gradient-to-br ${s.color}`}>
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={s.icon} />
+                  </svg>
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-bold text-gray-800">{s.label}</p>
+                  <p className="text-xs mt-0.5 text-gray-500">{s.desc}</p>
+                </div>
+              </div>
+            </a>
+          ) : (
+            <button
+              key={s.label}
+              onClick={() => setPopup(s.label)}
+              className="relative rounded-xl p-4 transition-all hover:-translate-y-0.5 bg-gray-50 border border-dashed border-gray-200 text-left"
+            >
+              <div className="absolute top-2 right-2">
+                <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="shrink-0 w-10 h-10 rounded-lg flex items-center justify-center bg-gradient-to-br from-gray-300 to-gray-400">
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={s.icon} />
+                  </svg>
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-bold text-gray-400">{s.label}</p>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded font-medium bg-gray-200 text-gray-400">{s.badge}</span>
+                  </div>
+                  <p className="text-xs mt-0.5 text-gray-300">タップして詳細を見る</p>
+                </div>
+              </div>
+            </button>
+          )
+        ))}
+      </div>
+
+      {/* Feature detail popup */}
+      {popup && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={() => setPopup(null)}>
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-gradient-to-r from-violet-500 to-purple-500 px-5 py-4">
+              <h3 className="text-white font-bold">{popup}</h3>
+            </div>
+            <div className="p-5 space-y-4">
+              <p className="text-sm text-gray-600 leading-relaxed">
+                {shortcuts.find((s) => s.label === popup)?.detail}
+              </p>
+              <div className="flex flex-col gap-2">
+                <a href="/dashboard/billing"
+                  className="w-full text-center py-2.5 bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold text-sm rounded-xl">
+                  プランをアップグレード
+                </a>
+                <button onClick={() => setPopup(null)} className="text-xs text-gray-400 hover:text-gray-600 mt-1">
+                  閉じる
+                </button>
+              </div>
             </div>
           </div>
-          {!s.available && (
-            <svg className="absolute top-3 right-3 w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
-          )}
-        </a>
-      ))}
-    </div>
+        </div>
+      )}
+    </>
   );
 }
 
