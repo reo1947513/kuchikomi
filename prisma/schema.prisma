@@ -189,3 +189,14 @@ model Faq {
   order     Int      @default(0)
   createdAt DateTime @default(now())
 }
+
+model Announcement {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  category    String   @default("お知らせ") // "新機能" | "メンテナンス" | "お知らせ" | "重要"
+  isPublished Boolean  @default(true)
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

@@ -119,6 +119,66 @@ function LineChart({ data }: { data: MonthlyCount[] }) {
   );
 }
 
+// ---- Announcement Banner ----
+type AnnouncementItem = { id: string; title: string; content: string; category: string; publishedAt: string };
+
+function AnnouncementBanner() {
+  const [items, setItems] = useState<AnnouncementItem[]>([]);
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [dismissed, setDismissed] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    // Load dismissed IDs from localStorage
+    const stored = localStorage.getItem("dismissedAnnouncements");
+    if (stored) setDismissed(new Set(JSON.parse(stored)));
+
+    fetch("/api/announcements")
+      .then((r) => r.json())
+      .then((d) => setItems(Array.isArray(d) ? d : []))
+      .catch(() => {});
+  }, []);
+
+  const dismiss = (id: string) => {
+    const next = new Set(dismissed);
+    next.add(id);
+    setDismissed(next);
+    localStorage.setItem("dismissedAnnouncements", JSON.stringify(Array.from(next)));
+  };
+
+  const visible = items.filter((i) => !dismissed.has(i.id));
+  if (visible.length === 0) return null;
+
+  const categoryColor = (c: string) => {
+    if (c === "新機能") return "bg-cyan-500";
+    if (c === "重要") return "bg-red-500";
+    if (c === "メンテナンス") return "bg-amber-500";
+    return "bg-violet-500";
+  };
+
+  return (
+    <div className="space-y-2">
+      {visible.slice(0, 3).map((item) => (
+        <div key={item.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="flex items-center gap-3 px-4 py-3 cursor-pointer" onClick={() => setExpanded(expanded === item.id ? null : item.id)}>
+            <span className={`shrink-0 w-2 h-2 rounded-full ${categoryColor(item.category)}`} />
+            <span className={`shrink-0 px-2 py-0.5 rounded text-xs font-medium text-white ${categoryColor(item.category)}`}>{item.category}</span>
+            <span className="flex-1 text-sm font-medium text-gray-800 truncate">{item.title}</span>
+            <span className="text-xs text-gray-400 shrink-0">{new Date(item.publishedAt).toLocaleDateString("ja-JP", { month: "short", day: "numeric" })}</span>
+            <button onClick={(e) => { e.stopPropagation(); dismiss(item.id); }} className="shrink-0 text-gray-300 hover:text-gray-500">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+          </div>
+          {expanded === item.id && (
+            <div className="px-4 pb-3 pt-0">
+              <p className="text-sm text-gray-600 whitespace-pre-wrap leading-relaxed">{item.content}</p>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // ---- Recent Sessions ----
 function RecentSessions({ sessions, shopName, questions }: { sessions: Session[]; shopName: string; questions: Question[] }) {
   const PER_PAGE = 12;
@@ -374,6 +434,9 @@ export default function DashboardPage() {
       `}</style>
 
       <ContractBanner />
+
+      {/* Announcements */}
+      <AnnouncementBanner />
 
       {/* Welcome Card */}
       <div className="rounded-2xl bg-gradient-to-r from-cyan-500 to-violet-500 p-4 md:p-6 text-white shadow-lg">

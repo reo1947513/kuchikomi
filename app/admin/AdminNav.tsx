@@ -10,6 +10,7 @@ const items = [
   { href: "/admin/industries", label: "業種管理" },
   { href: "/admin/faqs", label: "質問管理" },
   { href: "/admin/contacts", label: "お問い合わせ" },
+  { href: "/admin/announcements", label: "お知らせ" },
 ];
 
 export default function AdminNav() {
