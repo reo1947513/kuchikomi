@@ -1010,6 +1010,12 @@ export default function LpPage() {
               >
                 ログイン
               </a>
+              <a
+                href="/legal/tokushoho"
+                className="hover:text-white transition-colors"
+              >
+                特定商取引法に基づく表記
+              </a>
             </nav>
           </div>
           <div className="mt-8 border-t border-gray-800 pt-6 text-center text-xs">
