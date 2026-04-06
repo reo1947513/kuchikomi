@@ -25,6 +25,24 @@ export async function POST(request: NextRequest) {
     const session = source === "dashboard" ? getSession() : null;
     const userId = session?.userId || null;
     const contact = await prisma.contact.create({ data: { ...data, source, userId } });
+
+    // Send LINE notification to admin
+    const lineToken = process.env.LINE_CHANNEL_ACCESS_TOKEN;
+    const lineUserId = process.env.LINE_ADMIN_USER_ID;
+    if (lineToken && lineUserId) {
+      fetch("https://api.line.me/v2/bot/message/push", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${lineToken}` },
+        body: JSON.stringify({
+          to: lineUserId,
+          messages: [{
+            type: "text",
+            text: `【新規お問い合わせ】\n${data.category}\n${data.companyName}\n${data.lastName} ${data.firstName}\n${data.email}\n${data.phone}\n経由: ${source === "hp" ? "HP" : "管理画面"}\n\n${data.content.slice(0, 200)}`,
+          }],
+        }),
+      }).catch((e) => console.error("LINE notification failed:", e));
+    }
+
     return NextResponse.json(contact, { status: 201 });
   } catch (e) {
     if (e instanceof z.ZodError) {
