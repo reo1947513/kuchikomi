@@ -27,6 +27,45 @@ export default function ContactsPage() {
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [selected, setSelected] = useState<Contact | null>(null);
+  const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
+
+  const toggleCheck = (id: string) => {
+    const next = new Set(checkedIds);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    setCheckedIds(next);
+  };
+
+  const toggleAll = () => {
+    if (checkedIds.size === filtered.length) {
+      setCheckedIds(new Set());
+    } else {
+      setCheckedIds(new Set(filtered.map((c) => c.id)));
+    }
+  };
+
+  const bulkUpdateStatus = async (status: string) => {
+    if (checkedIds.size === 0) return;
+    if (!confirm(`${checkedIds.size}件を「${status}」に変更しますか？`)) return;
+    for (const id of Array.from(checkedIds)) {
+      await fetch(`/api/admin/contacts/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+    }
+    setContacts((prev) => prev.map((c) => checkedIds.has(c.id) ? { ...c, status } : c));
+    setCheckedIds(new Set());
+  };
+
+  const bulkDelete = async () => {
+    if (checkedIds.size === 0) return;
+    if (!confirm(`${checkedIds.size}件を削除しますか？この操作は取り消せません。`)) return;
+    for (const id of Array.from(checkedIds)) {
+      await fetch(`/api/admin/contacts/${id}`, { method: "DELETE" });
+    }
+    setContacts((prev) => prev.filter((c) => !checkedIds.has(c.id)));
+    setCheckedIds(new Set());
+  };
 
   useEffect(() => {
     fetch("/api/admin/contacts")
@@ -124,6 +163,28 @@ export default function ContactsPage() {
         </form>
       </div>
 
+      {/* Bulk actions */}
+      {checkedIds.size > 0 && (
+        <div className="flex items-center gap-2 bg-violet-50 border border-violet-200 rounded-xl px-4 py-2">
+          <span className="text-sm font-medium text-violet-700">{checkedIds.size}件 選択中</span>
+          <select
+            onChange={(e) => { if (e.target.value) bulkUpdateStatus(e.target.value); e.target.value = ""; }}
+            className="text-xs border border-violet-300 rounded-lg px-2 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-400"
+          >
+            <option value="">ステータス変更</option>
+            <option value="未対応">未対応</option>
+            <option value="対応中">対応中</option>
+            <option value="対応済み">対応済み</option>
+          </select>
+          <button onClick={bulkDelete} className="text-xs px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium">
+            一括削除
+          </button>
+          <button onClick={() => setCheckedIds(new Set())} className="text-xs text-gray-400 hover:text-gray-600 ml-auto">
+            選択解除
+          </button>
+        </div>
+      )}
+
       {loading ? (
         <div className="text-center py-12 text-gray-400 text-sm">読み込み中...</div>
       ) : contacts.length === 0 ? (
@@ -135,6 +196,9 @@ export default function ContactsPage() {
           <table className="w-full text-sm min-w-[1100px]">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
+                <th className="px-3 py-3">
+                  <input type="checkbox" checked={checkedIds.size === filtered.length && filtered.length > 0} onChange={toggleAll} className="rounded border-gray-300 text-violet-500 focus:ring-violet-400" />
+                </th>
                 <th className="text-left px-4 py-3 font-medium text-gray-600 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("createdAt")}>日時{sortKey === "createdAt" && (sortDir === "asc" ? " \u25B2" : " \u25BC")}</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-600 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("category")}>項目{sortKey === "category" && (sortDir === "asc" ? " \u25B2" : " \u25BC")}</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-600 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("contractStatus")}>契約状況{sortKey === "contractStatus" && (sortDir === "asc" ? " \u25B2" : " \u25BC")}</th>
@@ -150,7 +214,10 @@ export default function ContactsPage() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {filtered.map((c) => (
-                <tr key={c.id} className="hover:bg-gray-50 transition-colors">
+                <tr key={c.id} className={`hover:bg-gray-50 transition-colors ${checkedIds.has(c.id) ? "bg-violet-50" : ""}`}>
+                  <td className="px-3 py-3">
+                    <input type="checkbox" checked={checkedIds.has(c.id)} onChange={() => toggleCheck(c.id)} className="rounded border-gray-300 text-violet-500 focus:ring-violet-400" />
+                  </td>
                   <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{formatDate(c.createdAt)}</td>
                   <td className="px-4 py-3">
                     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-violet-100 text-violet-700">{c.category}</span>
