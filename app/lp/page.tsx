@@ -298,23 +298,23 @@ export default function LpPage() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white/90 text-sm font-medium px-5 py-2 rounded-full mb-8" style={{ animation: "heroFadeUp 0.8s ease-out forwards", opacity: 0 }}>
             <span>🚀</span>
-            <span>店舗集客の新常識</span>
+            <span>{t("hero.badge")}</span>
           </div>
           <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold leading-tight tracking-tight" style={{ animation: "heroScale 1s ease-out 0.3s forwards", opacity: 0 }}>
             <span style={{ backgroundImage: "linear-gradient(90deg, #22d3ee, #a78bfa, #d946ef, #22d3ee)", backgroundSize: "200% auto", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", animation: "shimmer 4s linear infinite" }}>
-              口コミが、
+              {t("hero.title1")}
             </span>
             <br />
             <span style={{ backgroundImage: "linear-gradient(90deg, #22d3ee, #a78bfa, #d946ef, #22d3ee)", backgroundSize: "200% auto", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", animation: "shimmer 4s linear infinite 0.5s" }}>
-              勝手に増える。
+              {t("hero.title2")}
             </span>
           </h1>
           <p className="mt-6 sm:mt-8 text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed px-2" style={{ animation: "heroFadeUp 0.8s ease-out 0.6s forwards", opacity: 0 }}>
-            たった3分のアンケートで、
+            {t("hero.desc1")}
             <br className="sm:hidden" />
-            AIが高品質な口コミを自動生成。
+            {t("hero.desc2")}
             <br />
-            Googleマップの評価を劇的に改善します。
+            {t("hero.desc3")}
           </p>
           <div className="mt-8 sm:mt-12 flex flex-col sm:flex-row items-center justify-center gap-4" style={{ animation: "heroFadeUp 0.8s ease-out 0.9s forwards", opacity: 0 }}>
             <button
@@ -322,11 +322,11 @@ export default function LpPage() {
               className="bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold px-8 sm:px-10 py-4 sm:py-5 rounded-full text-base sm:text-lg shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-all"
               style={{ animation: "heroPulse 3s ease-in-out infinite 1.5s" }}
             >
-              お問い合わせはこちら
+              {t("hero.cta")}
             </button>
           </div>
           <p className="mt-5 text-sm text-gray-400">
-            初期費用0円・最短即日導入
+            {t("hero.sub")}
           </p>
         </div>
         {/* Bottom fade to white */}
@@ -339,14 +339,14 @@ export default function LpPage() {
         <BgBlob className="w-[400px] h-[400px] bg-orange-300 bottom-0 -left-40" />
         <div className="relative max-w-6xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-10 sm:mb-16 px-2">
-            その悩み、
+            {t("problem.title1")}
             <br className="sm:hidden" />
             <span className="bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
               ComiSta
             </span>
-            が終わらせます。
+            {t("problem.title2")}
           </h2>
-          <p className="text-center text-gray-500 mb-10 sm:mb-16 text-sm sm:text-base">口コミ集めに悩む店舗オーナー様のよくあるお悩み</p>
+          <p className="text-center text-gray-500 mb-10 sm:mb-16 text-sm sm:text-base">{t("problem.desc")}</p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
@@ -400,14 +400,14 @@ export default function LpPage() {
         />
         <div className="relative max-w-5xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-4 px-2">
-            仕組みはシンプル。
+            {t("solution.title1")}
             <br className="sm:hidden" />
             <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
-              効果は絶大。
+              {t("solution.title2")}
             </span>
           </h2>
           <p className="text-center text-gray-500 mb-10 sm:mb-16 text-base sm:text-lg">
-            3ステップで口コミを簡単収集
+            {t("solution.desc")}
           </p>
           <div className="grid md:grid-cols-3 gap-8">
             {[
@@ -466,10 +466,10 @@ export default function LpPage() {
         <div className="relative max-w-6xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-10 sm:mb-16 px-2">
             <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-              選ばれ続ける、6つの理由
+              {t("features.title")}
             </span>
           </h2>
-          <p className="text-center text-gray-400 mb-10 sm:mb-16 text-sm sm:text-base">シンプルなのに高機能。ComiStaの強みをご紹介</p>
+          <p className="text-center text-gray-400 mb-10 sm:mb-16 text-sm sm:text-base">{t("features.desc")}</p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
@@ -534,13 +534,13 @@ export default function LpPage() {
         <BgBlob className="w-[400px] h-[400px] bg-violet-200 -bottom-40 left-0" />
         <div className="relative max-w-5xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-10 sm:mb-16 px-2">
-            あらゆる店舗ビジネスに、
+            {t("industries.title1")}
             <br className="sm:hidden" />
             <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
-              すぐ導入。
+              {t("industries.title2")}
             </span>
           </h2>
-          <p className="text-center text-gray-500 mb-10 sm:mb-16 text-sm sm:text-base">幅広い業種のお客様にご利用いただいています</p>
+          <p className="text-center text-gray-500 mb-10 sm:mb-16 text-sm sm:text-base">{t("industries.desc")}</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {[
               { icon: "🍽️", label: "飲食店・レストラン" },
@@ -576,13 +576,13 @@ export default function LpPage() {
         />
         <div className="relative max-w-6xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-3 px-2">
-            始めやすい、
+            {t("pricing.title1")}
             <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
-              続けやすい。
+              {t("pricing.title2")}
             </span>
           </h2>
           <p className="text-center text-gray-500 mb-10 sm:mb-16 text-base sm:text-lg">
-            全プラン初期費用0円
+            {t("pricing.desc")}
           </p>
           <div className="grid md:grid-cols-3 gap-6 items-start">
             {[
@@ -784,12 +784,12 @@ export default function LpPage() {
         <BgBlob className="w-[400px] h-[400px] bg-cyan-200 -bottom-40 -left-40" />
         <div className="relative max-w-5xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-4 px-2">
-            導入店舗の
+            {t("cases.title1")}
             <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
-              リアルな声
+              {t("cases.title2")}
             </span>
           </h2>
-          <p className="text-center text-gray-500 mb-10 sm:mb-14 text-sm sm:text-base">ComiStaを導入した店舗オーナー様の実際の成果をご紹介</p>
+          <p className="text-center text-gray-500 mb-10 sm:mb-14 text-sm sm:text-base">{t("cases.desc")}</p>
           <div className="grid md:grid-cols-2 gap-6">
             {[
               {
@@ -864,13 +864,13 @@ export default function LpPage() {
         <BgBlob className="w-[400px] h-[400px] bg-violet-200 -bottom-40 -right-40" />
         <div className="relative max-w-4xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-4 px-2">
-            他社サービスとの
+            {t("comparison.title1")}
             <br className="sm:hidden" />
             <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
-              比較
+              {t("comparison.title2")}
             </span>
           </h2>
-          <p className="text-center text-gray-500 mb-10 sm:mb-14 text-sm sm:text-base">ComiStaが選ばれる理由をご確認ください</p>
+          <p className="text-center text-gray-500 mb-10 sm:mb-14 text-sm sm:text-base">{t("comparison.desc")}</p>
           <div className="rounded-2xl shadow-lg border border-gray-200">
             <table className="w-full text-xs sm:text-sm">
               <thead>
@@ -952,12 +952,12 @@ export default function LpPage() {
         <BgBlob className="w-[400px] h-[400px] bg-violet-200 -bottom-40 right-1/4" />
         <div className="relative max-w-5xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-10 sm:mb-16 px-2">
-            最短即日、
+            {t("flow.title1")}
             <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
-              かんたん4ステップ
+              {t("flow.title2")}
             </span>
           </h2>
-          <p className="text-center text-gray-500 mb-10 sm:mb-16 text-sm sm:text-base">お問い合わせから運用開始まで最短即日で完了します</p>
+          <p className="text-center text-gray-500 mb-10 sm:mb-16 text-sm sm:text-base">{t("flow.desc")}</p>
           <div className="grid md:grid-cols-4 gap-8">
             {[
               {
@@ -1002,13 +1002,13 @@ export default function LpPage() {
         <BgBlob className="w-[400px] h-[400px] bg-violet-200 bottom-0 -right-40" />
         <div className="relative max-w-3xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-10 sm:mb-16 px-2">
-            気になるギモン、
+            {t("faq.title1")}
             <br className="sm:hidden" />
             <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
-              すべて解消。
+              {t("faq.title2")}
             </span>
           </h2>
-          <p className="text-center text-gray-500 mb-10 sm:mb-14 text-sm sm:text-base">ComiStaに関するよくある質問をまとめました</p>
+          <p className="text-center text-gray-500 mb-10 sm:mb-14 text-sm sm:text-base">{t("faq.desc")}</p>
           <div className="space-y-4">
             <FaqItem
               q="初期費用はかかりますか？"
@@ -1055,27 +1055,27 @@ export default function LpPage() {
         <div className="relative max-w-3xl mx-auto px-4 text-center">
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold mb-4 px-2">
             <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-              今日から、
+              {t("cta.title1")}
               <br className="sm:hidden" />
-              口コミで差をつけよう。
+              {t("cta.title2")}
             </span>
           </h2>
           <p className="text-gray-300 mb-6 text-base sm:text-lg px-2">
-            お問い合わせは1分で完了。
+            {t("cta.desc1")}
             <br className="sm:hidden" />
-            お気軽にご連絡ください。
+            {t("cta.desc2")}
           </p>
           {/* Urgency badge */}
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-400/30 text-orange-300 font-bold text-sm px-5 py-2.5 rounded-full mb-10">
             <span>🔥</span>
-            <span>今なら初月50%OFF キャンペーン実施中</span>
+            <span>{t("cta.campaign")}</span>
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
               href="/contact"
               className="inline-block bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold px-8 sm:px-12 py-4 sm:py-5 rounded-full text-base sm:text-lg shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-all"
             >
-              お問い合わせ
+              {t("cta.contact")}
             </a>
             <a
               href="https://lin.ee/6C7mwFK"
@@ -1084,11 +1084,11 @@ export default function LpPage() {
               className="inline-flex items-center gap-2 bg-[#06C755] text-white font-bold px-8 sm:px-10 py-4 sm:py-5 rounded-full text-base sm:text-lg shadow-2xl shadow-green-500/30 hover:shadow-green-500/50 hover:scale-105 transition-all"
             >
               <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.066-.022.137-.033.194-.033.195 0 .375.104.515.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" /></svg>
-              LINE で相談
+              {t("cta.line")}
             </a>
           </div>
           <p className="mt-8 text-sm text-gray-400">
-            お問い合わせフォームよりお気軽にご連絡ください
+            {t("cta.sub")}
           </p>
         </div>
       </Section>
@@ -1112,25 +1112,25 @@ export default function LpPage() {
                 href="/login"
                 className="hover:text-white transition-colors"
               >
-                ログイン
+                {t("footer.login")}
               </a>
               <a
                 href="/legal/tokushoho"
                 className="hover:text-white transition-colors"
               >
-                特定商取引法に基づく表記
+                {t("footer.tokushoho")}
               </a>
               <a
                 href="/legal/privacy"
                 className="hover:text-white transition-colors"
               >
-                プライバシーポリシー
+                {t("footer.privacy")}
               </a>
               <a
                 href="/legal/terms"
                 className="hover:text-white transition-colors"
               >
-                利用規約
+                {t("footer.terms")}
               </a>
               <a
                 href="https://lin.ee/6C7mwFK"
@@ -1138,7 +1138,7 @@ export default function LpPage() {
                 rel="noopener noreferrer"
                 className="hover:text-white transition-colors"
               >
-                公式LINE
+                {t("footer.line")}
               </a>
             </nav>
           </div>
