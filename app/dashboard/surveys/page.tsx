@@ -179,6 +179,55 @@ function AnnouncementBanner() {
   );
 }
 
+// ---- CSV Export Button ----
+function CsvExportButton() {
+  const [planType, setPlanType] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/auth/me").then((r) => r.json()).then((d) => setPlanType(d.planType ?? null)).catch(() => {});
+  }, []);
+
+  const isPremium = planType === "premium" || planType === "lifetime_premium";
+
+  const handleExport = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/dashboard/export");
+      if (!res.ok) {
+        const d = await res.json();
+        alert(d.error || "エクスポートに失敗しました");
+        return;
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `kuchikomi-export-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      alert("エクスポートに失敗しました");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleExport}
+      disabled={!isPremium || loading}
+      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors disabled:opacity-40 disabled:cursor-not-allowed border-gray-300 text-gray-600 hover:bg-gray-50"
+      title={isPremium ? undefined : "プレミアムプランでご利用いただけます"}
+    >
+      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+      {loading ? "出力中..." : "CSV出力"}
+    </button>
+  );
+}
+
 // ---- Recent Sessions ----
 function RecentSessions({ sessions, shopName, questions }: { sessions: Session[]; shopName: string; questions: Question[] }) {
   const PER_PAGE = 12;
@@ -494,7 +543,15 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {data.survey && <RecentSessions sessions={data.recentSessions} shopName={shopName} questions={data.survey.questions} />}
+      {data.survey && (
+        <>
+          <div className="flex items-center justify-between">
+            <h2 className="text-base sm:text-lg font-bold text-gray-900">回答履歴</h2>
+            <CsvExportButton />
+          </div>
+          <RecentSessions sessions={data.recentSessions} shopName={shopName} questions={data.survey.questions} />
+        </>
+      )}
 
       {/* Limit warning/reached popup */}
       {showLimitPopup && (
