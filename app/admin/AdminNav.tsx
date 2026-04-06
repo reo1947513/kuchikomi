@@ -12,6 +12,7 @@ const items = [
   { href: "/admin/contacts", label: "お問い合わせ" },
   { href: "/admin/announcements", label: "お知らせ" },
   { href: "/admin/campaigns", label: "キャンペーン" },
+  { href: "/admin/feedback", label: "フィードバック" },
 ];
 
 export default function AdminNav() {
