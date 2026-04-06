@@ -33,6 +33,7 @@ export default function PublicContactPage() {
   const [phone3, setPhone3] = useState("");
   const [content, setContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [agreedPrivacy, setAgreedPrivacy] = useState(false);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const touch = (field: string) => setTouched((p) => ({ ...p, [field]: true }));
@@ -192,7 +193,14 @@ export default function PublicContactPage() {
                 <label className="block text-sm font-bold text-gray-800 mb-1">お問い合わせ内容<RequiredBadge /></label>
                 <textarea value={content} onChange={(e) => setContent(e.target.value)} onBlur={() => touch("content")} rows={5} className={`w-full border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 resize-y ${validCls("content", content)}`} />
               </div>
-              <button onClick={handleConfirm} disabled={!isValid} className="w-full py-3.5 rounded-xl text-white font-bold text-sm bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 transition-colors disabled:opacity-40">
+              <label className="flex items-start gap-2 cursor-pointer">
+                <input type="checkbox" checked={agreedPrivacy} onChange={(e) => setAgreedPrivacy(e.target.checked)}
+                  className="mt-0.5 rounded border-gray-300 text-violet-500 focus:ring-violet-400" />
+                <span className="text-xs text-gray-600">
+                  <a href="/legal/privacy" target="_blank" className="text-violet-500 underline">プライバシーポリシー</a>に同意の上、送信します <span className="text-red-500">*</span>
+                </span>
+              </label>
+              <button onClick={handleConfirm} disabled={!isValid || !agreedPrivacy} className="w-full py-3.5 rounded-xl text-white font-bold text-sm bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 transition-colors disabled:opacity-40">
                 確認画面へ
               </button>
             </div>

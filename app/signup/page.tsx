@@ -12,6 +12,8 @@ export default function SignupPage() {
   const [address, setAddress] = useState("");
   const [industry, setIndustry] = useState("");
   const [phone, setPhone] = useState("");
+  const [agreedTerms, setAgreedTerms] = useState(false);
+  const [agreedPrivacy, setAgreedPrivacy] = useState(false);
   const [industries, setIndustries] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -137,13 +139,31 @@ export default function SignupPage() {
             <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="090-0000-0000" className={inputCls} />
           </div>
 
+          {/* Terms & Privacy agreement */}
+          <div className="space-y-2 bg-gray-50 rounded-lg p-3">
+            <label className="flex items-start gap-2 cursor-pointer">
+              <input type="checkbox" checked={agreedTerms} onChange={(e) => setAgreedTerms(e.target.checked)}
+                className="mt-0.5 rounded border-gray-300 text-violet-500 focus:ring-violet-400" />
+              <span className="text-xs text-gray-600">
+                <a href="/legal/terms" target="_blank" className="text-violet-500 underline hover:text-violet-700">利用規約</a>に同意します <span className="text-red-500">*</span>
+              </span>
+            </label>
+            <label className="flex items-start gap-2 cursor-pointer">
+              <input type="checkbox" checked={agreedPrivacy} onChange={(e) => setAgreedPrivacy(e.target.checked)}
+                className="mt-0.5 rounded border-gray-300 text-violet-500 focus:ring-violet-400" />
+              <span className="text-xs text-gray-600">
+                <a href="/legal/privacy" target="_blank" className="text-violet-500 underline hover:text-violet-700">プライバシーポリシー</a>に同意します <span className="text-red-500">*</span>
+              </span>
+            </label>
+          </div>
+
           {error && (
             <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600">{error}</div>
           )}
 
           <button
             type="submit"
-            disabled={submitting}
+            disabled={submitting || !agreedTerms || !agreedPrivacy}
             className="w-full rounded-lg bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white font-semibold py-3 text-sm transition disabled:opacity-60"
           >
             {submitting ? "登録中..." : "アカウントを作成"}
