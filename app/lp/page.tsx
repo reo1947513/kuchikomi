@@ -324,7 +324,7 @@ export default function LpPage() {
       </section>
 
       {/* ───────── Problem ───────── */}
-      <Section className="relative py-16 sm:py-24 md:py-32 bg-white overflow-hidden">
+      <Section id="problem" className="relative py-16 sm:py-24 md:py-32 bg-white overflow-hidden">
         <BgBlob className="w-[500px] h-[500px] bg-red-300 -top-60 -right-60" />
         <BgBlob className="w-[400px] h-[400px] bg-orange-300 bottom-0 -left-40" />
         <div className="relative max-w-6xl mx-auto px-4">
@@ -375,7 +375,7 @@ export default function LpPage() {
       </Section>
 
       {/* ───────── Solution ───────── */}
-      <Section className="relative py-16 sm:py-24 md:py-32 overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-violet-50">
+      <Section id="solution" className="relative py-16 sm:py-24 md:py-32 overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-violet-50">
         <BgBlob className="w-[500px] h-[500px] bg-cyan-300 top-20 -left-60" />
         <BgBlob className="w-[400px] h-[400px] bg-violet-300 -bottom-40 -right-40" />
         {/* Dot grid overlay */}
@@ -517,7 +517,7 @@ export default function LpPage() {
       </Section>
 
       {/* ───────── Target Industries ───────── */}
-      <Section className="relative py-16 sm:py-24 md:py-32 bg-white overflow-hidden">
+      <Section id="industries" className="relative py-16 sm:py-24 md:py-32 bg-white overflow-hidden">
         <BgBlob className="w-[500px] h-[500px] bg-cyan-200 top-0 -right-60" />
         <BgBlob className="w-[400px] h-[400px] bg-violet-200 -bottom-40 left-0" />
         <div className="relative max-w-5xl mx-auto px-4">
@@ -766,7 +766,7 @@ export default function LpPage() {
       </Section>
 
       {/* ───────── Comparison ───────── */}
-      <Section className="relative py-16 sm:py-24 md:py-32 bg-white overflow-hidden">
+      <Section id="comparison" className="relative py-16 sm:py-24 md:py-32 bg-white overflow-hidden">
         <BgBlob className="w-[500px] h-[500px] bg-cyan-200 -top-40 -left-60" />
         <BgBlob className="w-[400px] h-[400px] bg-violet-200 -bottom-40 -right-40" />
         <div className="relative max-w-4xl mx-auto px-4">
