@@ -10,6 +10,9 @@ interface UserData {
   additionalReviews: number;
   stripeSubscriptionId: string | null;
   stripeCustomerId: string | null;
+  contractStart: string | null;
+  contractEnd: string | null;
+  noContractLimit: boolean;
 }
 
 interface PlanCard {
@@ -228,12 +231,15 @@ export default function BillingPage() {
               <p>追加レビュー残: <strong>{user.additionalReviews}件</strong></p>
             </div>
             {hasSubscription && (
-              <button
-                onClick={handlePortal}
-                className="mt-3 px-4 py-2 text-sm font-medium text-violet-700 bg-violet-50 border border-violet-200 rounded-lg hover:bg-violet-100 transition-colors"
-              >
-                サブスクリプション管理
-              </button>
+              <div className="flex flex-wrap gap-2 mt-3">
+                <button
+                  onClick={handlePortal}
+                  className="px-4 py-2 text-sm font-medium text-violet-700 bg-violet-50 border border-violet-200 rounded-lg hover:bg-violet-100 transition-colors"
+                >
+                  サブスクリプション管理
+                </button>
+                <CancelButton user={user} onCancelled={fetchUser} />
+              </div>
             )}
           </div>
         ) : (
@@ -398,5 +404,85 @@ function SuccessMessage() {
     >
       {message}
     </div>
+  );
+}
+
+function CancelButton({ user, onCancelled }: { user: UserData; onCancelled: () => void }) {
+  const [loading, setLoading] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  // Check if cancellation is allowed (1 month before contract end)
+  const canCancel = (() => {
+    if (!user.contractEnd || user.noContractLimit) return false;
+    const end = new Date(user.contractEnd);
+    const oneMonthBefore = new Date(end);
+    oneMonthBefore.setMonth(oneMonthBefore.getMonth() - 1);
+    return new Date() >= oneMonthBefore;
+  })();
+
+  const contractEndStr = user.contractEnd
+    ? new Date(user.contractEnd).toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric" })
+    : "";
+
+  const handleCancel = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/stripe/cancel", { method: "POST" });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error || "解約に失敗しました");
+      alert("解約手続きが完了しました。契約期間終了後にサービスが停止されます。");
+      setShowConfirm(false);
+      onCancelled();
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "エラーが発生しました");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <button
+        onClick={() => setShowConfirm(true)}
+        disabled={!canCancel}
+        className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        title={canCancel ? undefined : "契約終了日の1ヶ月前から解約手続きが可能です"}
+      >
+        解約する
+      </button>
+
+      {showConfirm && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={() => setShowConfirm(false)}>
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-red-500 px-5 py-4">
+              <h3 className="text-white font-bold">解約の確認</h3>
+            </div>
+            <div className="p-5 space-y-4">
+              <p className="text-sm text-gray-600">
+                本当に解約しますか？契約期間終了日（{contractEndStr}）までサービスはご利用いただけます。
+              </p>
+              <p className="text-xs text-gray-400">
+                ※ 解約後は口コミの自動生成、分析機能などが停止されます。
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowConfirm(false)}
+                  className="flex-1 py-2.5 border border-gray-300 text-gray-700 font-medium text-sm rounded-xl hover:bg-gray-50"
+                >
+                  キャンセル
+                </button>
+                <button
+                  onClick={handleCancel}
+                  disabled={loading}
+                  className="flex-1 py-2.5 bg-red-500 text-white font-bold text-sm rounded-xl hover:bg-red-600 disabled:opacity-60"
+                >
+                  {loading ? "処理中..." : "解約する"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

@@ -22,6 +22,8 @@ type Shop = {
   contractEnd?: string | null;
   noContractLimit?: boolean;
   sessionCount?: number;
+  stripeSubscriptionId?: string | null;
+  planType?: string | null;
 };
 
 type EditForm = {
@@ -184,6 +186,21 @@ export default function ShopsPage() {
       setFormError(e instanceof Error ? e.message : "エラー");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleCancelContract = async (shop: Shop) => {
+    if (!confirm(`「${shop.shopName ?? shop.name}」の契約を解約しますか？Stripeのサブスクリプションもキャンセルされます。`)) return;
+    try {
+      const res = await fetch(`/api/admin/shops/${shop.id}/cancel`, { method: "POST" });
+      if (!res.ok) {
+        const d = await res.json();
+        throw new Error(d.error || "解約に失敗しました");
+      }
+      alert("解約処理が完了しました");
+      fetchShops();
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "解約に失敗しました");
     }
   };
 
@@ -365,6 +382,13 @@ export default function ShopsPage() {
                     >
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                       編集
+                    </button>
+                    <button
+                      onClick={() => handleCancelContract(shop)}
+                      disabled={!shop.stripeSubscriptionId && !shop.planType}
+                      className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-orange-500 hover:bg-orange-600 text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      解約
                     </button>
                     <button
                       onClick={() => handleDelete(shop)}
