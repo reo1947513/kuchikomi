@@ -508,13 +508,11 @@ export default function SurveySettingsPage() {
 
   const isPremiumUser = userPlanType === "premium" || userPlanType === "lifetime_premium";
 
-  const tabs: { key: Tab; label: string }[] = [
+  const tabs: { key: Tab; label: string; locked?: boolean }[] = [
     ...(userRole === "super" ? [
       { key: "basic" as Tab, label: "基本設定" },
     ] : []),
-    ...(userRole === "super" || isPremiumUser ? [
-      { key: "ai" as Tab, label: "AI設定" },
-    ] : []),
+    { key: "ai" as Tab, label: "AI設定", locked: !isPremiumUser && userRole !== "super" },
     ...(userRole === "super" ? [
       { key: "questions" as Tab, label: "質問管理" },
     ] : []),
@@ -585,12 +583,19 @@ export default function SurveySettingsPage() {
                 key={tab.key}
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
-                className={`px-3 sm:px-5 py-3 text-xs sm:text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
+                className={`px-3 sm:px-5 py-3 text-xs sm:text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap flex items-center gap-1 ${
                   activeTab === tab.key
                     ? "border-violet-500 text-gray-900"
+                    : tab.locked
+                    ? "border-transparent text-gray-300"
                     : "border-transparent text-gray-500 hover:text-gray-700"
                 }`}
               >
+                {tab.locked && (
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                )}
                 {tab.label}
               </button>
             ))}
@@ -690,7 +695,31 @@ export default function SurveySettingsPage() {
         )}
 
         {/* ===== Tab: AI設定 ===== */}
-        {activeTab === "ai" && (
+        {activeTab === "ai" && !isPremiumUser && userRole !== "super" && (
+          <div className="bg-white rounded-xl shadow p-6 sm:p-10 text-center space-y-4">
+            <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center mx-auto">
+              <svg className="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold text-gray-700">AI設定はプレミアムプラン限定です</h3>
+            <p className="text-sm text-gray-500 max-w-md mx-auto">
+              プレミアムプランにアップグレードすると、AIが口コミを生成する際のプロンプトを自由にカスタマイズできます。業種や店舗の特徴に合わせた文章スタイルで、より効果的な口コミを生成できます。
+            </p>
+            <div className="bg-gray-50 rounded-xl p-4 text-left max-w-md mx-auto">
+              <p className="text-xs font-semibold text-gray-500 mb-2">カスタマイズできる項目:</p>
+              <ul className="text-xs text-gray-400 space-y-1">
+                <li>・ AIプロンプトテンプレートの編集</li>
+                <li>・ 口調の選択と追加（敬体・カジュアル等）</li>
+                <li>・ キーワード設定</li>
+              </ul>
+            </div>
+            <a href="/dashboard/billing" className="inline-block px-6 py-3 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white font-bold text-sm rounded-xl shadow transition-colors">
+              プランをアップグレード
+            </a>
+          </div>
+        )}
+        {activeTab === "ai" && (isPremiumUser || userRole === "super") && (
           <div className="bg-white rounded-xl shadow p-4 sm:p-6 space-y-4">
             {/* 固定プロンプト表示 */}
             <div>

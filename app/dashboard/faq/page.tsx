@@ -14,16 +14,22 @@ const defaultFaqs: Faq[] = [
 ];
 
 export default function FAQPage() {
-  const [faqs, setFaqs] = useState<Faq[]>(defaultFaqs);
+  const [faqs, setFaqs] = useState<Faq[]>([]);
+  const [loading, setLoading] = useState(true);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   useEffect(() => {
     fetch("/api/faqs")
       .then((r) => r.json())
       .then((data) => {
-        if (Array.isArray(data) && data.length > 0) setFaqs(data);
+        if (Array.isArray(data) && data.length > 0) {
+          setFaqs(data);
+        } else {
+          setFaqs(defaultFaqs);
+        }
       })
-      .catch(() => {});
+      .catch(() => setFaqs(defaultFaqs))
+      .finally(() => setLoading(false));
   }, []);
 
   return (
@@ -43,6 +49,9 @@ export default function FAQPage() {
         <p className="text-sm text-gray-500 mt-1">ComiStaに関するよくある質問をまとめました</p>
       </div>
 
+      {loading ? (
+        <div className="text-center py-12 text-gray-400 text-sm">読み込み中...</div>
+      ) : (
       <div className="bg-white rounded-xl shadow-sm divide-y divide-gray-100">
         {faqs.map((faq, i) => (
           <div key={faq.id}>
@@ -74,6 +83,7 @@ export default function FAQPage() {
           </div>
         ))}
       </div>
+      )}
     </div>
   );
 }
