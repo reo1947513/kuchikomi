@@ -9,7 +9,7 @@ export default function TokushohoPage() {
   const rows = [
     ["販売業者", "川上玲央"],
     ["代表者", "川上玲央"],
-    ["所在地", "大阪府大阪市東住吉区南田辺1-10-26-103"],
+    ["所在地", "大阪府大阪市中央区南久宝寺町4丁目4-1 新御堂ビル501-1"],
     ["電話番号", "090-2914-0992"],
     ["メールアドレス", "conestkawakami@gmail.com"],
     ["販売URL", "https://comista-kuchikomi.com"],
