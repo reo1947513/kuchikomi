@@ -506,10 +506,16 @@ export default function SurveySettingsPage() {
     );
   }
 
+  const isPremiumUser = userPlanType === "premium" || userPlanType === "lifetime_premium";
+
   const tabs: { key: Tab; label: string }[] = [
     ...(userRole === "super" ? [
       { key: "basic" as Tab, label: "基本設定" },
+    ] : []),
+    ...(userRole === "super" || isPremiumUser ? [
       { key: "ai" as Tab, label: "AI設定" },
+    ] : []),
+    ...(userRole === "super" ? [
       { key: "questions" as Tab, label: "質問管理" },
     ] : []),
     { key: "logo", label: "ロゴ・クーポン" },
