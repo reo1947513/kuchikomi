@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "ComiSta",
@@ -32,7 +33,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <body className="antialiased bg-gray-50 text-gray-900">{children}</body>
+      <body className="antialiased bg-gray-50 text-gray-900">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

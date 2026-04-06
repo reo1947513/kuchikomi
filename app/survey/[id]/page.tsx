@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import ChatMessage from "@/components/ChatMessage";
+import { useLang, LangToggle } from "@/lib/i18n";
+import { surveyDict } from "@/lib/dictionaries/lp";
 
 interface Choice {
   id: string;
@@ -61,6 +63,8 @@ export default function SurveyPage({
   params: { id: string };
 }) {
   const surveyId = params.id;
+  const { lang } = useLang();
+  const t = (key: string) => surveyDict[key]?.[lang] ?? surveyDict[key]?.ja ?? key;
 
   const [session, setSession] = useState<Session | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -239,8 +243,8 @@ export default function SurveyPage({
         setPhase({
           type: "error",
           message: isLimitReached
-            ? "ご回答ありがとうございました。現在、口コミ生成を一時停止しております。ご不便をおかけして申し訳ございません。"
-            : data.error ?? "口コミの生成に失敗しました",
+            ? t("survey.paused")
+            : data.error ?? t("survey.generateFailed"),
         });
         return;
       }
@@ -315,7 +319,7 @@ export default function SurveyPage({
       {/* Test mode banner */}
       {isPreview && (
         <div className="bg-amber-500 text-white text-center text-xs font-bold py-1.5 z-20">
-          テストモード — この回答はカウントされません
+          {t("survey.testMode")}
         </div>
       )}
       {/* Top bar */}
@@ -334,9 +338,12 @@ export default function SurveyPage({
                 {session?.survey.title ?? "アンケート"}
               </h1>
             </div>
-            <span className="text-xs text-gray-500 ml-2 flex-shrink-0">
-              {answeredCount}/{totalQuestions}
-            </span>
+            <div className="flex items-center gap-2 ml-2 flex-shrink-0">
+              <span className="text-xs text-gray-500">
+                {answeredCount}/{totalQuestions}
+              </span>
+              <LangToggle className="border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400" />
+            </div>
           </div>
           {/* Progress bar */}
           <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -414,7 +421,7 @@ export default function SurveyPage({
                     } as React.CSSProperties
                   }
                   rows={2}
-                  placeholder="ご回答を入力してください..."
+                  placeholder={t("survey.textPlaceholder")}
                   value={textInput}
                   onChange={(e) => setTextInput(e.target.value)}
                   onKeyDown={(e) => {

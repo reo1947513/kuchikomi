@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useLang, LangToggle } from "@/lib/i18n";
+import { lpDict } from "@/lib/dictionaries/lp";
 
 /* ─── Scroll‑reveal hook ─── */
 function useReveal() {
@@ -110,6 +112,8 @@ function BgBlob({
 
 /* ─── Main Page ─── */
 export default function LpPage() {
+  const { lang } = useLang();
+  const t = (key: string) => lpDict[key]?.[lang] ?? lpDict[key]?.ja ?? key;
   const [menuOpen, setMenuOpen] = useState(false);
   const [showTop, setShowTop] = useState(false);
 
@@ -157,8 +161,9 @@ export default function LpPage() {
               onClick={() => window.location.href = "/contact"}
               className="bg-gradient-to-r from-cyan-500 to-violet-500 text-white text-sm font-semibold px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity shadow-lg shadow-cyan-500/25"
             >
-              お問い合わせ
+              {t("nav.contact")}
             </button>
+            <LangToggle className="border-gray-300 text-gray-500 hover:text-gray-900 hover:border-gray-500" />
           </nav>
 
           {/* Mobile hamburger */}
@@ -230,8 +235,11 @@ export default function LpPage() {
             onClick={() => { setMenuOpen(false); window.location.href = "/contact"; }}
             className="w-full bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-semibold py-3 rounded-full"
           >
-            お問い合わせ
+            {t("nav.contact")}
           </button>
+          <div className="mt-3 flex justify-center">
+            <LangToggle className="border-gray-300 text-gray-500 hover:text-gray-900 hover:border-gray-500 px-4 py-2" />
+          </div>
         </div>
       </div>
 
