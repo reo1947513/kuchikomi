@@ -1,0 +1,11 @@
+User-agent: *
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /dashboard/
+Allow: /lp
+Allow: /contact
+Allow: /legal/
+Allow: /survey/
+Sitemap: https://comista-kuchikomi.com/sitemap.xml
