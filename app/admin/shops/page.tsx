@@ -327,6 +327,7 @@ export default function ShopsPage() {
               <th className="text-left px-4 py-3 font-semibold text-gray-700 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("name")}>担当者名{sortKey === "name" && (sortDir === "asc" ? " ▲" : " ▼")}</th>
               <th className="text-left px-4 py-3 font-semibold text-gray-700 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("sessionCount")}>アクセス回数{sortKey === "sessionCount" && (sortDir === "asc" ? " ▲" : " ▼")}</th>
               <th className="text-left px-4 py-3 font-semibold text-gray-700 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("contractDays")}>契約残日数{sortKey === "contractDays" && (sortDir === "asc" ? " ▲" : " ▼")}</th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-700">プラン</th>
               <th className="text-left px-4 py-3 font-semibold text-gray-700">メール</th>
               <th className="text-left px-4 py-3 font-semibold text-gray-700">住所</th>
               <th className="text-left px-4 py-3 font-semibold text-gray-700">代理店</th>
@@ -361,6 +362,22 @@ export default function ShopsPage() {
                   })() : (
                     <span className="text-gray-400">未設定</span>
                   )}
+                </td>
+                <td className="px-4 py-3">
+                  {(() => {
+                    const p = shop.planType;
+                    if (!p) return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">無料</span>;
+                    const labels: Record<string, { label: string; cls: string }> = {
+                      light: { label: "ライト", cls: "bg-blue-100 text-blue-700" },
+                      standard: { label: "スタンダード", cls: "bg-violet-100 text-violet-700" },
+                      premium: { label: "プレミアム", cls: "bg-amber-100 text-amber-700" },
+                      lifetime_light: { label: "永年ライト", cls: "bg-blue-100 text-blue-700" },
+                      lifetime_standard: { label: "永年スタンダード", cls: "bg-violet-100 text-violet-700" },
+                      lifetime_premium: { label: "永年プレミアム", cls: "bg-amber-100 text-amber-700" },
+                    };
+                    const info = labels[p] || { label: p, cls: "bg-gray-100 text-gray-600" };
+                    return <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${info.cls}`}>{info.label}</span>;
+                  })()}
                 </td>
                 <td className="px-4 py-3 text-xs text-gray-500 max-w-[180px] truncate">{shop.email ?? "—"}</td>
                 <td className="px-4 py-3 text-gray-600 max-w-xs truncate">{shop.address ?? "—"}</td>
