@@ -18,11 +18,8 @@ function getPlanFromPrice(priceId: string, amount: number | null, interval: stri
     if (amount === 20000) return { planType: "premium", planReviewLimit: 300 };
   }
 
-  // One-time: lifetime licenses
+  // One-time: additional reviews
   if (!interval || interval === null) {
-    if (amount === 150000) return { planType: "lifetime_standard", planReviewLimit: 100 };
-    if (amount === 250000) return { planType: "lifetime_premium", planReviewLimit: 300 };
-
     // Additional reviews
     if (amount === 2000) return { planType: "", planReviewLimit: 0, isAdditional: true, additionalAmount: 20 };
     if (amount === 5000) return { planType: "", planReviewLimit: 0, isAdditional: true, additionalAmount: 50 };
@@ -82,7 +79,7 @@ export async function POST(request: NextRequest) {
             });
           }
         } else if (session.mode === "payment") {
-          // One-time payment: lifetime or additional reviews
+          // One-time payment: additional reviews
           const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
           const item = lineItems.data[0];
           if (item) {

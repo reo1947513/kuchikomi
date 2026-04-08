@@ -44,7 +44,7 @@ model User {
   stripeCustomerId     String?  @unique
   stripeSubscriptionId String?
   stripePriceId        String?
-  planType             String?  // "standard" | "premium" | "lifetime_standard" | "lifetime_premium"
+  planType             String?  // "standard" | "premium"
   planReviewLimit      Int      @default(0)
   additionalReviews    Int      @default(0)
 

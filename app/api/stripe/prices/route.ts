@@ -9,11 +9,6 @@ const SUBSCRIPTION_AMOUNTS: Record<number, { name: string; planType: string; rev
   20000: { name: "プレミアムプラン", planType: "premium", reviews: 300, priceLabel: "¥20,000/月" },
 };
 
-const LIFETIME_AMOUNTS: Record<number, { name: string; planType: string; reviews: number; priceLabel: string }> = {
-  150000: { name: "永年ライセンス スタンダード", planType: "lifetime_standard", reviews: 100, priceLabel: "¥150,000（一括）" },
-  250000: { name: "永年ライセンス プレミアム", planType: "lifetime_premium", reviews: 300, priceLabel: "¥250,000（一括）" },
-};
-
 const ADDITIONAL_AMOUNTS: Record<number, { name: string; reviews: number; priceLabel: string }> = {
   2000: { name: "追加20件", reviews: 20, priceLabel: "¥2,000" },
   5000: { name: "追加50件", reviews: 50, priceLabel: "¥5,000" },
@@ -33,15 +28,6 @@ export async function GET() {
       reviews: number;
       priceId: string;
       mode: "subscription";
-      planType: string;
-    }> = [];
-
-    const lifetime: Array<{
-      name: string;
-      priceLabel: string;
-      reviews: number;
-      priceId: string;
-      mode: "payment";
       planType: string;
     }> = [];
 
@@ -67,14 +53,6 @@ export async function GET() {
           });
         }
       } else if (!price.recurring) {
-        const lifetimeConfig = LIFETIME_AMOUNTS[amount];
-        if (lifetimeConfig) {
-          lifetime.push({
-            ...lifetimeConfig,
-            priceId: price.id,
-            mode: "payment",
-          });
-        }
         const additionalConfig = ADDITIONAL_AMOUNTS[amount];
         if (additionalConfig) {
           additional.push({
@@ -88,10 +66,9 @@ export async function GET() {
 
     // Sort by review count
     subscriptions.sort((a, b) => a.reviews - b.reviews);
-    lifetime.sort((a, b) => a.reviews - b.reviews);
     additional.sort((a, b) => a.reviews - b.reviews);
 
-    return NextResponse.json({ subscriptions, lifetime, additional });
+    return NextResponse.json({ subscriptions, additional });
   } catch (error) {
     console.error("Failed to fetch Stripe prices:", error);
     return NextResponse.json(

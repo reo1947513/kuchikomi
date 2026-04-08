@@ -75,13 +75,8 @@ export const lpDict: Record<string, { ja: string; en: string }> = {
   "pricing.desc": { ja: "全プラン初期費用0円", en: "Zero setup fee for all plans" },
   "pricing.monthly": { ja: "月", en: "mo" },
   "pricing.perMonth": { ja: "/月", en: "/mo" },
-  "pricing.installment": { ja: "一括払いの場合（分割:", en: "Lump-sum price (installment:" },
   "pricing.popular": { ja: "🏆 人気No.1", en: "🏆 Most Popular" },
   "pricing.contact": { ja: "お問い合わせ", en: "Contact Us" },
-  "pricing.lifetime": { ja: "永年ライセンス", en: "Lifetime License" },
-  "pricing.lifetimeSub": { ja: "（買い切り）", en: "(One-time purchase)" },
-  "pricing.lifetimeDesc": { ja: "月額不要・一括払いでずっと使える", en: "No monthly fee · Pay once, use forever" },
-  "pricing.lump": { ja: "一括", en: "one-time" },
   "pricing.recommended": { ja: "おすすめ", en: "Recommended" },
   "pricing.installmentNote": { ja: "※ 分割払いにも対応しております。詳しくはお問い合わせください。", en: "* Installment plans available. Contact us for details." },
   "pricing.standard": { ja: "スタンダードプラン", en: "Standard Plan" },
@@ -95,7 +90,6 @@ export const lpDict: Record<string, { ja: string; en: string }> = {
   "pricing.feat.qr": { ja: "QRコード発行", en: "QR code generation" },
   "pricing.feat.analytics": { ja: "リアルタイム分析", en: "Real-time analytics" },
   "pricing.feat.support": { ja: "カスタマーサポート", en: "Customer support" },
-  "pricing.lifetimeNote": { ja: "永年ライセンスもご用意しています。詳しくはお問い合わせください。", en: "Lifetime licenses also available. Contact us for details." },
 
   // Case Studies
   "cases.title1": { ja: "導入店舗の", en: "Real stories from" },

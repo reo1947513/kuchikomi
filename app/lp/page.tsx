@@ -627,9 +627,6 @@ export default function LpPage() {
               </div>
             ))}
           </div>
-          <p className="text-center text-sm text-gray-500 mt-10">
-            {t("pricing.lifetimeNote")}
-          </p>
         </div>
       </Section>
 

@@ -40,25 +40,6 @@ const subscriptionPlans: PlanCard[] = [
   },
 ];
 
-const lifetimePlans: PlanCard[] = [
-  {
-    name: "永年ライセンス スタンダード",
-    priceLabel: "¥150,000（一括）",
-    reviews: 100,
-    priceId: "",
-    mode: "payment",
-    planType: "lifetime_standard",
-  },
-  {
-    name: "永年ライセンス プレミアム",
-    priceLabel: "¥250,000（一括）",
-    reviews: 300,
-    priceId: "",
-    mode: "payment",
-    planType: "lifetime_premium",
-  },
-];
-
 const additionalPacks = [
   {
     name: "追加20件",
@@ -79,17 +60,14 @@ const additionalPacks = [
 const planLabels: Record<string, string> = {
   standard: "スタンダードプラン",
   premium: "プレミアムプラン",
-  lifetime_standard: "永年ライセンス スタンダード",
-  lifetime_premium: "永年ライセンス プレミアム",
 };
 
 export default function BillingPage() {
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
-  const [prices, setPrices] = useState<{ subscriptions: PlanCard[]; lifetime: PlanCard[]; additional: typeof additionalPacks }>({
+  const [prices, setPrices] = useState<{ subscriptions: PlanCard[]; additional: typeof additionalPacks }>({
     subscriptions: subscriptionPlans,
-    lifetime: lifetimePlans,
     additional: additionalPacks,
   });
 
@@ -172,7 +150,6 @@ export default function BillingPage() {
     );
   }
 
-  const isLifetime = user.planType?.startsWith("lifetime_");
   const hasSubscription = !!user.stripeSubscriptionId;
   const hasPlan = !!user.planType;
 
@@ -192,11 +169,6 @@ export default function BillingPage() {
               <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-violet-100 text-violet-800">
                 {planLabels[user.planType!] || user.planType}
               </span>
-              {isLifetime && (
-                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">
-                  永年
-                </span>
-              )}
             </div>
             <div className="text-sm text-gray-600">
               <p>月間レビュー上限: <strong>{user.planReviewLimit}件</strong></p>
@@ -234,51 +206,16 @@ export default function BillingPage() {
                 <p className="text-sm text-gray-500 mt-1">月間 {plan.reviews}件 まで</p>
                 <button
                   onClick={() => handleCheckout(plan.priceId, plan.mode)}
-                  disabled={!plan.priceId || isCurrent || isLifetime || !!checkoutLoading}
+                  disabled={!plan.priceId || isCurrent || !!checkoutLoading}
                   className="mt-4 w-full px-4 py-2.5 text-sm font-medium text-white bg-violet-600 rounded-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px]"
                 >
                   {checkoutLoading === plan.priceId
                     ? "処理中..."
                     : isCurrent
                     ? "現在のプラン"
-                    : isLifetime
-                    ? "永年ライセンス利用中"
                     : hasPlan
                     ? "プラン変更"
                     : "申し込む"}
-                </button>
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* Lifetime Licenses */}
-      <section>
-        <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-4">永年ライセンス（買い切り）</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {prices.lifetime.map((plan) => {
-            const isCurrent = user.planType === plan.planType;
-            return (
-              <div
-                key={plan.planType}
-                className={`bg-white rounded-lg shadow p-6 border-2 ${
-                  isCurrent ? "border-amber-500" : "border-transparent"
-                }`}
-              >
-                <h3 className="text-base font-semibold text-gray-900">{plan.name}</h3>
-                <p className="text-xl sm:text-2xl font-bold text-gray-900 mt-2">{plan.priceLabel}</p>
-                <p className="text-sm text-gray-500 mt-1">月間 {plan.reviews}件 まで</p>
-                <button
-                  onClick={() => handleCheckout(plan.priceId, plan.mode)}
-                  disabled={!plan.priceId || isCurrent || !!checkoutLoading}
-                  className="mt-4 w-full px-4 py-2.5 text-sm font-medium text-white bg-amber-600 rounded-lg hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px]"
-                >
-                  {checkoutLoading === plan.priceId
-                    ? "処理中..."
-                    : isCurrent
-                    ? "現在のプラン"
-                    : "購入する"}
                 </button>
               </div>
             );
