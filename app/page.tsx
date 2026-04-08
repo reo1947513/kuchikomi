@@ -402,15 +402,15 @@ export default function LpPage() {
       </section>
 
       {/* ───────── Announcements ───────── */}
-      {announcements.length > 0 && (
-        <section className="bg-white py-10">
-          <div className="max-w-4xl mx-auto px-4">
-            <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <svg className="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
-              </svg>
-              お知らせ
-            </h2>
+      <section className="bg-white py-10">
+        <div className="max-w-4xl mx-auto px-4">
+          <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <svg className="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+            </svg>
+            お知らせ
+          </h2>
+          {announcements.length > 0 ? (
             <div className="space-y-3">
               {announcements.map((a) => {
                 const catColor = a.category === "新機能" ? "bg-cyan-100 text-cyan-700" : a.category === "重要" ? "bg-red-100 text-red-700" : a.category === "メンテナンス" ? "bg-amber-100 text-amber-700" : "bg-gray-100 text-gray-600";
@@ -430,9 +430,11 @@ export default function LpPage() {
                 );
               })}
             </div>
-          </div>
-        </section>
-      )}
+          ) : (
+            <p className="text-sm text-gray-400 text-center py-4">現在お知らせはありません</p>
+          )}
+        </div>
+      </section>
 
       {/* ───────── Problem ───────── */}
       <Section className="relative py-24 md:py-32 bg-white overflow-hidden">
