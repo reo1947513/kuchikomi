@@ -28,10 +28,14 @@ export default function CampaignsPage() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [target, setTarget] = useState("all");
+  const [startAt, setStartAt] = useState("");
   const [endAt, setEndAt] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sending, setSending] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editStartAt, setEditStartAt] = useState("");
+  const [editEndAt, setEditEndAt] = useState("");
 
   const fetchItems = () => {
     fetch("/api/admin/campaigns")
@@ -51,10 +55,14 @@ export default function CampaignsPage() {
       const res = await fetch("/api/admin/campaigns", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, content, target, endAt: endAt || undefined }),
+        body: JSON.stringify({
+          title, content, target,
+          startAt: startAt ? new Date(startAt).toISOString() : undefined,
+          endAt: endAt ? new Date(endAt).toISOString() : undefined,
+        }),
       });
       if (!res.ok) throw new Error("作成に失敗しました");
-      setTitle(""); setContent(""); setTarget("all"); setEndAt("");
+      setTitle(""); setContent(""); setTarget("all"); setStartAt(""); setEndAt("");
       fetchItems();
     } catch (e) {
       setError(e instanceof Error ? e.message : "エラー");
@@ -90,6 +98,40 @@ export default function CampaignsPage() {
     } finally { setSending(null); }
   };
 
+  const toLocalDatetime = (iso: string) => {
+    const d = new Date(iso);
+    const offset = d.getTimezoneOffset();
+    const local = new Date(d.getTime() - offset * 60000);
+    return local.toISOString().slice(0, 16);
+  };
+
+  const startEditDates = (item: Campaign) => {
+    setEditingId(item.id);
+    setEditStartAt(toLocalDatetime(item.startAt));
+    setEditEndAt(item.endAt ? toLocalDatetime(item.endAt) : "");
+  };
+
+  const handleSaveDates = async (id: string) => {
+    await fetch(`/api/admin/campaigns/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        startAt: editStartAt ? new Date(editStartAt).toISOString() : new Date().toISOString(),
+        endAt: editEndAt ? new Date(editEndAt).toISOString() : null,
+      }),
+    });
+    setEditingId(null);
+    fetchItems();
+  };
+
+  const getStatus = (item: Campaign) => {
+    const now = new Date();
+    const start = new Date(item.startAt);
+    if (start > now) return { label: "予約中", cls: "bg-amber-100 text-amber-700" };
+    if (item.endAt && new Date(item.endAt) < now) return { label: "終了", cls: "bg-gray-100 text-gray-500" };
+    return { label: "配信中", cls: "bg-green-100 text-green-700" };
+  };
+
   const targetLabel = (t: string) => TARGETS.find((x) => x.value === t)?.label || t;
   const targetColor = (t: string) => {
     if (t === "free") return "bg-gray-100 text-gray-600";
@@ -97,7 +139,11 @@ export default function CampaignsPage() {
     if (t === "cancelled") return "bg-red-100 text-red-600";
     return "bg-cyan-100 text-cyan-700";
   };
-  const formatDate = (d: string) => new Date(d).toLocaleDateString("ja-JP", { year: "numeric", month: "short", day: "numeric" });
+  const formatDate = (d: string) => {
+    const date = new Date(d);
+    return date.toLocaleDateString("ja-JP", { year: "numeric", month: "short", day: "numeric" })
+      + " " + date.toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" });
+  };
 
   const inputCls = "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent";
 
@@ -118,16 +164,22 @@ export default function CampaignsPage() {
             <label className="block text-sm font-medium text-gray-700 mb-1">内容</label>
             <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={4} placeholder="キャンペーンの詳細を入力" className={inputCls} />
           </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">対象ユーザー</label>
+            <select value={target} onChange={(e) => setTarget(e.target.value)} className={inputCls}>
+              {TARGETS.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+            </select>
+          </div>
           <div className="flex gap-3">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">対象ユーザー</label>
-              <select value={target} onChange={(e) => setTarget(e.target.value)} className={inputCls}>
-                {TARGETS.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
-              </select>
+              <label className="block text-sm font-medium text-gray-700 mb-1">開始日時（任意）</label>
+              <input type="datetime-local" value={startAt} onChange={(e) => setStartAt(e.target.value)} className={inputCls} />
+              <p className="text-xs text-gray-400 mt-0.5">未設定の場合は即時公開</p>
             </div>
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">終了日（任意）</label>
-              <input type="date" value={endAt} onChange={(e) => setEndAt(e.target.value)} className={inputCls} />
+              <label className="block text-sm font-medium text-gray-700 mb-1">終了日時（任意）</label>
+              <input type="datetime-local" value={endAt} onChange={(e) => setEndAt(e.target.value)} className={inputCls} />
+              <p className="text-xs text-gray-400 mt-0.5">未設定の場合は無期限</p>
             </div>
           </div>
           <div className="flex justify-end">
@@ -146,20 +198,43 @@ export default function CampaignsPage() {
         ) : items.length === 0 ? (
           <p className="p-6 text-center text-sm text-gray-400">キャンペーンがまだありません</p>
         ) : (
-          items.map((item) => (
+          items.map((item) => {
+            const status = item.isPublished ? getStatus(item) : null;
+            return (
             <div key={item.id} className="px-3 sm:px-5 py-4">
               <div className="flex items-start gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${targetColor(item.target)}`}>{targetLabel(item.target)}</span>
+                    {status && <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${status.cls}`}>{status.label}</span>}
                     <span className="text-sm font-medium text-gray-800">{item.title}</span>
                     {!item.isPublished && <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-200 text-gray-500">非公開</span>}
                     {item.emailSent && <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-600">メール送信済</span>}
                   </div>
                   <p className="text-sm text-gray-600 whitespace-pre-wrap line-clamp-2">{item.content}</p>
-                  <p className="text-xs text-gray-400 mt-1">
-                    {formatDate(item.startAt)}{item.endAt ? ` 〜 ${formatDate(item.endAt)}` : " 〜 無期限"}
-                  </p>
+                  {editingId === item.id ? (
+                    <div className="flex items-end gap-2 mt-2 flex-wrap">
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-0.5">開始日時</label>
+                        <input type="datetime-local" value={editStartAt} onChange={(e) => setEditStartAt(e.target.value)}
+                          className="border border-gray-300 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-violet-400" />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-0.5">終了日時</label>
+                        <input type="datetime-local" value={editEndAt} onChange={(e) => setEditEndAt(e.target.value)}
+                          className="border border-gray-300 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-violet-400" />
+                      </div>
+                      <button onClick={() => handleSaveDates(item.id)}
+                        className="px-3 py-1 text-xs font-medium rounded-lg bg-violet-500 hover:bg-violet-600 text-white">保存</button>
+                      <button onClick={() => setEditingId(null)}
+                        className="px-3 py-1 text-xs font-medium rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-600">キャンセル</button>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-gray-400 mt-1 cursor-pointer hover:text-violet-500" onClick={() => startEditDates(item)}>
+                      {formatDate(item.startAt)}{item.endAt ? ` 〜 ${formatDate(item.endAt)}` : " 〜 無期限"}
+                      <span className="ml-1 text-gray-300">✎</span>
+                    </p>
+                  )}
                 </div>
                 <div className="flex flex-col gap-1.5 flex-shrink-0">
                   <button onClick={() => handleTogglePublish(item)}
@@ -177,7 +252,8 @@ export default function CampaignsPage() {
                 </div>
               </div>
             </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>
