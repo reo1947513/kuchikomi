@@ -503,6 +503,7 @@ export default function ShopsPage() {
               {addError && <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">{addError}</div>}
               {[
                 { label: "ショップ名", key: "shopName", type: "text", required: true },
+                { label: "担当者名", key: "staffName", type: "text", required: false },
                 { label: "メールアドレス", key: "email", type: "email", required: false },
                 { label: "ログインID（自動割り当て）", key: "loginId", type: "text", required: false, placeholder: "自動で割り当てられます", readOnly: true },
                 { label: "パスワード", key: "password", type: "password", required: true },
