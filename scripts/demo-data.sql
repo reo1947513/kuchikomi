@@ -2037,7 +2037,7 @@ VALUES ('demo-answer-700', 'demo-session-100', 'demo-q6a-3', 'demo-choice-101', 
 -- Shop 4: デモバー (Light plan, 18/20 used)
 -- ============================================
 INSERT INTO "User" (id, email, "loginId", password, name, role, "shopName", address, industry, "noContractLimit", "planType", "planReviewLimit", "createdAt", "updatedAt")
-VALUES ('demo-user-4', 'demo4@kuchikomi.jp', 'AG-000004', '$2a$10$V5h/b24p0tNw34DJ9T7TkOxGaOubUwBnvLOALbMPZFtvr2wsIJi0y', 'デモバー管理者', 'admin', 'デモバー', '東京都渋谷区demo4', 'バー', true, 'light', 20, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z');
+VALUES ('demo-user-4', 'demo4@kuchikomi.jp', 'AG-000004', '$2a$10$V5h/b24p0tNw34DJ9T7TkOxGaOubUwBnvLOALbMPZFtvr2wsIJi0y', 'デモバー管理者', 'admin', 'デモバー', '東京都渋谷区demo4', 'バー', true, 'standard', 100, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z');
 
 INSERT INTO "Survey" (id, title, "openingMessage", "closingMessage", "completionMessage", keywords, "toneRandom", "googleBusinessUrl", "logoUrl", "couponImageUrl", "couponEnabled", "couponExpiry", "chatIconType", "chatIconPreset", "themeMainColor", "themeUserColor", "minRandomQuestions", "maxRandomQuestions", "isActive", "monthlyReviewLimit", "monthlyReviewCount", "createdAt", "updatedAt", "userId")
 VALUES ('demo-survey-4', 'デモバーアンケート', 'ご来店ありがとうございます。サービス向上のため、簡単なアンケートにご協力ください。', 'アンケートにご協力いただきありがとうございました。', 'ご回答ありがとうございました。次回のご来店をお待ちしております！', 'カクテル,雰囲気,バーテンダー,接客,落ち着く', true, 'https://g.page/demo-bar', '/demo/logo-bar.svg', '/demo/coupon-bar.svg', true, '2026-12-31', 'preset', 'utensils', '#312e81', '#4c1d95', 1, 1, true, 20, 18, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z', 'demo-user-4');
