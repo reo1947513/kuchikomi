@@ -936,6 +936,115 @@ export default function SurveySettingsPage() {
         )}
         {activeTab === "questions" && canEditAll && (
           <div className="space-y-4">
+
+            {/* Industry question templates */}
+            <div className="bg-white rounded-xl shadow p-4">
+              <label className="block text-sm font-semibold text-gray-700 mb-1">業種別テンプレート</label>
+              <p className="text-xs text-gray-400 mb-3">業種を選択すると、その業種に適した質問セットが一括で読み込まれます。既存の質問は置き換えられます。</p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+                {([
+                  { label: "飲食店", icon: "🍽️", questions: [
+                    { text: "お料理の味はいかがでしたか？", type: "choice" as const, choices: [{text:"とても美味しかった",score:2},{text:"美味しかった",score:1},{text:"普通",score:0},{text:"やや不満",score:-1},{text:"不満",score:-2}] },
+                    { text: "スタッフの接客はいかがでしたか？", type: "choice" as const, choices: [{text:"とても良かった",score:2},{text:"良かった",score:1},{text:"普通",score:0},{text:"やや不満",score:-1},{text:"不満",score:-2}] },
+                    { text: "店内の雰囲気はいかがでしたか？", type: "choice" as const, choices: [{text:"とても良かった",score:2},{text:"良かった",score:1},{text:"普通",score:0},{text:"やや不満",score:-1},{text:"不満",score:-2}] },
+                    { text: "料理の提供スピードは満足でしたか？", type: "choice" as const, choices: [{text:"とても満足",score:2},{text:"満足",score:1},{text:"普通",score:0},{text:"やや不満",score:-1},{text:"不満",score:-2}] },
+                    { text: "特に気に入ったメニューがあれば教えてください", type: "text" as const, choices: [] },
+                    { text: "またご来店いただけますか？", type: "choice" as const, choices: [{text:"ぜひ来たい",score:2},{text:"機会があれば",score:1},{text:"わからない",score:0},{text:"あまり来ないと思う",score:-1}] },
+                  ]},
+                  { label: "美容室", icon: "💇", questions: [
+                    { text: "仕上がりには満足していますか？", type: "choice" as const, choices: [{text:"非常に満足",score:2},{text:"満足",score:1},{text:"どちらとも言えない",score:0},{text:"やや不満",score:-1},{text:"不満",score:-2}] },
+                    { text: "スタイリストの技術はいかがでしたか？", type: "choice" as const, choices: [{text:"とても良かった",score:2},{text:"良かった",score:1},{text:"普通",score:0},{text:"やや不満",score:-1},{text:"不満",score:-2}] },
+                    { text: "カウンセリングは十分でしたか？", type: "choice" as const, choices: [{text:"とても丁寧だった",score:2},{text:"十分だった",score:1},{text:"普通",score:0},{text:"やや不足",score:-1},{text:"不十分だった",score:-2}] },
+                    { text: "店内の雰囲気はいかがでしたか？", type: "choice" as const, choices: [{text:"とても良かった",score:2},{text:"良かった",score:1},{text:"普通",score:0},{text:"やや不満",score:-1},{text:"不満",score:-2}] },
+                    { text: "ヘッドスパやトリートメントに興味はありますか？", type: "choice" as const, choices: [{text:"とてもある",score:2},{text:"少しある",score:1},{text:"あまりない",score:0},{text:"ない",score:-1}] },
+                    { text: "特に良かった点を教えてください", type: "text" as const, choices: [] },
+                  ]},
+                  { label: "整骨院", icon: "💆", questions: [
+                    { text: "施術後の体調はいかがですか？", type: "choice" as const, choices: [{text:"とても良くなった",score:2},{text:"良くなった",score:1},{text:"変わらない",score:0},{text:"やや悪化した",score:-1}] },
+                    { text: "施術の説明は分かりやすかったですか？", type: "choice" as const, choices: [{text:"とても分かりやすい",score:2},{text:"分かりやすい",score:1},{text:"普通",score:0},{text:"分かりにくい",score:-1}] },
+                    { text: "スタッフの対応はいかがでしたか？", type: "choice" as const, choices: [{text:"とても良かった",score:2},{text:"良かった",score:1},{text:"普通",score:0},{text:"やや不満",score:-1},{text:"不満",score:-2}] },
+                    { text: "待ち時間は気になりましたか？", type: "choice" as const, choices: [{text:"全く気にならなかった",score:2},{text:"許容範囲",score:1},{text:"やや長い",score:0},{text:"長かった",score:-1}] },
+                    { text: "どのような症状でご来院されましたか？", type: "text" as const, choices: [] },
+                    { text: "継続して通いたいと思いますか？", type: "choice" as const, choices: [{text:"ぜひ通いたい",score:2},{text:"通いたい",score:1},{text:"検討中",score:0},{text:"あまり思わない",score:-1}] },
+                  ]},
+                  { label: "エステ", icon: "✨", questions: [
+                    { text: "施術の効果は感じられましたか？", type: "choice" as const, choices: [{text:"とても感じた",score:2},{text:"感じた",score:1},{text:"あまり感じない",score:0},{text:"感じなかった",score:-1}] },
+                    { text: "スタッフの接客はいかがでしたか？", type: "choice" as const, choices: [{text:"とても良かった",score:2},{text:"良かった",score:1},{text:"普通",score:0},{text:"やや不満",score:-1},{text:"不満",score:-2}] },
+                    { text: "店内の清潔感はいかがでしたか？", type: "choice" as const, choices: [{text:"とても清潔",score:2},{text:"清潔",score:1},{text:"普通",score:0},{text:"やや気になった",score:-1}] },
+                    { text: "カウンセリングの内容は満足でしたか？", type: "choice" as const, choices: [{text:"とても満足",score:2},{text:"満足",score:1},{text:"普通",score:0},{text:"やや不満",score:-1}] },
+                    { text: "今後試してみたいメニューはありますか？", type: "text" as const, choices: [] },
+                    { text: "またご来店いただけますか？", type: "choice" as const, choices: [{text:"ぜひ来たい",score:2},{text:"機会があれば",score:1},{text:"わからない",score:0},{text:"あまり来ないと思う",score:-1}] },
+                  ]},
+                  { label: "バー", icon: "🍸", questions: [
+                    { text: "ドリンクのクオリティはいかがでしたか？", type: "choice" as const, choices: [{text:"とても良かった",score:2},{text:"良かった",score:1},{text:"普通",score:0},{text:"やや不満",score:-1},{text:"不満",score:-2}] },
+                    { text: "スタッフの接客はいかがでしたか？", type: "choice" as const, choices: [{text:"とても良かった",score:2},{text:"良かった",score:1},{text:"普通",score:0},{text:"やや不満",score:-1},{text:"不満",score:-2}] },
+                    { text: "店内の雰囲気は楽しめましたか？", type: "choice" as const, choices: [{text:"とても楽しめた",score:2},{text:"楽しめた",score:1},{text:"普通",score:0},{text:"やや不満",score:-1}] },
+                    { text: "特に気に入ったドリンクがあれば教えてください", type: "text" as const, choices: [] },
+                    { text: "また来たいと思いますか？", type: "choice" as const, choices: [{text:"ぜひ来たい",score:2},{text:"機会があれば",score:1},{text:"わからない",score:0},{text:"あまり来ないと思う",score:-1}] },
+                  ]},
+                  { label: "ラウンジ", icon: "🌙", questions: [
+                    { text: "今日の時間は楽しめましたか？", type: "choice" as const, choices: [{text:"とても楽しめた",score:2},{text:"楽しめた",score:1},{text:"普通",score:0},{text:"やや不満",score:-1}] },
+                    { text: "スタッフの対応はいかがでしたか？", type: "choice" as const, choices: [{text:"とても良かった",score:2},{text:"良かった",score:1},{text:"普通",score:0},{text:"やや不満",score:-1},{text:"不満",score:-2}] },
+                    { text: "ドリンクや料理は満足でしたか？", type: "choice" as const, choices: [{text:"とても満足",score:2},{text:"満足",score:1},{text:"普通",score:0},{text:"やや不満",score:-1}] },
+                    { text: "店内の雰囲気はいかがでしたか？", type: "choice" as const, choices: [{text:"とても良かった",score:2},{text:"良かった",score:1},{text:"普通",score:0},{text:"やや不満",score:-1}] },
+                    { text: "特に印象に残ったことがあれば教えてください", type: "text" as const, choices: [] },
+                    { text: "また来たいと思いますか？", type: "choice" as const, choices: [{text:"ぜひ来たい",score:2},{text:"機会があれば",score:1},{text:"わからない",score:0},{text:"あまり来ないと思う",score:-1}] },
+                  ]},
+                  { label: "ネイルサロン", icon: "💅", questions: [
+                    { text: "仕上がりのデザインは満足ですか？", type: "choice" as const, choices: [{text:"非常に満足",score:2},{text:"満足",score:1},{text:"どちらとも言えない",score:0},{text:"やや不満",score:-1},{text:"不満",score:-2}] },
+                    { text: "ネイリストの技術はいかがでしたか？", type: "choice" as const, choices: [{text:"とても良かった",score:2},{text:"良かった",score:1},{text:"普通",score:0},{text:"やや不満",score:-1}] },
+                    { text: "施術時間は適切でしたか？", type: "choice" as const, choices: [{text:"ちょうど良い",score:2},{text:"やや長い",score:0},{text:"長すぎた",score:-1}] },
+                    { text: "店内の雰囲気はいかがでしたか？", type: "choice" as const, choices: [{text:"とても良かった",score:2},{text:"良かった",score:1},{text:"普通",score:0},{text:"やや不満",score:-1}] },
+                    { text: "次回試してみたいデザインはありますか？", type: "text" as const, choices: [] },
+                  ]},
+                  { label: "不動産", icon: "🏠", questions: [
+                    { text: "物件のご案内は満足でしたか？", type: "choice" as const, choices: [{text:"とても満足",score:2},{text:"満足",score:1},{text:"普通",score:0},{text:"やや不満",score:-1},{text:"不満",score:-2}] },
+                    { text: "担当者の対応はいかがでしたか？", type: "choice" as const, choices: [{text:"とても良かった",score:2},{text:"良かった",score:1},{text:"普通",score:0},{text:"やや不満",score:-1},{text:"不満",score:-2}] },
+                    { text: "ご要望は十分にヒアリングされましたか？", type: "choice" as const, choices: [{text:"十分にされた",score:2},{text:"おおむね良い",score:1},{text:"やや不足",score:0},{text:"不十分だった",score:-1}] },
+                    { text: "提案された物件は希望に合っていましたか？", type: "choice" as const, choices: [{text:"とても合っていた",score:2},{text:"概ね合っていた",score:1},{text:"あまり合わなかった",score:-1}] },
+                    { text: "その他ご感想があればお聞かせください", type: "text" as const, choices: [] },
+                  ]},
+                  { label: "アパレル", icon: "👗", questions: [
+                    { text: "お探しの商品は見つかりましたか？", type: "choice" as const, choices: [{text:"見つかった",score:2},{text:"近いものがあった",score:1},{text:"見つからなかった",score:-1}] },
+                    { text: "スタッフの接客はいかがでしたか？", type: "choice" as const, choices: [{text:"とても良かった",score:2},{text:"良かった",score:1},{text:"普通",score:0},{text:"やや不満",score:-1}] },
+                    { text: "店内の品揃えは満足でしたか？", type: "choice" as const, choices: [{text:"とても満足",score:2},{text:"満足",score:1},{text:"普通",score:0},{text:"やや不満",score:-1}] },
+                    { text: "コーディネートの提案はいかがでしたか？", type: "choice" as const, choices: [{text:"とても参考になった",score:2},{text:"参考になった",score:1},{text:"特になし",score:0}] },
+                    { text: "お気に入りのアイテムがあれば教えてください", type: "text" as const, choices: [] },
+                  ]},
+                  { label: "ジム・フィットネス", icon: "💪", questions: [
+                    { text: "トレーニングの内容は満足でしたか？", type: "choice" as const, choices: [{text:"とても満足",score:2},{text:"満足",score:1},{text:"普通",score:0},{text:"やや不満",score:-1},{text:"不満",score:-2}] },
+                    { text: "トレーナーの指導はいかがでしたか？", type: "choice" as const, choices: [{text:"とても良かった",score:2},{text:"良かった",score:1},{text:"普通",score:0},{text:"やや不満",score:-1}] },
+                    { text: "施設の清潔さは満足でしたか？", type: "choice" as const, choices: [{text:"とても清潔",score:2},{text:"清潔",score:1},{text:"普通",score:0},{text:"やや気になった",score:-1}] },
+                    { text: "設備や器具は充実していましたか？", type: "choice" as const, choices: [{text:"とても充実",score:2},{text:"充実",score:1},{text:"普通",score:0},{text:"やや不足",score:-1}] },
+                    { text: "今後の目標や改善してほしい点があれば教えてください", type: "text" as const, choices: [] },
+                    { text: "継続して通いたいと思いますか？", type: "choice" as const, choices: [{text:"ぜひ通いたい",score:2},{text:"通いたい",score:1},{text:"検討中",score:0},{text:"あまり思わない",score:-1}] },
+                  ]},
+                ] as { label: string; icon: string; questions: { text: string; type: "choice" | "text"; choices: { text: string; score: number }[] }[] }[]).map((tmpl) => (
+                  <button
+                    key={tmpl.label}
+                    type="button"
+                    onClick={() => {
+                      if (questions.length > 0 && !confirm(`既存の質問（${questions.length}件）を${tmpl.label}用テンプレートに置き換えますか？`)) return;
+                      setQuestions(tmpl.questions.map((q, i) => ({
+                        id: `tmpl-${Date.now()}-${i}`,
+                        text: q.text,
+                        type: q.type,
+                        order: i,
+                        isRandom: false,
+                        groupName: null,
+                        choices: q.choices.map((c, ci) => ({ text: c.text, order: ci, score: c.score })),
+                        branchQuestions: [],
+                      })));
+                    }}
+                    className="flex flex-col items-center gap-1 border border-gray-200 rounded-xl px-2 py-3 hover:border-violet-400 hover:bg-violet-50/50 transition-colors group"
+                  >
+                    <span className="text-2xl">{tmpl.icon}</span>
+                    <span className="text-xs font-medium text-gray-600 group-hover:text-violet-600">{tmpl.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div className="bg-white rounded-xl shadow divide-y divide-gray-100">
 
             {/* Random question count settings */}
