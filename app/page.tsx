@@ -648,6 +648,14 @@ export default function LpPage() {
                 limit: t("pricing.standard.limit"),
                 target: t("pricing.standard.target"),
                 popular: true,
+                features: [
+                  t("pricing.feat.ai"),
+                  t("pricing.feat.chat"),
+                  t("pricing.feat.qr"),
+                  "分析ページ（グラフ）",
+                  "メール通知",
+                  t("pricing.feat.support"),
+                ],
               },
               {
                 name: t("pricing.premium"),
@@ -655,6 +663,18 @@ export default function LpPage() {
                 limit: t("pricing.premium.limit"),
                 target: t("pricing.premium.target"),
                 popular: false,
+                features: [
+                  t("pricing.feat.ai"),
+                  t("pricing.feat.chat"),
+                  t("pricing.feat.qr"),
+                  "分析ページ（グラフ）",
+                  "AI分析レポート",
+                  "CSVエクスポート",
+                  "AIプロンプト編集",
+                  "複数店舗管理",
+                  "メール通知",
+                  "優先サポート",
+                ],
               },
             ].map((plan) => (
               <div
@@ -686,13 +706,7 @@ export default function LpPage() {
                   {plan.limit}
                 </p>
                 <ul className="space-y-3 text-sm text-gray-600">
-                  {[
-                    t("pricing.feat.ai"),
-                    t("pricing.feat.chat"),
-                    t("pricing.feat.qr"),
-                    t("pricing.feat.analytics"),
-                    t("pricing.feat.support"),
-                  ].map((feat) => (
+                  {plan.features.map((feat) => (
                     <li key={feat} className="flex items-center gap-2">
                       <svg
                         className="w-4 h-4 text-cyan-500 shrink-0"
