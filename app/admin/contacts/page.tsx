@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useToast, Toast } from "@/components/Toast";
 
 type Contact = {
   id: string;
@@ -28,6 +29,7 @@ export default function ContactsPage() {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [selected, setSelected] = useState<Contact | null>(null);
   const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
+  const { toast, showToast } = useToast();
 
   const toggleCheck = (id: string) => {
     const next = new Set(checkedIds);
@@ -87,7 +89,7 @@ export default function ContactsPage() {
       setContacts((prev) => prev.filter((c) => c.id !== id));
       if (selected?.id === id) setSelected(null);
     } catch {
-      alert("削除に失敗しました");
+      showToast("削除に失敗しました", "error");
     }
   };
 
@@ -102,7 +104,9 @@ export default function ContactsPage() {
         setContacts((prev) => prev.map((c) => c.id === id ? { ...c, status } : c));
         if (selected && selected.id === id) setSelected({ ...selected, status });
       }
-    } catch {}
+    } catch {
+      showToast("エラーが発生しました", "error");
+    }
   };
 
   const statusColor = (s: string) => {
@@ -296,6 +300,7 @@ export default function ContactsPage() {
           </div>
         </div>
       )}
+      <Toast toast={toast} />
     </div>
   );
 }

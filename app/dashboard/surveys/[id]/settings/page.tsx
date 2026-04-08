@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { useToast, Toast } from "@/components/Toast";
 
 // ---- Types ----
 type Tone = {
@@ -196,6 +197,7 @@ export default function SurveySettingsPage() {
   const [couponDragging, setCouponDragging] = useState(false);
   const [couponUploading, setCouponUploading] = useState(false);
   const [couponUploadError, setCouponUploadError] = useState<string | null>(null);
+  const { toast, showToast } = useToast();
 
   useEffect(() => {
     fetch("/api/auth/me").then(r => r.json()).then(d => {
@@ -399,10 +401,10 @@ export default function SurveySettingsPage() {
       if (res.ok) {
         setQuestions((prev) => prev.filter((q) => q.id !== id));
       } else {
-        alert("削除に失敗しました");
+        showToast("削除に失敗しました", "error");
       }
     } catch {
-      alert("ネットワークエラーが発生しました");
+      showToast("ネットワークエラーが発生しました", "error");
     }
   };
 
@@ -438,9 +440,9 @@ export default function SurveySettingsPage() {
 
   const handleAddQuestion = async () => {
     if (useGrouping) {
-      if (!groupName.trim()) { alert("\u30b0\u30eb\u30fc\u30d7\u540d\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044"); return; }
+      if (!groupName.trim()) { showToast("\u30b0\u30eb\u30fc\u30d7\u540d\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "error"); return; }
       const validQs = groupQuestions.filter((gq) => gq.text.trim());
-      if (validQs.length === 0) { alert("\u8cea\u554f\u30921\u3064\u4ee5\u4e0a\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044"); return; }
+      if (validQs.length === 0) { showToast("\u8cea\u554f\u30921\u3064\u4ee5\u4e0a\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "error"); return; }
       try {
         const added: Question[] = [];
         for (let i = 0; i < validQs.length; i++) {
@@ -454,7 +456,7 @@ export default function SurveySettingsPage() {
         }
         setQuestions((prev) => [...prev, ...added]);
         setShowAddQuestion(false); setUseGrouping(false); setGroupName(""); setGroupQuestions([{text:"",type:"text",choices:[]}]);
-      } catch (e) { alert(e instanceof Error ? e.message : "\u30a8\u30e9\u30fc"); }
+      } catch (e) { showToast(e instanceof Error ? e.message : "\u30a8\u30e9\u30fc", "error"); }
       return;
     }
     if (!newQText.trim()) return;
@@ -479,7 +481,7 @@ export default function SurveySettingsPage() {
       setNewQIsRandom(false);
       setNewQChoices(DEFAULT_CHOICES.map((c) => ({ ...c })));
     } catch (e) {
-      alert(e instanceof Error ? e.message : "エラーが発生しました");
+      showToast(e instanceof Error ? e.message : "エラーが発生しました", "error");
     }
   };
 
@@ -496,7 +498,7 @@ export default function SurveySettingsPage() {
       const res = await fetch(qrApiUrl);
       const blob = await res.blob();
       setQrDataUrl(URL.createObjectURL(blob));
-    } catch { alert("QRコードの生成に失敗しました"); }
+    } catch { showToast("QRコードの生成に失敗しました", "error"); }
     finally { setQrGenerating(false); }
   };
 
@@ -1788,6 +1790,7 @@ export default function SurveySettingsPage() {
           </div>
         )}
       </div>
+      <Toast toast={toast} />
     </div>
   );
 }

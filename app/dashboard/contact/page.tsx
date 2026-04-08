@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useToast, Toast } from "@/components/Toast";
 
 type Phase = "input" | "confirm" | "complete";
 
@@ -34,6 +35,7 @@ export default function ContactPage() {
   const [content, setContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const { toast, showToast } = useToast();
 
   const touch = (field: string) => setTouched((p) => ({ ...p, [field]: true }));
 
@@ -76,7 +78,7 @@ export default function ContactPage() {
       setPhase("complete");
       window.scrollTo(0, 0);
     } catch {
-      alert("送信に失敗しました。もう一度お試しください。");
+      showToast("送信に失敗しました。もう一度お試しください。", "error");
     } finally {
       setSubmitting(false);
     }
@@ -140,6 +142,7 @@ export default function ContactPage() {
             </button>
           </div>
         </div>
+        <Toast toast={toast} />
       </div>
     );
   }
@@ -222,6 +225,7 @@ export default function ContactPage() {
           </button>
         </div>
       </div>
+      <Toast toast={toast} />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useToast, Toast } from "@/components/Toast";
 
 type Campaign = {
   id: string;
@@ -35,6 +36,7 @@ export default function CampaignsPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sending, setSending] = useState<string | null>(null);
+  const { toast, showToast } = useToast();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editStartAt, setEditStartAt] = useState("");
   const [editEndAt, setEditEndAt] = useState("");
@@ -75,17 +77,29 @@ export default function CampaignsPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("このキャンペーンを削除しますか？")) return;
-    await fetch(`/api/admin/campaigns/${id}`, { method: "DELETE" });
-    fetchItems();
+    try {
+      const res = await fetch(`/api/admin/campaigns/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("削除に失敗しました");
+      showToast("削除しました", "success");
+      fetchItems();
+    } catch (e) {
+      showToast(e instanceof Error ? e.message : "削除に失敗しました", "error");
+    }
   };
 
   const handleTogglePublish = async (item: Campaign) => {
-    await fetch(`/api/admin/campaigns/${item.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ isPublished: !item.isPublished }),
-    });
-    fetchItems();
+    try {
+      const res = await fetch(`/api/admin/campaigns/${item.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isPublished: !item.isPublished }),
+      });
+      if (!res.ok) throw new Error("更新に失敗しました");
+      showToast(item.isPublished ? "非公開にしました" : "公開しました", "success");
+      fetchItems();
+    } catch (e) {
+      showToast(e instanceof Error ? e.message : "更新に失敗しました", "error");
+    }
   };
 
   const handleSendEmail = async (item: Campaign) => {
@@ -100,10 +114,10 @@ export default function CampaignsPage() {
       const res = await fetch(`/api/admin/campaigns/${item.id}/send`, { method: "POST" });
       const d = await res.json();
       if (!res.ok) throw new Error(d.error || "送信に失敗しました");
-      alert(`${d.sent}/${d.total}件 送信しました`);
+      showToast(`${d.sent}/${d.total}件 送信しました`, "success");
       fetchItems();
     } catch (e) {
-      alert(e instanceof Error ? e.message : "送信に失敗しました");
+      showToast(e instanceof Error ? e.message : "送信に失敗しました", "error");
     } finally { setSending(null); }
   };
 
@@ -291,6 +305,7 @@ export default function CampaignsPage() {
           })
         )}
       </div>
+      <Toast toast={toast} />
     </div>
   );
 }

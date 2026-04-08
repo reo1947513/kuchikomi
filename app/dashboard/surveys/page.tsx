@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useToast, Toast } from "@/components/Toast";
 
 // ---- Types ----
 type Choice = { id: string; text: string; order: number };
@@ -362,6 +363,7 @@ function PremiumShortcuts({ surveyId }: { surveyId: string }) {
 function CsvExportButton() {
   const [planType, setPlanType] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { toast, showToast } = useToast();
 
   useEffect(() => {
     fetch("/api/auth/me").then((r) => r.json()).then((d) => setPlanType(d.planType ?? null)).catch(() => {});
@@ -375,7 +377,7 @@ function CsvExportButton() {
       const res = await fetch("/api/dashboard/export");
       if (!res.ok) {
         const d = await res.json();
-        alert(d.error || "エクスポートに失敗しました");
+        showToast(d.error || "エクスポートに失敗しました", "error");
         return;
       }
       const blob = await res.blob();
@@ -386,24 +388,27 @@ function CsvExportButton() {
       a.click();
       URL.revokeObjectURL(url);
     } catch {
-      alert("エクスポートに失敗しました");
+      showToast("エクスポートに失敗しました", "error");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <button
-      onClick={handleExport}
-      disabled={!isPremium || loading}
-      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors disabled:opacity-40 disabled:cursor-not-allowed border-gray-300 text-gray-600 hover:bg-gray-50"
-      title={isPremium ? undefined : "プレミアムプランでご利用いただけます"}
-    >
-      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-      </svg>
-      {loading ? "出力中..." : "CSV出力"}
-    </button>
+    <>
+      <button
+        onClick={handleExport}
+        disabled={!isPremium || loading}
+        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors disabled:opacity-40 disabled:cursor-not-allowed border-gray-300 text-gray-600 hover:bg-gray-50"
+        title={isPremium ? undefined : "プレミアムプランでご利用いただけます"}
+      >
+        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        {loading ? "出力中..." : "CSV出力"}
+      </button>
+      <Toast toast={toast} />
+    </>
   );
 }
 

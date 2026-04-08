@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useToast, Toast } from "@/components/Toast";
 
 type ChoiceStat = { question: string; type: "choice"; data: { name: string; value: number }[] };
 type TextStat = { question: string; type: "text"; texts: string[] };
@@ -17,6 +18,7 @@ const COLORS = ["#06B6D4", "#8B5CF6", "#F59E0B", "#EF4444", "#10B981"];
 export default function FeedbackPage() {
   const [data, setData] = useState<FeedbackData | null>(null);
   const [loading, setLoading] = useState(true);
+  const { toast, showToast } = useToast();
 
   useEffect(() => {
     fetch("/api/admin/feedback")
@@ -52,7 +54,7 @@ export default function FeedbackPage() {
           <p className="text-sm text-gray-500 mt-1">ComiStaへのユーザーフィードバック結果</p>
         </div>
         <button
-          onClick={() => { navigator.clipboard.writeText(surveyUrl); alert("アンケートURLをコピーしました"); }}
+          onClick={() => { navigator.clipboard.writeText(surveyUrl); showToast("アンケートURLをコピーしました", "success"); }}
           className="flex items-center gap-2 px-4 py-2 border border-violet-400 text-violet-600 font-semibold rounded-xl hover:bg-violet-50 transition-colors text-sm"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -103,6 +105,7 @@ export default function FeedbackPage() {
           )}
         </div>
       ))}
+      <Toast toast={toast} />
     </div>
   );
 }

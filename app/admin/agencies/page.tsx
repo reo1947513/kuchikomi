@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useToast, Toast } from "@/components/Toast";
 
 type Agency = {
   id: string;
@@ -21,6 +22,7 @@ export default function AgenciesPage() {
   const [name, setName] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const { toast, showToast } = useToast();
 
   const fetchAgencies = useCallback(async () => {
     setLoading(true);
@@ -94,7 +96,7 @@ export default function AgenciesPage() {
       }
       fetchAgencies();
     } catch (e) {
-      alert(e instanceof Error ? e.message : "削除に失敗しました");
+      showToast(e instanceof Error ? e.message : "削除に失敗しました", "error");
     }
   };
 
@@ -235,6 +237,7 @@ export default function AgenciesPage() {
           </div>
         </div>
       )}
+      <Toast toast={toast} />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useToast, Toast } from "@/components/Toast";
 import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 const COLORS = ["#06B6D4", "#8B5CF6", "#F59E0B", "#EF4444", "#10B981", "#EC4899", "#6366F1", "#14B8A6"];
@@ -180,6 +181,7 @@ export default function AnalysisPage() {
 function AnalysisCsvButton() {
   const [pt, setPt] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { toast, showToast } = useToast();
 
   useEffect(() => {
     fetch("/api/auth/me").then((r) => r.json()).then((d) => setPt(d.planType ?? null)).catch(() => {});
@@ -193,7 +195,7 @@ function AnalysisCsvButton() {
       const res = await fetch("/api/dashboard/export");
       if (!res.ok) {
         const d = await res.json();
-        alert(d.error || "エクスポートに失敗しました");
+        showToast(d.error || "エクスポートに失敗しました", "error");
         return;
       }
       const blob = await res.blob();
@@ -204,7 +206,7 @@ function AnalysisCsvButton() {
       a.click();
       URL.revokeObjectURL(url);
     } catch {
-      alert("エクスポートに失敗しました");
+      showToast("エクスポートに失敗しました", "error");
     } finally {
       setLoading(false);
     }

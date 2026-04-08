@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useToast, Toast } from "@/components/Toast";
 
 interface UserData {
   id: string;
@@ -398,6 +399,7 @@ function SuccessMessage() {
 function CancelButton({ user, onCancelled }: { user: UserData; onCancelled: () => void }) {
   const [loading, setLoading] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const { toast, showToast } = useToast();
 
   // Check if cancellation is allowed (1 month before contract end)
   const canCancel = (() => {
@@ -418,11 +420,11 @@ function CancelButton({ user, onCancelled }: { user: UserData; onCancelled: () =
       const res = await fetch("/api/stripe/cancel", { method: "POST" });
       const d = await res.json();
       if (!res.ok) throw new Error(d.error || "解約に失敗しました");
-      alert("解約手続きが完了しました。契約期間終了後にサービスが停止されます。");
+      showToast("解約手続きが完了しました。契約期間終了後にサービスが停止されます。", "success");
       setShowConfirm(false);
       onCancelled();
     } catch (e) {
-      alert(e instanceof Error ? e.message : "エラーが発生しました");
+      showToast(e instanceof Error ? e.message : "エラーが発生しました", "error");
     } finally {
       setLoading(false);
     }
@@ -471,6 +473,7 @@ function CancelButton({ user, onCancelled }: { user: UserData; onCancelled: () =
           </div>
         </div>
       )}
+      <Toast toast={toast} />
     </>
   );
 }

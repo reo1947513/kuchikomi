@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useToast, Toast } from "@/components/Toast";
 
 type Industry = { id: string; name: string; order: number };
 
@@ -18,6 +19,7 @@ export default function IndustriesPage() {
   const [dragIdx, setDragIdx] = useState<number | null>(null);
   const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
   const [saveMsg, setSaveMsg] = useState<string | null>(null);
+  const { toast, showToast } = useToast();
 
   const fetchIndustries = useCallback(async () => {
     setLoading(true);
@@ -85,7 +87,7 @@ export default function IndustriesPage() {
       }
       fetchIndustries();
     } catch (e) {
-      alert(e instanceof Error ? e.message : "削除に失敗しました");
+      showToast(e instanceof Error ? e.message : "削除に失敗しました", "error");
     }
   };
 
@@ -112,7 +114,9 @@ export default function IndustriesPage() {
         setSaveMsg("並び順を保存しました");
         setTimeout(() => setSaveMsg(null), 2000);
       }
-    } catch {}
+    } catch {
+      showToast("エラーが発生しました", "error");
+    }
   };
 
   const sortByName = async () => {
@@ -128,7 +132,9 @@ export default function IndustriesPage() {
         setSaveMsg("あいうえお順に並べ替えました");
         setTimeout(() => setSaveMsg(null), 2000);
       }
-    } catch {}
+    } catch {
+      showToast("エラーが発生しました", "error");
+    }
   };
 
   return (
@@ -282,6 +288,7 @@ export default function IndustriesPage() {
           </div>
         </div>
       )}
+      <Toast toast={toast} />
     </div>
   );
 }

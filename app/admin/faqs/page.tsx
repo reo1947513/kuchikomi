@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useToast, Toast } from "@/components/Toast";
 
 type Faq = {
   id: string;
@@ -20,6 +21,7 @@ export default function FaqsPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editQuestion, setEditQuestion] = useState("");
   const [editAnswer, setEditAnswer] = useState("");
+  const { toast, showToast } = useToast();
 
   const fetchFaqs = () => {
     fetch("/api/admin/faqs")
@@ -65,7 +67,7 @@ export default function FaqsPage() {
       await fetch(`/api/admin/faqs/${faq.id}`, { method: "DELETE" });
       fetchFaqs();
     } catch {
-      alert("削除に失敗しました");
+      showToast("削除に失敗しました", "error");
     }
   };
 
@@ -229,6 +231,7 @@ export default function FaqsPage() {
           ))
         )}
       </div>
+      <Toast toast={toast} />
     </div>
   );
 }
