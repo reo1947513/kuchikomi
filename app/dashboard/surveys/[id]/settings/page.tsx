@@ -1024,17 +1024,18 @@ export default function SurveySettingsPage() {
                     key={tmpl.label}
                     type="button"
                     onClick={() => {
-                      if (questions.length > 0 && !confirm(`既存の質問（${questions.length}件）を${tmpl.label}用テンプレートに置き換えますか？`)) return;
-                      setQuestions(tmpl.questions.map((q, i) => ({
+                      const startOrder = questions.length;
+                      const newQs = tmpl.questions.map((q, i) => ({
                         id: `tmpl-${Date.now()}-${i}`,
                         text: q.text,
                         type: q.type,
-                        order: i,
+                        order: startOrder + i,
                         isRandom: false,
                         groupName: null,
                         choices: q.choices.map((c, ci) => ({ text: c.text, order: ci, score: c.score })),
                         branchQuestions: [],
-                      })));
+                      }));
+                      setQuestions((prev) => [...prev, ...newQs]);
                     }}
                     className="flex flex-col items-center gap-1 border border-gray-200 rounded-xl px-2 py-3 hover:border-violet-400 hover:bg-violet-50/50 transition-colors group"
                   >
