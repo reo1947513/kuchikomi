@@ -6,7 +6,7 @@
     },
     {
       "path": "/api/cron/campaign-send",
-      "schedule": "*/15 * * * *"
+      "schedule": "0 8 * * *"
     },
     {
       "path": "/api/cron/monthly-report",
