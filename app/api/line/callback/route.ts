@@ -11,22 +11,25 @@ export async function GET(request: NextRequest) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://comista-kuchikomi.com";
   const dashboardUrl = `${appUrl}/dashboard/settings`;
 
-  // LINE sent an explicit error
   if (error) {
-    console.error("LINE callback error param:", error);
     return NextResponse.redirect(`${dashboardUrl}?line=error`);
   }
 
-  // No code/state = prefetch or direct navigation, just redirect without error
+  // No code/state = prefetch or direct navigation
+  // Return a waiting page instead of redirect to prevent prefetch from navigating away
   if (!code || !state) {
-    return NextResponse.redirect(dashboardUrl);
+    return new NextResponse(
+      `<!DOCTYPE html><html><head><meta charset="utf-8"><title>LINE連携処理中</title></head>
+      <body style="display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;color:#555;">
+      <p>LINE連携処理中...</p>
+      </body></html>`,
+      { status: 200, headers: { "Content-Type": "text/html", "Cache-Control": "no-store" } }
+    );
   }
 
-  // Extract userId from state
   const parts = state.split(":");
   const userId = parts[1];
   if (!userId) {
-    console.error("LINE callback: userId not found in state:", state);
     return NextResponse.redirect(`${dashboardUrl}?line=error`);
   }
 
@@ -48,8 +51,7 @@ export async function GET(request: NextRequest) {
     });
 
     if (!tokenRes.ok) {
-      const errText = await tokenRes.text();
-      console.error("LINE token exchange failed:", tokenRes.status, errText);
+      console.error("LINE token exchange failed:", tokenRes.status, await tokenRes.text());
       return NextResponse.redirect(`${dashboardUrl}?line=error`);
     }
 
