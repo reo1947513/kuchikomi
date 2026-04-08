@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useLang, LangToggle } from "@/lib/i18n";
-import { surveyDict } from "@/lib/dictionaries/lp";
 
 interface ResultData {
   id: string;
@@ -22,8 +20,6 @@ export default function ResultPage({
   params: { id: string; sessionId: string };
 }) {
   const { id: surveyId, sessionId } = params;
-  const { lang } = useLang();
-  const t = (key: string) => surveyDict[key]?.[lang] ?? surveyDict[key]?.ja ?? key;
 
   const [data, setData] = useState<ResultData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -34,7 +30,7 @@ export default function ResultPage({
   useEffect(() => {
     fetch(`/api/sessions/${sessionId}`)
       .then((r) => {
-        if (!r.ok) throw new Error(t("survey.resultFetchFailed"));
+        if (!r.ok) throw new Error("結果の取得に失敗しました");
         return r.json();
       })
       .then((d: ResultData) => {
@@ -66,6 +62,8 @@ export default function ResultPage({
     } catch {
       // ignore
     }
+    // Track the click
+    fetch(`/api/sessions/${sessionId}/google-click`, { method: "POST" }).catch(() => {});
     window.open(url, "_blank");
   }
 
@@ -94,7 +92,7 @@ export default function ResultPage({
     return (
       <div className="min-h-screen flex items-center justify-center p-6" style={{ backgroundColor: "#F5F3FF" }}>
         <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-red-700 text-sm max-w-sm w-full text-center">
-          {error ?? t("survey.error")}
+          {error ?? "エラーが発生しました"}
         </div>
       </div>
     );
@@ -121,8 +119,7 @@ export default function ResultPage({
               </svg>
             </div>
           )}
-          <h1 className="text-xl font-bold text-gray-900">{t("result.title")}</h1>
-          <LangToggle className="border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400" />
+          <h1 className="text-xl font-bold text-gray-900">クチコミ文章が完成しました！</h1>
         </div>
 
         {/* Shop message */}
@@ -136,7 +133,7 @@ export default function ResultPage({
                   clipRule="evenodd"
                 />
               </svg>
-              <span className="text-sm font-bold text-white">{t("result.shopMessage")}</span>
+              <span className="text-sm font-bold text-white">ショップからのメッセージ</span>
             </div>
             <div className="bg-violet-50 px-4 py-4">
               <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">{data.completionMessage}</p>
@@ -155,7 +152,7 @@ export default function ResultPage({
                 clipRule="evenodd"
               />
             </svg>
-            <span className="text-sm font-semibold text-gray-700">{t("result.review")}</span>
+            <span className="text-sm font-semibold text-gray-700">クチコミ</span>
           </div>
 
           <textarea
@@ -166,7 +163,7 @@ export default function ResultPage({
           />
 
           <div className="flex items-center justify-between">
-            <p className="text-xs text-gray-400">{reviewText.length} {t("survey.chars")}</p>
+            <p className="text-xs text-gray-400">{reviewText.length}文字</p>
             <button
               onClick={copyReview}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 transition-colors"
@@ -176,14 +173,14 @@ export default function ResultPage({
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 text-green-500">
                     <path fillRule="evenodd" d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9 13.5a.75.75 0 0 1-1.154.114l-6-6a.75.75 0 0 1 1.06-1.06l5.353 5.353 8.493-12.739a.75.75 0 0 1 1.04-.208Z" clipRule="evenodd" />
                   </svg>
-                  {t("result.copied")}
+                  コピーしました！
                 </>
               ) : (
                 <>
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
                     <path fillRule="evenodd" d="M10.5 3A1.501 1.501 0 0 0 9 4.5h6A1.5 1.5 0 0 0 13.5 3h-3Zm-2.693.178A3 3 0 0 1 10.5 1.5h3a3 3 0 0 1 2.694 1.678c.497.042.992.092 1.486.15 1.497.173 2.57 1.46 2.57 2.929V19.5a3 3 0 0 1-3 3H6.75a3 3 0 0 1-3-3V6.257c0-1.469 1.073-2.756 2.57-2.93.493-.057.989-.107 1.487-.149Z" clipRule="evenodd" />
                   </svg>
-                  {t("result.copy")}
+                  コピーする
                 </>
               )}
             </button>
@@ -192,23 +189,26 @@ export default function ResultPage({
 
         {/* AI notice */}
         <p className="text-xs text-gray-400 text-center leading-relaxed px-2">
-          {t("result.aiNote")}
+          ※ この口コミ文章はAIが生成したものです。内容を確認・編集してから投稿してください。
         </p>
 
         {/* Coupon image */}
         {data.couponImageUrl && (
           <div className="rounded-2xl overflow-hidden shadow-sm border border-violet-200">
-            <div className="px-4 py-2 flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-violet-500">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-white">
-                <path d="M9.375 3a1.875 1.875 0 0 0 0 3.75h1.875v4.5H3.375A1.875 1.875 0 0 1 1.5 9.375v-.75a1.875 1.875 0 0 1 1.875-1.875h.375m0 0V3A1.875 1.875 0 0 1 5.625 3h5.25A1.875 1.875 0 0 1 12.75 4.875V6.75m0 0h-3.375m3.375 0h.375a1.875 1.875 0 0 1 1.875 1.875v.75c0 1.036-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 0 1 1.5 9.375v-.75m12 4.5v5.625a1.875 1.875 0 0 1-1.875 1.875H5.625a1.875 1.875 0 0 1-1.875-1.875V13.5h10.5Z" />
-              </svg>
-              <span className="text-sm font-bold text-white">{t("result.coupon")}</span>
+            <div className="px-4 py-2 flex items-center justify-between bg-gradient-to-r from-cyan-500 to-violet-500">
+              <div className="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-white">
+                  <path d="M9.375 3a1.875 1.875 0 0 0 0 3.75h1.875v4.5H3.375A1.875 1.875 0 0 1 1.5 9.375v-.75a1.875 1.875 0 0 1 1.875-1.875h.375m0 0V3A1.875 1.875 0 0 1 5.625 3h5.25A1.875 1.875 0 0 1 12.75 4.875V6.75m0 0h-3.375m3.375 0h.375a1.875 1.875 0 0 1 1.875 1.875v.75c0 1.036-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 0 1 1.5 9.375v-.75m12 4.5v5.625a1.875 1.875 0 0 1-1.875 1.875H5.625a1.875 1.875 0 0 1-1.875-1.875V13.5h10.5Z" />
+                </svg>
+                <span className="text-sm font-bold text-white">クーポン</span>
+              </div>
+              <span className="text-xs text-white/80">{formattedTime}</span>
             </div>
             <div className="relative">
               <img src={data.couponImageUrl} alt="coupon" className="w-full object-contain pointer-events-none select-none" draggable={false} onContextMenu={(e) => e.preventDefault()} />
               {data.couponExpiry && (
                 <p className="text-right text-xs text-gray-500 px-3 py-1.5">
-                  {t("result.couponExpiry")} {new Date(data.couponExpiry).toLocaleDateString(lang === "en" ? "en-US" : "ja-JP", { year: "numeric", month: "long", day: "numeric" })}
+                  有効期限: {new Date(data.couponExpiry).toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric" })}まで
                 </p>
               )}
             </div>
@@ -228,7 +228,7 @@ export default function ResultPage({
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
-              {t("result.postGoogle")}
+              Google Mapで口コミを投稿
             </button>
           )}
 
@@ -236,7 +236,7 @@ export default function ResultPage({
             href={`/survey/${surveyId}`}
             className="flex items-center justify-center w-full py-3 px-4 rounded-xl text-sm text-gray-600 font-medium border border-gray-200 bg-white hover:bg-gray-50 transition-colors"
           >
-            {t("result.backToSurvey")}
+            アンケートへ戻る
           </a>
         </div>
 

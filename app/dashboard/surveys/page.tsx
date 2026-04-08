@@ -9,7 +9,8 @@ type Survey = {
   id: string; title: string; monthlyReviewLimit: number; monthlyReviewCount: number;
   questions: Question[];
 };
-type Session = { id: string; reviewText: string | null; createdAt: string };
+type Answer = { questionId: string; choiceId: string | null; textValue: string | null };
+type Session = { id: string; reviewText: string | null; createdAt: string; answers: Answer[] };
 type MonthlyCount = { label: string; count: number };
 type AdviceItem = { id: string; content: string; dateFrom: string | null; dateTo: string | null; createdAt: string };
 type DashboardData = {
@@ -22,6 +23,11 @@ type DashboardData = {
   lastMonthCount: number;
   totalSessionCount: number;
   totalAccessCount: number;
+  googleClickCount: number;
+  thisMonthAccess: number;
+  lastMonthAccess: number;
+  thisMonthGoogleClick: number;
+  lastMonthGoogleClick: number;
 };
 
 // ---- Animated Number ----
@@ -117,8 +123,292 @@ function LineChart({ data }: { data: MonthlyCount[] }) {
   );
 }
 
+// ---- Announcement Banner ----
+type AnnouncementItem = { id: string; title: string; content: string; category: string; publishedAt: string };
+
+function AnnouncementBanner() {
+  const [items, setItems] = useState<AnnouncementItem[]>([]);
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [dismissed, setDismissed] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    // Load dismissed IDs from localStorage
+    const stored = localStorage.getItem("dismissedAnnouncements");
+    if (stored) setDismissed(new Set(JSON.parse(stored)));
+
+    fetch("/api/announcements")
+      .then((r) => r.json())
+      .then((d) => setItems(Array.isArray(d) ? d : []))
+      .catch(() => {});
+  }, []);
+
+  const dismiss = (id: string) => {
+    const next = new Set(dismissed);
+    next.add(id);
+    setDismissed(next);
+    localStorage.setItem("dismissedAnnouncements", JSON.stringify(Array.from(next)));
+  };
+
+  const visible = items.filter((i) => !dismissed.has(i.id));
+  if (visible.length === 0) return null;
+
+  const categoryColor = (c: string) => {
+    if (c === "新機能") return "bg-cyan-500";
+    if (c === "重要") return "bg-red-500";
+    if (c === "メンテナンス") return "bg-amber-500";
+    return "bg-violet-500";
+  };
+
+  return (
+    <div className="space-y-2">
+      {visible.slice(0, 3).map((item) => (
+        <div key={item.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="flex items-center gap-3 px-4 py-3 cursor-pointer" onClick={() => setExpanded(expanded === item.id ? null : item.id)}>
+            <span className={`shrink-0 w-2 h-2 rounded-full ${categoryColor(item.category)}`} />
+            <span className={`shrink-0 px-2 py-0.5 rounded text-xs font-medium text-white ${categoryColor(item.category)}`}>{item.category}</span>
+            <span className="flex-1 text-sm font-medium text-gray-800 truncate">{item.title}</span>
+            <span className="text-xs text-gray-400 shrink-0">{new Date(item.publishedAt).toLocaleDateString("ja-JP", { month: "short", day: "numeric" })}</span>
+            <button onClick={(e) => { e.stopPropagation(); dismiss(item.id); }} className="shrink-0 text-gray-300 hover:text-gray-500">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+          </div>
+          {expanded === item.id && (
+            <div className="px-4 pb-3 pt-0">
+              <p className="text-sm text-gray-600 whitespace-pre-wrap leading-relaxed">{item.content}</p>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ---- Campaign Banner ----
+type CampaignItem = { id: string; title: string; content: string; target: string; startAt: string; endAt: string | null };
+
+function CampaignBanner() {
+  const [items, setItems] = useState<CampaignItem[]>([]);
+  const [dismissed, setDismissed] = useState<Set<string>>(new Set());
+  const [expanded, setExpanded] = useState<string | null>(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("dismissedCampaigns");
+    if (stored) setDismissed(new Set(JSON.parse(stored)));
+
+    fetch("/api/campaigns").then((r) => r.json()).then((d) => setItems(Array.isArray(d) ? d : [])).catch(() => {});
+  }, []);
+
+  const dismiss = (id: string) => {
+    const next = new Set(dismissed);
+    next.add(id);
+    setDismissed(next);
+    localStorage.setItem("dismissedCampaigns", JSON.stringify(Array.from(next)));
+  };
+
+  const visible = items.filter((i) => !dismissed.has(i.id));
+  if (visible.length === 0) return null;
+
+  return (
+    <div className="space-y-2">
+      {visible.slice(0, 2).map((item) => (
+        <div key={item.id} className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl shadow-sm border border-amber-200 overflow-hidden">
+          <div className="flex items-center gap-3 px-4 py-3 cursor-pointer" onClick={() => setExpanded(expanded === item.id ? null : item.id)}>
+            <span className="text-lg">🎁</span>
+            <span className="flex-1 text-sm font-bold text-amber-800 truncate">{item.title}</span>
+            <button onClick={(e) => { e.stopPropagation(); dismiss(item.id); }} className="shrink-0 text-amber-300 hover:text-amber-500">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+          </div>
+          {expanded === item.id && (
+            <div className="px-4 pb-3">
+              <p className="text-sm text-amber-700 whitespace-pre-wrap leading-relaxed">{item.content}</p>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ---- Premium Feature Shortcuts ----
+function PremiumShortcuts({ surveyId }: { surveyId: string }) {
+  const [planType, setPlanType] = useState<string | null>(null);
+  const [popup, setPopup] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/auth/me").then((r) => r.json()).then((d) => setPlanType(d.planType ?? null)).catch(() => {});
+  }, []);
+
+  const isPremium = planType === "premium" || planType === "lifetime_premium";
+  const isStandardPlus = isPremium || planType === "standard" || planType === "lifetime_standard";
+
+  const shortcuts = [
+    {
+      label: "AI分析レポート",
+      desc: "AIがアンケートデータを分析",
+      detail: "蓄積されたアンケートの回答データをAIが分析し、お客様の傾向や改善提案を含むレポートを自動生成します。月1回実行でき、店舗運営の改善に活用いただけます。",
+      href: "/dashboard/analysis",
+      icon: "M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z",
+      available: isPremium,
+      badge: "Premium限定",
+      color: "from-violet-500 to-purple-500",
+    },
+    {
+      label: "カスタムプロンプト",
+      desc: "AI口コミ生成を自由にカスタマイズ",
+      detail: "AIが口コミを生成する際のプロンプト（指示文）を自由に編集できます。業種や店舗の特徴に合わせた口コミ文を生成させることで、より自然で効果的な口コミを作成できます。",
+      href: `/dashboard/surveys/${surveyId}/settings`,
+      icon: "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z",
+      available: isPremium,
+      badge: "Premium限定",
+      color: "from-fuchsia-500 to-pink-500",
+    },
+    {
+      label: "リアルタイム分析",
+      desc: "回答データをグラフで可視化",
+      detail: "月別の回答数推移や、質問ごとの回答分布をグラフで確認できます。繁忙期の把握やサービス改善のヒントをデータから読み取れます。",
+      href: "/dashboard/analysis",
+      icon: "M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z",
+      available: isStandardPlus,
+      badge: "Standard以上",
+      color: "from-cyan-500 to-blue-500",
+    },
+  ];
+
+  return (
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {shortcuts.map((s) => (
+          s.available ? (
+            <a
+              key={s.label}
+              href={s.href}
+              className="relative rounded-xl p-4 transition-all hover:-translate-y-0.5 bg-white shadow-sm border border-gray-100 hover:shadow-md"
+            >
+              <div className="absolute top-2 right-2">
+                <span className="text-[10px] px-1.5 py-0.5 rounded font-bold bg-gradient-to-r from-violet-500 to-purple-500 text-white">{s.badge}</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center bg-gradient-to-br ${s.color}`}>
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={s.icon} />
+                  </svg>
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-bold text-gray-800">{s.label}</p>
+                  <p className="text-xs mt-0.5 text-gray-500">{s.desc}</p>
+                </div>
+              </div>
+            </a>
+          ) : (
+            <button
+              key={s.label}
+              onClick={() => setPopup(s.label)}
+              className="relative rounded-xl p-4 transition-all hover:-translate-y-0.5 hover:shadow-md bg-gray-50 border border-dashed border-gray-200 text-left premium-fade-in"
+            >
+              <div className="absolute top-2 right-2 premium-lock-float">
+                <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="shrink-0 w-10 h-10 rounded-lg flex items-center justify-center bg-gradient-to-br from-gray-300 to-gray-400">
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={s.icon} />
+                  </svg>
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-bold text-gray-400">{s.label}</p>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded font-medium bg-gray-200 text-gray-400">{s.badge}</span>
+                  </div>
+                  <p className="text-xs mt-0.5 text-gray-300">タップして詳細を見る</p>
+                </div>
+              </div>
+            </button>
+          )
+        ))}
+      </div>
+
+      {/* Feature detail popup */}
+      {popup && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4 premium-overlay" onClick={() => setPopup(null)}>
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden premium-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-gradient-to-r from-violet-500 to-purple-500 px-5 py-4">
+              <h3 className="text-white font-bold">{popup}</h3>
+            </div>
+            <div className="p-5 space-y-4">
+              <p className="text-sm text-gray-600 leading-relaxed">
+                {shortcuts.find((s) => s.label === popup)?.detail}
+              </p>
+              <div className="flex flex-col gap-2">
+                <a href="/dashboard/billing"
+                  className="w-full text-center py-2.5 text-white font-bold text-sm rounded-xl premium-shimmer-btn premium-pulse">
+                  プランをアップグレード
+                </a>
+                <button onClick={() => setPopup(null)} className="text-xs text-gray-400 hover:text-gray-600 mt-1">
+                  閉じる
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// ---- CSV Export Button ----
+function CsvExportButton() {
+  const [planType, setPlanType] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/auth/me").then((r) => r.json()).then((d) => setPlanType(d.planType ?? null)).catch(() => {});
+  }, []);
+
+  const isPremium = planType === "premium" || planType === "lifetime_premium";
+
+  const handleExport = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/dashboard/export");
+      if (!res.ok) {
+        const d = await res.json();
+        alert(d.error || "エクスポートに失敗しました");
+        return;
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `kuchikomi-export-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      alert("エクスポートに失敗しました");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleExport}
+      disabled={!isPremium || loading}
+      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors disabled:opacity-40 disabled:cursor-not-allowed border-gray-300 text-gray-600 hover:bg-gray-50"
+      title={isPremium ? undefined : "プレミアムプランでご利用いただけます"}
+    >
+      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+      {loading ? "出力中..." : "CSV出力"}
+    </button>
+  );
+}
+
 // ---- Recent Sessions ----
-function RecentSessions({ sessions, shopName }: { sessions: Session[]; shopName: string }) {
+function RecentSessions({ sessions, shopName, questions }: { sessions: Session[]; shopName: string; questions: Question[] }) {
   const PER_PAGE = 12;
   const [sort, setSort] = useState<"newest" | "oldest">("newest");
   const [dateFrom, setDateFrom] = useState("");
@@ -164,13 +454,38 @@ function RecentSessions({ sessions, shopName }: { sessions: Session[]; shopName:
               <div key={s.id} className="bg-white/70 backdrop-blur-sm rounded-xl shadow-sm border border-white/50 p-4">
                 <p className="font-medium text-gray-800 text-sm">{shopName}</p>
                 <p className="text-xs text-gray-400 mt-0.5">回答日時: {dateStr}</p>
-                {s.reviewText && (
-                  <button onClick={() => setExpanded(expanded === s.id ? null : s.id)}
-                    className="mt-2 text-xs font-medium text-violet-600 hover:text-violet-500 underline">
-                    関連する口コミ: 1件
-                  </button>
+                <div className="mt-2 flex gap-2">
+                  {s.answers?.length > 0 && (
+                    <button onClick={() => setExpanded(expanded === s.id + "-ans" ? null : s.id + "-ans")}
+                      className={`text-xs font-medium px-2 py-1 rounded-lg transition-colors ${expanded === s.id + "-ans" ? "bg-cyan-100 text-cyan-700" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}>
+                      アンケート回答
+                    </button>
+                  )}
+                  {s.reviewText && (
+                    <button onClick={() => setExpanded(expanded === s.id + "-rev" ? null : s.id + "-rev")}
+                      className={`text-xs font-medium px-2 py-1 rounded-lg transition-colors ${expanded === s.id + "-rev" ? "bg-violet-100 text-violet-700" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}>
+                      口コミ
+                    </button>
+                  )}
+                </div>
+                {expanded === s.id + "-ans" && s.answers && (
+                  <div className="mt-2 p-3 bg-cyan-50 border border-cyan-200 rounded-lg text-xs space-y-2">
+                    {questions.map((q) => {
+                      const ans = s.answers.find((a) => a.questionId === q.id);
+                      if (!ans) return null;
+                      const ansText = ans.choiceId
+                        ? q.choices.find((c) => c.id === ans.choiceId)?.text || "—"
+                        : ans.textValue || "—";
+                      return (
+                        <div key={q.id}>
+                          <p className="text-gray-500">{q.text}</p>
+                          <p className="font-medium text-gray-800">{ansText}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
                 )}
-                {expanded === s.id && s.reviewText && (
+                {expanded === s.id + "-rev" && s.reviewText && (
                   <div className="mt-2 p-3 bg-violet-50 border border-violet-200 rounded-lg text-xs text-gray-700 whitespace-pre-line">
                     {s.reviewText}
                   </div>
@@ -265,11 +580,42 @@ export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showLimitPopup, setShowLimitPopup] = useState(false);
+  const [limitPopupType, setLimitPopupType] = useState<"reached" | "warning">("reached");
 
   useEffect(() => {
     fetch("/api/dashboard")
       .then((r) => r.json())
-      .then(setData)
+      .then((d) => {
+        setData(d);
+        // Show limit popup up to 5 times
+        if (d.survey) {
+          const limit = d.survey.monthlyReviewLimit;
+          const count = d.survey.monthlyReviewCount ?? 0;
+          if (limit > 0) {
+            const remaining = limit - count;
+            if (remaining <= 0) {
+              // Limit reached
+              const key = "limitReachedPopupCount";
+              const shown = parseInt(sessionStorage.getItem(key) || "0", 10);
+              if (shown < 5) {
+                setLimitPopupType("reached");
+                setShowLimitPopup(true);
+                sessionStorage.setItem(key, String(shown + 1));
+              }
+            } else if (remaining <= Math.max(3, Math.ceil(limit * 0.1))) {
+              // Warning: 10% or 3 remaining, whichever is larger
+              const key = "limitWarningPopupCount";
+              const shown = parseInt(sessionStorage.getItem(key) || "0", 10);
+              if (shown < 5) {
+                setLimitPopupType("warning");
+                setShowLimitPopup(true);
+                sessionStorage.setItem(key, String(shown + 1));
+              }
+            }
+          }
+        }
+      })
       .catch(() => setError("データの取得に失敗しました"))
       .finally(() => setLoading(false));
   }, []);
@@ -284,19 +630,31 @@ export default function DashboardPage() {
   const totalSessions = data.totalSessionCount ?? 0;
   const totalAccess = data.totalAccessCount ?? 0;
   const questionCount = data.survey?.questions?.length ?? 0;
-  const usageRate = data.survey ? Math.round((thisMonthCount / data.survey.monthlyReviewLimit) * 100) : 0;
+  const usageRate = data.survey ? (data.survey.monthlyReviewLimit > 0 ? Math.round((thisMonthCount / data.survey.monthlyReviewLimit) * 100) : 0) : 0;
   const completionRate = totalAccess > 0 ? Math.round((totalSessions / totalAccess) * 100) : 0;
+  const googleClickCount = data.googleClickCount ?? 0;
+  const googleClickRate = totalSessions > 0 ? Math.round((googleClickCount / totalSessions) * 100) : 0;
 
-  const monthDiff = thisMonthCount - lastMonthCount;
-  const monthDiffLabel = monthDiff > 0 ? `+${monthDiff}` : `${monthDiff}`;
+  const thisMonthAccess = data.thisMonthAccess ?? 0;
+  const lastMonthAccess = data.lastMonthAccess ?? 0;
+  const thisMonthGoogleClick = data.thisMonthGoogleClick ?? 0;
+  const lastMonthGoogleClick = data.lastMonthGoogleClick ?? 0;
+
+  const fmt = (curr: number, prev: number) => {
+    const diff = curr - prev;
+    if (curr === 0 && prev === 0) return undefined;
+    return `前月比 ${diff > 0 ? "+" : ""}${diff}`;
+  };
+  const diffColor = (curr: number, prev: number) => curr >= prev ? "text-green-600" : "text-red-500";
 
   const statCards = [
-    { label: "今月の生成数", value: thisMonthCount, suffix: "件", sub: lastMonthCount > 0 || thisMonthCount > 0 ? `前月比 ${monthDiffLabel}` : undefined, subColor: monthDiff >= 0 ? "text-green-600" : "text-red-500", icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" },
-    { label: "総回答数", value: totalSessions, suffix: "件", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" },
-    { label: "アクセス数", value: totalAccess, suffix: "回", icon: "M15 12a3 3 0 11-6 0 3 3 0 016 0z" },
+    { label: "今月の生成数", value: thisMonthCount, suffix: "件", sub: fmt(thisMonthCount, lastMonthCount), subColor: diffColor(thisMonthCount, lastMonthCount), icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" },
+    { label: "今月のアクセス", value: thisMonthAccess, suffix: "回", sub: fmt(thisMonthAccess, lastMonthAccess), subColor: diffColor(thisMonthAccess, lastMonthAccess), icon: "M15 12a3 3 0 11-6 0 3 3 0 016 0z" },
+    { label: "今月の口コミ投稿", value: thisMonthGoogleClick, suffix: "件", sub: fmt(thisMonthGoogleClick, lastMonthGoogleClick), subColor: diffColor(thisMonthGoogleClick, lastMonthGoogleClick), icon: "M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 4.674h4.914c.969 0 1.371 1.24.588 1.81l-3.976 2.888 1.518 4.674c.3.921-.755 1.688-1.538 1.118L12 15.203l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914l1.518-4.674z" },
     { label: "設問数", value: questionCount, suffix: "問", icon: "M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
-    { label: "月間利用率", value: usageRate, suffix: "%", icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" },
-    { label: "回答完了率", value: completionRate, suffix: "%", icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" },
+    { label: "月間利用率", value: usageRate, suffix: "%", sub: data.survey?.monthlyReviewLimit === 0 ? "無制限" : undefined, subColor: "text-gray-500", icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" },
+    { label: "回答完了率", value: completionRate, suffix: "%", sub: `${totalSessions}/${totalAccess}件`, subColor: "text-gray-500", icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" },
+    { label: "口コミ投稿率", value: googleClickRate, suffix: "%", sub: `${googleClickCount}/${totalSessions}件`, subColor: "text-gray-500", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" },
   ];
 
   return (
@@ -313,6 +671,12 @@ export default function DashboardPage() {
       `}</style>
 
       <ContractBanner />
+
+      {/* Announcements */}
+      <AnnouncementBanner />
+
+      {/* Campaigns */}
+      <CampaignBanner />
 
       {/* Welcome Card */}
       <div className="rounded-2xl bg-gradient-to-r from-cyan-500 to-violet-500 p-4 md:p-6 text-white shadow-lg">
@@ -360,6 +724,11 @@ export default function DashboardPage() {
         </div>
       )}
 
+      {/* Premium Feature Shortcuts */}
+      {data.survey && (
+        <PremiumShortcuts surveyId={data.survey.id} />
+      )}
+
       {!data.survey && (
         <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-white/50 p-12 text-center">
           <p className="text-gray-400 text-sm mb-4">アンケートがまだ作成されていません</p>
@@ -370,7 +739,58 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {data.survey && <RecentSessions sessions={data.recentSessions} shopName={shopName} />}
+      {data.survey && (
+        <>
+          <div className="flex items-center justify-between">
+            <h2 className="text-base sm:text-lg font-bold text-gray-900">回答履歴</h2>
+            <CsvExportButton />
+          </div>
+          <RecentSessions sessions={data.recentSessions} shopName={shopName} questions={data.survey.questions} />
+        </>
+      )}
+
+      {/* Limit warning/reached popup */}
+      {showLimitPopup && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={() => setShowLimitPopup(false)}>
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div className={`px-5 py-4 ${limitPopupType === "reached" ? "bg-gradient-to-r from-red-500 to-orange-500" : "bg-gradient-to-r from-amber-500 to-orange-400"}`}>
+              <h3 className="text-white font-bold flex items-center gap-2">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+                {limitPopupType === "reached" ? "口コミ生成の上限に達しました" : "口コミ生成の上限が近づいています"}
+              </h3>
+            </div>
+            <div className="p-5 space-y-4">
+              <p className="text-sm text-gray-600">
+                {limitPopupType === "reached"
+                  ? `今月の口コミ生成数が上限（${data.survey?.monthlyReviewLimit}件）に達しています。アンケートからの口コミ生成が一時停止中です。`
+                  : `今月の口コミ生成数が ${thisMonthCount}/${data.survey?.monthlyReviewLimit}件 です。上限に達すると口コミの自動生成が停止します。`}
+              </p>
+              <div className="flex flex-col gap-2">
+                <a
+                  href="/dashboard/billing"
+                  className="w-full text-center py-2.5 bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold text-sm rounded-xl"
+                >
+                  プランをアップグレード
+                </a>
+                <a
+                  href="/dashboard/billing"
+                  className="w-full text-center py-2.5 border border-gray-300 text-gray-700 font-medium text-sm rounded-xl hover:bg-gray-50"
+                >
+                  追加レビューを購入
+                </a>
+                <button
+                  onClick={() => setShowLimitPopup(false)}
+                  className="text-xs text-gray-400 hover:text-gray-600 mt-1"
+                >
+                  閉じる
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

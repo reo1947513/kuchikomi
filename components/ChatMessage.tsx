@@ -1,5 +1,13 @@
 "use client";
 
+function isLightColor(hex: string): boolean {
+  const c = hex.replace("#", "");
+  const r = parseInt(c.substring(0, 2), 16);
+  const g = parseInt(c.substring(2, 4), 16);
+  const b = parseInt(c.substring(4, 6), 16);
+  return (r * 299 + g * 587 + b * 114) / 1000 > 160;
+}
+
 interface ChatMessageProps {
   type: "bot" | "user";
   message: string;
@@ -102,8 +110,8 @@ export default function ChatMessage({
   return (
     <div className="flex justify-end mb-4 animate-[chatSlideRight_0.4s_ease-out]">
       <div
-        className="max-w-xs md:max-w-md lg:max-w-lg px-4 py-3 rounded-2xl rounded-tr-sm shadow-sm text-sm leading-relaxed text-gray-800"
-        style={{ backgroundColor: userColor }}
+        className="max-w-xs md:max-w-md lg:max-w-lg px-4 py-3 rounded-2xl rounded-tr-sm shadow-sm text-sm leading-relaxed"
+        style={{ backgroundColor: userColor, color: isLightColor(userColor) ? "#1f2937" : "#ffffff" }}
       >
         {message}
       </div>

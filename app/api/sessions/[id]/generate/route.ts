@@ -35,6 +35,7 @@ export async function POST(
       survey: {
         include: {
           tones: { where: { isActive: true }, orderBy: { order: "asc" } },
+          user: { select: { id: true, additionalReviews: true, email: true, planType: true, shopName: true } },
         },
       },
       answers: {
@@ -53,6 +54,21 @@ export async function POST(
 
   if (!session) {
     return NextResponse.json({ error: "Session not found" }, { status: 404 });
+  }
+
+  // Check monthly review limit (0 = unlimited, e.g. premium plan) — skip for test sessions
+  let useAdditionalReview = false;
+  if (!session.isTest && session.survey.monthlyReviewLimit > 0 && session.survey.monthlyReviewCount >= session.survey.monthlyReviewLimit) {
+    // Check if user has additional reviews
+    const additionalReviews = session.survey.user?.additionalReviews ?? 0;
+    if (additionalReviews > 0) {
+      useAdditionalReview = true;
+    } else {
+      return NextResponse.json(
+        { error: "今月の口コミ生成上限に達しました。プランのアップグレードまたは追加レビューの購入をご検討ください。" },
+        { status: 429 }
+      );
+    }
   }
 
   if (session.answers.length === 0) {
@@ -123,7 +139,7 @@ export async function POST(
     }
     reviewText = content.text.trim();
   } catch (error) {
-    console.error("Claude API error:", error);
+    console.error("Claude API error:", error instanceof Error ? error.message : "Unknown error");
     return NextResponse.json(
       { error: "Failed to generate review text" },
       { status: 500 }
@@ -131,21 +147,52 @@ export async function POST(
   }
 
   // Save the review text, mark session as completed, and increment monthly count
-  await Promise.all([
+  const isTest = session.isTest;
+  const updates: Promise<any>[] = [
     prisma.reviewSession.update({
       where: { id: sessionId },
-      data: {
-        reviewText,
-        status: "completed",
-      },
+      data: { reviewText, status: "completed" },
     }),
-    prisma.survey.update({
-      where: { id: session.survey.id },
-      data: {
-        monthlyReviewCount: { increment: 1 },
-      },
-    }),
-  ]);
+  ];
+
+  // Only increment counts for real sessions
+  if (!isTest) {
+    updates.push(
+      prisma.survey.update({
+        where: { id: session.survey.id },
+        data: { monthlyReviewCount: { increment: 1 } },
+      })
+    );
+  }
+
+  // Decrement additional reviews if used (real sessions only)
+  if (!isTest && useAdditionalReview && session.survey.user) {
+    updates.push(
+      prisma.user.update({
+        where: { id: session.survey.user.id },
+        data: { additionalReviews: { decrement: 1 } },
+      })
+    );
+  }
+
+  await Promise.all(updates);
+
+  // Send email notification for real sessions (Standard+ plans)
+  if (!isTest && session.survey.user?.email) {
+    const plan = session.survey.user.planType ?? "";
+    const notifyPlans = ["standard", "lifetime_standard", "premium", "lifetime_premium"];
+    if (notifyPlans.includes(plan)) {
+      import("@/lib/mail").then(({ sendReviewNotificationEmail }) => {
+        sendReviewNotificationEmail(
+          session.survey.user!.email!,
+          session.survey.user!.shopName || session.survey.title,
+          reviewText,
+          session.survey.monthlyReviewCount + 1,
+          session.survey.monthlyReviewLimit
+        ).catch((e) => console.error("Review notification email failed:", e));
+      });
+    }
+  }
 
   return NextResponse.json({
     reviewText,

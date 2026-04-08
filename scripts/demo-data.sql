@@ -14,8 +14,8 @@ DELETE FROM "User" WHERE id LIKE 'demo-%';
 -- ============================================
 -- Shop 1: デモ飲食店
 -- ============================================
-INSERT INTO "User" (id, email, "loginId", password, name, role, "shopName", address, industry, "noContractLimit", "createdAt", "updatedAt")
-VALUES ('demo-user-1', 'demo1@kuchikomi.jp', 'AG-000001', '$2a$10$V5h/b24p0tNw34DJ9T7TkOxGaOubUwBnvLOALbMPZFtvr2wsIJi0y', 'デモ飲食店管理者', 'admin', 'デモ飲食店', '東京都渋谷区demo1', '飲食店', true, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z');
+INSERT INTO "User" (id, email, "loginId", password, name, role, "shopName", address, industry, "noContractLimit", "planType", "planReviewLimit", "createdAt", "updatedAt")
+VALUES ('demo-user-1', 'demo1@kuchikomi.jp', 'AG-000001', '$2a$10$V5h/b24p0tNw34DJ9T7TkOxGaOubUwBnvLOALbMPZFtvr2wsIJi0y', 'デモ飲食店管理者', 'admin', 'デモ飲食店', '東京都渋谷区demo1', '飲食店', true, 'premium', 300, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z');
 
 INSERT INTO "Survey" (id, title, "openingMessage", "closingMessage", "completionMessage", keywords, "toneRandom", "googleBusinessUrl", "minRandomQuestions", "maxRandomQuestions", "isActive", "monthlyReviewLimit", "monthlyReviewCount", "createdAt", "updatedAt", "userId")
 VALUES ('demo-survey-1', 'デモ飲食店アンケート', 'ご来店ありがとうございます。サービス向上のため、簡単なアンケートにご協力ください。', 'アンケートにご協力いただきありがとうございました。', 'ご回答ありがとうございました。またのご来店をお待ちしております。', '美味しい,料理,接客,雰囲気,コスパ', true, 'https://g.page/demo-restaurant', 1, 1, true, 100, 0, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z', 'demo-user-1');
@@ -669,8 +669,8 @@ VALUES ('demo-answer-231', 'demo-session-33', 'demo-q6a-1', 'demo-choice-21', NU
 -- ============================================
 -- Shop 2: デモ整骨院
 -- ============================================
-INSERT INTO "User" (id, email, "loginId", password, name, role, "shopName", address, industry, "noContractLimit", "createdAt", "updatedAt")
-VALUES ('demo-user-2', 'demo2@kuchikomi.jp', 'AG-000002', '$2a$10$V5h/b24p0tNw34DJ9T7TkOxGaOubUwBnvLOALbMPZFtvr2wsIJi0y', 'デモ整骨院管理者', 'admin', 'デモ整骨院', '東京都渋谷区demo2', '整骨院', true, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z');
+INSERT INTO "User" (id, email, "loginId", password, name, role, "shopName", address, industry, "noContractLimit", "planType", "planReviewLimit", "createdAt", "updatedAt")
+VALUES ('demo-user-2', 'demo2@kuchikomi.jp', 'AG-000002', '$2a$10$V5h/b24p0tNw34DJ9T7TkOxGaOubUwBnvLOALbMPZFtvr2wsIJi0y', 'デモ整骨院管理者', 'admin', 'デモ整骨院', '東京都渋谷区demo2', '整骨院', true, 'premium', 300, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z');
 
 INSERT INTO "Survey" (id, title, "openingMessage", "closingMessage", "completionMessage", keywords, "toneRandom", "googleBusinessUrl", "minRandomQuestions", "maxRandomQuestions", "isActive", "monthlyReviewLimit", "monthlyReviewCount", "createdAt", "updatedAt", "userId")
 VALUES ('demo-survey-2', 'デモ整骨院アンケート', 'ご来院ありがとうございます。サービス向上のため、簡単なアンケートにご協力ください。', 'アンケートにご協力いただきありがとうございました。', 'ご回答ありがとうございました。お体のお悩みがありましたらいつでもご相談ください。', '施術,効果,丁寧,清潔,改善', true, 'https://g.page/demo-seikotsuin', 1, 1, true, 100, 0, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z', 'demo-user-2');
@@ -1344,8 +1344,8 @@ VALUES ('demo-answer-462', 'demo-session-66', 'demo-q6a-2', 'demo-choice-61', NU
 -- ============================================
 -- Shop 3: デモ美容室
 -- ============================================
-INSERT INTO "User" (id, email, "loginId", password, name, role, "shopName", address, industry, "noContractLimit", "createdAt", "updatedAt")
-VALUES ('demo-user-3', 'demo3@kuchikomi.jp', 'AG-000003', '$2a$10$V5h/b24p0tNw34DJ9T7TkOxGaOubUwBnvLOALbMPZFtvr2wsIJi0y', 'デモ美容室管理者', 'admin', 'デモ美容室', '東京都渋谷区demo3', '美容室', true, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z');
+INSERT INTO "User" (id, email, "loginId", password, name, role, "shopName", address, industry, "noContractLimit", "planType", "planReviewLimit", "createdAt", "updatedAt")
+VALUES ('demo-user-3', 'demo3@kuchikomi.jp', 'AG-000003', '$2a$10$V5h/b24p0tNw34DJ9T7TkOxGaOubUwBnvLOALbMPZFtvr2wsIJi0y', 'デモ美容室管理者', 'admin', 'デモ美容室', '東京都渋谷区demo3', '美容室', true, 'premium', 300, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z');
 
 INSERT INTO "Survey" (id, title, "openingMessage", "closingMessage", "completionMessage", keywords, "toneRandom", "googleBusinessUrl", "minRandomQuestions", "maxRandomQuestions", "isActive", "monthlyReviewLimit", "monthlyReviewCount", "createdAt", "updatedAt", "userId")
 VALUES ('demo-survey-3', 'デモ美容室アンケート', 'ご来店ありがとうございます。サービス向上のため、簡単なアンケートにご協力ください。', 'アンケートにご協力いただきありがとうございました。', 'ご回答ありがとうございました。またのご来店をお待ちしております。', 'カット,カラー,仕上がり,接客,おしゃれ', true, 'https://g.page/demo-biyoushitsu', 1, 1, true, 100, 0, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z', 'demo-user-3');
@@ -2032,5 +2032,56 @@ INSERT INTO "Answer" (id, "sessionId", "questionId", "choiceId", "textValue", "c
 VALUES ('demo-answer-699', 'demo-session-100', 'demo-q5b-3', 'demo-choice-96', NULL, '2026-04-03T17:03:26.713Z');
 INSERT INTO "Answer" (id, "sessionId", "questionId", "choiceId", "textValue", "createdAt")
 VALUES ('demo-answer-700', 'demo-session-100', 'demo-q6a-3', 'demo-choice-101', NULL, '2026-04-03T17:03:26.713Z');
+
+-- ============================================
+-- Shop 4: デモバー (Light plan, 18/20 used)
+-- ============================================
+INSERT INTO "User" (id, email, "loginId", password, name, role, "shopName", address, industry, "noContractLimit", "planType", "planReviewLimit", "createdAt", "updatedAt")
+VALUES ('demo-user-4', 'demo4@kuchikomi.jp', 'AG-000004', '$2a$10$V5h/b24p0tNw34DJ9T7TkOxGaOubUwBnvLOALbMPZFtvr2wsIJi0y', 'デモバー管理者', 'admin', 'デモバー', '東京都渋谷区demo4', 'バー', true, 'light', 20, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z');
+
+INSERT INTO "Survey" (id, title, "openingMessage", "closingMessage", "completionMessage", keywords, "toneRandom", "googleBusinessUrl", "logoUrl", "couponImageUrl", "couponEnabled", "couponExpiry", "chatIconType", "chatIconPreset", "themeMainColor", "themeUserColor", "minRandomQuestions", "maxRandomQuestions", "isActive", "monthlyReviewLimit", "monthlyReviewCount", "createdAt", "updatedAt", "userId")
+VALUES ('demo-survey-4', 'デモバーアンケート', 'ご来店ありがとうございます。サービス向上のため、簡単なアンケートにご協力ください。', 'アンケートにご協力いただきありがとうございました。', 'ご回答ありがとうございました。次回のご来店をお待ちしております！', 'カクテル,雰囲気,バーテンダー,接客,落ち着く', true, 'https://g.page/demo-bar', '/demo/logo-bar.svg', '/demo/coupon-bar.svg', true, '2026-12-31', 'preset', 'utensils', '#312e81', '#4c1d95', 1, 1, true, 20, 18, '2026-04-04T17:41:07.488Z', '2026-04-04T17:41:07.488Z', 'demo-user-4');
+
+INSERT INTO "Tone" (id, name, "isActive", "order", "surveyId")
+VALUES ('demo-tone-4-1', 'カジュアルな口調', true, 1, 'demo-survey-4');
+INSERT INTO "Tone" (id, name, "isActive", "order", "surveyId")
+VALUES ('demo-tone-4-2', '情緒的で感情豊かな表現', true, 2, 'demo-survey-4');
+
+INSERT INTO "Question" (id, text, "order", type, "isRandom", "groupName", "surveyId")
+VALUES ('demo-q1-4', 'お飲み物はいかがでしたか？', 1, 'choice', false, NULL, 'demo-survey-4');
+INSERT INTO "Choice" (id, text, "order", score, "questionId")
+VALUES ('demo-choice-4-1', 'とても美味しかった', 1, 5, 'demo-q1-4');
+INSERT INTO "Choice" (id, text, "order", score, "questionId")
+VALUES ('demo-choice-4-2', '美味しかった', 2, 4, 'demo-q1-4');
+INSERT INTO "Choice" (id, text, "order", score, "questionId")
+VALUES ('demo-choice-4-3', '普通', 3, 3, 'demo-q1-4');
+
+INSERT INTO "Question" (id, text, "order", type, "isRandom", "groupName", "surveyId")
+VALUES ('demo-q2-4', '店内の雰囲気はいかがでしたか？', 2, 'choice', false, NULL, 'demo-survey-4');
+INSERT INTO "Choice" (id, text, "order", score, "questionId")
+VALUES ('demo-choice-4-4', 'とても良い', 1, 5, 'demo-q2-4');
+INSERT INTO "Choice" (id, text, "order", score, "questionId")
+VALUES ('demo-choice-4-5', '良い', 2, 4, 'demo-q2-4');
+INSERT INTO "Choice" (id, text, "order", score, "questionId")
+VALUES ('demo-choice-4-6', '普通', 3, 3, 'demo-q2-4');
+
+INSERT INTO "Question" (id, text, "order", type, "isRandom", "groupName", "surveyId")
+VALUES ('demo-q3-4', 'バーテンダーの接客はいかがでしたか？', 3, 'choice', false, NULL, 'demo-survey-4');
+INSERT INTO "Choice" (id, text, "order", score, "questionId")
+VALUES ('demo-choice-4-7', 'とても良い', 1, 5, 'demo-q3-4');
+INSERT INTO "Choice" (id, text, "order", score, "questionId")
+VALUES ('demo-choice-4-8', '良い', 2, 4, 'demo-q3-4');
+INSERT INTO "Choice" (id, text, "order", score, "questionId")
+VALUES ('demo-choice-4-9', '普通', 3, 3, 'demo-q3-4');
+
+INSERT INTO "Question" (id, text, "order", type, "isRandom", "groupName", "surveyId")
+VALUES ('demo-q4-4', 'また来たいと思いますか？', 4, 'choice', false, NULL, 'demo-survey-4');
+INSERT INTO "Choice" (id, text, "order", score, "questionId")
+VALUES ('demo-choice-4-10', 'ぜひまた来たい', 1, 5, 'demo-q4-4');
+INSERT INTO "Choice" (id, text, "order", score, "questionId")
+VALUES ('demo-choice-4-11', '機会があれば', 2, 3, 'demo-q4-4');
+
+INSERT INTO "Question" (id, text, "order", type, "isRandom", "groupName", "surveyId")
+VALUES ('demo-q5-4', 'ご意見やご要望があればお聞かせください', 5, 'text', false, NULL, 'demo-survey-4');
 
 COMMIT;

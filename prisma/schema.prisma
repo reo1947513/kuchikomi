@@ -48,7 +48,9 @@ model User {
   planReviewLimit      Int      @default(0)
   additionalReviews    Int      @default(0)
 
-  surveys      Survey[]
+  surveys        Survey[]
+  contacts       Contact[]
+  passwordResets PasswordReset[]
 }
 
 model Survey {
@@ -119,15 +121,17 @@ model Choice {
 }
 
 model ReviewSession {
-  id          String   @id @default(cuid())
-  surveyId    String
-  survey      Survey   @relation(fields: [surveyId], references: [id])
-  answers     Answer[]
-  reviewText  String?
-  status      String   @default("in_progress") // "in_progress" | "completed"
-  couponUsed  Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String   @id @default(cuid())
+  surveyId        String
+  survey          Survey   @relation(fields: [surveyId], references: [id])
+  answers         Answer[]
+  reviewText      String?
+  status          String   @default("in_progress") // "in_progress" | "completed"
+  isTest          Boolean  @default(false)
+  couponUsed      Boolean  @default(false)
+  googleClickedAt DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model Advice {
@@ -164,7 +168,18 @@ model Contact {
   source         String   @default("dashboard") // "dashboard" | "hp"
   status         String   @default("未対応")
   userId         String?
+  user           User?    @relation(fields: [userId], references: [id])
   createdAt      DateTime @default(now())
+}
+
+model PasswordReset {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  token     String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
 }
 
 model Faq {
@@ -173,4 +188,43 @@ model Faq {
   answer    String
   order     Int      @default(0)
   createdAt DateTime @default(now())
+}
+
+model Announcement {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  category    String   @default("お知らせ") // "新機能" | "メンテナンス" | "お知らせ" | "重要"
+  isPublished Boolean  @default(true)
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Campaign {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  target      String   @default("all") // "all" | "free" | "paid" | "cancelled"
+  isPublished Boolean  @default(true)
+  emailSent   Boolean  @default(false)
+  emailSentAt DateTime?
+  startAt     DateTime @default(now())
+  endAt       DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model CaseStudy {
+  id          String   @id @default(cuid())
+  shopName    String
+  industry    String
+  title       String
+  content     String
+  result      String
+  rating      Int      @default(5)
+  isPublished Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

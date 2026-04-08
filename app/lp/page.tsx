@@ -1,5 +1,1163 @@
-import { redirect } from "next/navigation";
+"use client";
 
-export default function LpRedirect() {
-  redirect("/");
+import Image from "next/image";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useLang, LangToggle } from "@/lib/i18n";
+import { lpDict } from "@/lib/dictionaries/lp";
+
+/* ─── Scroll‑reveal hook ─── */
+function useReveal() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setVisible(true);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.15 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  return { ref, visible };
+}
+
+function Section({
+  children,
+  className = "",
+  id,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  id?: string;
+}) {
+  const { ref, visible } = useReveal();
+  return (
+    <section
+      id={id}
+      ref={ref}
+      className={`transition-all duration-700 ${
+        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+      } ${className}`}
+    >
+      {children}
+    </section>
+  );
+}
+
+/* ─── Smooth scroll helper ─── */
+function scrollTo(id: string) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: "smooth" });
+}
+
+/* ─── FAQ Accordion Item ─── */
+function FaqItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="bg-white/60 backdrop-blur-sm border border-white/40 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 text-left text-sm sm:text-base font-semibold text-gray-800 hover:bg-white/40 transition-colors"
+      >
+        <span>{q}</span>
+        <svg
+          className={`w-5 h-5 shrink-0 transition-transform duration-300 ${
+            open ? "rotate-180" : ""
+          }`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      </button>
+      <div
+        className={`grid transition-all duration-300 ${
+          open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <p className="px-4 sm:px-6 pb-4 sm:pb-5 text-sm sm:text-base text-gray-600 leading-relaxed">{a}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Floating decoration blobs ─── */
+function BgBlob({
+  className,
+}: {
+  className: string;
+}) {
+  return (
+    <div
+      className={`absolute rounded-full blur-3xl opacity-20 pointer-events-none ${className}`}
+    />
+  );
+}
+
+/* ─── Main Page ─── */
+export default function LpPage() {
+  const { lang } = useLang();
+  const t = (key: string) => lpDict[key]?.[lang] ?? lpDict[key]?.ja ?? key;
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [showTop, setShowTop] = useState(false);
+
+  useEffect(() => {
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    window.scrollTo(0, 0);
+    const onScroll = () => setShowTop(window.scrollY > 400);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const handleNav = useCallback((id: string) => {
+    setMenuOpen(false);
+    setTimeout(() => scrollTo(id), 100);
+  }, []);
+
+  const navLinks = [
+    { label: "特徴", id: "features" },
+    { label: "料金", id: "pricing" },
+    { label: "導入事例", id: "cases" },
+    { label: "他社比較", id: "comparison" },
+    { label: "導入の流れ", id: "flow" },
+    { label: "FAQ", id: "faq" },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gray-950 text-gray-900 overflow-x-hidden">
+      {/* ───────── Header ───────── */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
+          <Image src="/logo.png" alt="ComiSta" width={120} height={36} className="sm:w-[160px]" />
+
+          {/* Desktop nav */}
+          <nav className="hidden md:flex items-center gap-8">
+            {navLinks.map((l) => (
+              <button
+                key={l.id}
+                onClick={() => scrollTo(l.id)}
+                className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                {l.label}
+              </button>
+            ))}
+            <button
+              onClick={() => window.location.href = "/contact"}
+              className="bg-gradient-to-r from-cyan-500 to-violet-500 text-white text-sm font-semibold px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity shadow-lg shadow-cyan-500/25"
+            >
+              {t("nav.contact")}
+            </button>
+            <LangToggle className="border-gray-300 text-gray-500 hover:text-gray-900 hover:border-gray-500" />
+          </nav>
+
+          {/* Mobile hamburger */}
+          <button
+            className="md:hidden p-2"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="メニュー"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              {menuOpen ? (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              ) : (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              )}
+            </svg>
+          </button>
+        </div>
+
+      </header>
+
+      {/* Mobile menu overlay */}
+      {menuOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-[60] md:hidden"
+          onClick={() => setMenuOpen(false)}
+        />
+      )}
+      {/* Mobile menu drawer */}
+      <div
+        className={`fixed top-0 right-0 h-full w-72 z-[70] shadow-2xl transition-transform duration-300 ease-out md:hidden ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
+        style={{ backgroundColor: "#ffffff" }}
+      >
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100" style={{ backgroundColor: "#ffffff" }}>
+          <span className="text-sm font-bold text-gray-800">メニュー</span>
+          <button onClick={() => setMenuOpen(false)} className="p-1 text-gray-400 hover:text-gray-600">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div className="px-5 py-4 space-y-1" style={{ backgroundColor: "#ffffff" }}>
+          {navLinks.map((l) => (
+            <button
+              key={l.id}
+              onClick={() => handleNav(l.id)}
+              className="block w-full text-left py-3 px-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors"
+            >
+              {l.label}
+            </button>
+          ))}
+        </div>
+        <div className="px-5 mt-2" style={{ backgroundColor: "#ffffff" }}>
+          <button
+            onClick={() => { setMenuOpen(false); window.location.href = "/contact"; }}
+            className="w-full bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-semibold py-3 rounded-full"
+          >
+            {t("nav.contact")}
+          </button>
+          <div className="mt-3 flex justify-center">
+            <LangToggle className="border-gray-300 text-gray-500 hover:text-gray-900 hover:border-gray-500 px-4 py-2" />
+          </div>
+        </div>
+      </div>
+
+      {/* ───────── Hero ───────── */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-indigo-950 to-violet-950" />
+        {/* Decorative blobs with animation */}
+        <BgBlob className="w-[600px] h-[600px] bg-cyan-500 -top-40 -left-40 opacity-30 animate-[float_8s_ease-in-out_infinite]" />
+        <BgBlob className="w-[500px] h-[500px] bg-violet-500 top-1/3 -right-40 opacity-25 animate-[float_10s_ease-in-out_infinite_1s]" />
+        <BgBlob className="w-[400px] h-[400px] bg-fuchsia-500 bottom-0 left-1/3 opacity-20 animate-[float_12s_ease-in-out_infinite_2s]" />
+        {/* Dot grid overlay */}
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, white 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
+          }}
+        />
+        <style>{`
+          @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.05); }
+          }
+          @keyframes heroFadeUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes heroScale {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+          }
+          @keyframes heroPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(6,182,212,0.4); }
+            50% { box-shadow: 0 0 40px 10px rgba(6,182,212,0.2); }
+          }
+          @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+          }
+          @keyframes glowPulse {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.35; transform: scale(1.02); }
+          }
+          @keyframes popularPulse {
+            0%, 100% { box-shadow: 0 25px 50px -12px rgba(139,92,246,0.2); }
+            50% { box-shadow: 0 25px 60px -8px rgba(139,92,246,0.35); }
+          }
+          @keyframes badgeBounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-3px); }
+          }
+        `}</style>
+        <div className="relative max-w-5xl mx-auto text-center px-4 py-24">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white/90 text-sm font-medium px-5 py-2 rounded-full mb-8" style={{ animation: "heroFadeUp 0.8s ease-out forwards", opacity: 0 }}>
+            <span>🚀</span>
+            <span>{t("hero.badge")}</span>
+          </div>
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold leading-tight tracking-tight" style={{ animation: "heroScale 1s ease-out 0.3s forwards", opacity: 0 }}>
+            <span style={{ backgroundImage: "linear-gradient(90deg, #22d3ee, #a78bfa, #d946ef, #22d3ee)", backgroundSize: "200% auto", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", animation: "shimmer 4s linear infinite" }}>
+              {t("hero.title1")}
+            </span>
+            <br />
+            <span style={{ backgroundImage: "linear-gradient(90deg, #22d3ee, #a78bfa, #d946ef, #22d3ee)", backgroundSize: "200% auto", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", animation: "shimmer 4s linear infinite 0.5s" }}>
+              {t("hero.title2")}
+            </span>
+          </h1>
+          <p className="mt-6 sm:mt-8 text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed px-2" style={{ animation: "heroFadeUp 0.8s ease-out 0.6s forwards", opacity: 0 }}>
+            {t("hero.desc1")}
+            <br className="sm:hidden" />
+            {t("hero.desc2")}
+            <br />
+            {t("hero.desc3")}
+          </p>
+          <div className="mt-8 sm:mt-12 flex flex-col sm:flex-row items-center justify-center gap-4" style={{ animation: "heroFadeUp 0.8s ease-out 0.9s forwards", opacity: 0 }}>
+            <button
+              onClick={() => scrollTo("contact")}
+              className="bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold px-8 sm:px-10 py-4 sm:py-5 rounded-full text-base sm:text-lg shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-all"
+              style={{ animation: "heroPulse 3s ease-in-out infinite 1.5s" }}
+            >
+              {t("hero.cta")}
+            </button>
+          </div>
+          <p className="mt-5 text-sm text-gray-400">
+            {t("hero.sub")}
+          </p>
+        </div>
+        {/* Bottom fade to white */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent" />
+      </section>
+
+      {/* ───────── Problem ───────── */}
+      <Section id="problem" className="relative py-16 sm:py-24 md:py-32 bg-white overflow-hidden">
+        <BgBlob className="w-[500px] h-[500px] bg-red-300 -top-60 -right-60" />
+        <BgBlob className="w-[400px] h-[400px] bg-orange-300 bottom-0 -left-40" />
+        <div className="relative max-w-6xl mx-auto px-4">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-10 sm:mb-16 px-2">
+            {t("problem.title1")}
+            <br className="sm:hidden" />
+            <span className="bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
+              ComiSta
+            </span>
+            {t("problem.title2")}
+          </h2>
+          <p className="text-center text-gray-500 mb-10 sm:mb-16 text-sm sm:text-base">{t("problem.desc")}</p>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                icon: "😔",
+                title: "口コミを書いてもらえない",
+                desc: "お客様に口コミをお願いするのが気まずい",
+              },
+              {
+                icon: "⭐",
+                title: "Googleマップの評価が低い",
+                desc: "競合に比べて星の数が少ない",
+              },
+              {
+                icon: "⏰",
+                title: "口コミ対策に時間がかかる",
+                desc: "忙しくて口コミ管理まで手が回らない",
+              },
+              {
+                icon: "❓",
+                title: "何を書けばいいかわからない",
+                desc: "お客様が口コミの書き方に困っている",
+              },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-red-100 text-center hover:shadow-xl hover:-translate-y-1 transition-all"
+              >
+                <div className="text-5xl mb-4">{item.icon}</div>
+                <h3 className="font-bold text-lg mb-2 text-gray-900">
+                  {item.title}
+                </h3>
+                <p className="text-gray-500 text-sm">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      {/* ───────── Solution ───────── */}
+      <Section id="solution" className="relative py-16 sm:py-24 md:py-32 overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-violet-50">
+        <BgBlob className="w-[500px] h-[500px] bg-cyan-300 top-20 -left-60" />
+        <BgBlob className="w-[400px] h-[400px] bg-violet-300 -bottom-40 -right-40" />
+        {/* Dot grid overlay */}
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, #6366f1 1px, transparent 1px)",
+            backgroundSize: "28px 28px",
+          }}
+        />
+        <div className="relative max-w-5xl mx-auto px-4">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-4 px-2">
+            {t("solution.title1")}
+            <br className="sm:hidden" />
+            <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+              {t("solution.title2")}
+            </span>
+          </h2>
+          <p className="text-center text-gray-500 mb-10 sm:mb-16 text-base sm:text-lg">
+            {t("solution.desc")}
+          </p>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                num: "01",
+                icon: "📱",
+                title: "アンケートに回答",
+                desc: "QRコードを読み取って簡単なアンケートに回答",
+                gradient: "from-cyan-500 to-blue-500",
+              },
+              {
+                num: "02",
+                icon: "🤖",
+                title: "AIが口コミを自動生成",
+                desc: "回答内容をもとにAIが自然な口コミ文章を作成",
+                gradient: "from-violet-500 to-purple-500",
+              },
+              {
+                num: "03",
+                icon: "📍",
+                title: "Googleマップに投稿",
+                desc: "ワンタップでGoogleマップに口コミを投稿",
+                gradient: "from-fuchsia-500 to-pink-500",
+              },
+            ].map((step) => (
+              <div
+                key={step.num}
+                className="text-center bg-white/60 backdrop-blur-sm rounded-3xl p-8 border border-white/60 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
+              >
+                <div className={`inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br ${step.gradient} text-4xl mb-5 shadow-lg`}>
+                  {step.icon}
+                </div>
+                <div className={`text-5xl font-black bg-gradient-to-r ${step.gradient} bg-clip-text text-transparent mb-3`}>
+                  {step.num}
+                </div>
+                <h3 className="font-bold text-xl mb-2">{step.title}</h3>
+                <p className="text-gray-500 text-sm">{step.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      {/* ───────── Features ───────── */}
+      <Section id="features" className="relative py-16 sm:py-24 md:py-32 overflow-hidden bg-gradient-to-br from-gray-950 via-indigo-950 to-violet-950">
+        <BgBlob className="w-[600px] h-[600px] bg-cyan-500 -top-40 -right-60 opacity-15" />
+        <BgBlob className="w-[500px] h-[500px] bg-violet-500 bottom-0 -left-40 opacity-15" />
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, white 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
+          }}
+        />
+        <div className="relative max-w-6xl mx-auto px-4">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-10 sm:mb-16 px-2">
+            <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+              {t("features.title")}
+            </span>
+          </h2>
+          <p className="text-center text-gray-400 mb-10 sm:mb-16 text-sm sm:text-base">{t("features.desc")}</p>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              {
+                icon: "✨",
+                title: "AIによる自然な文章生成",
+                desc: "実際のお客様の声に基づいた自然な口コミを自動生成",
+                gradient: "from-cyan-500 to-blue-500",
+              },
+              {
+                icon: "💬",
+                title: "チャット形式のアンケート",
+                desc: "LINEのようなUIで回答率90%以上",
+                gradient: "from-violet-500 to-purple-500",
+              },
+              {
+                icon: "📷",
+                title: "QRコードで簡単導入",
+                desc: "お客様はQRコードを読み取るだけ。アプリ不要",
+                gradient: "from-fuchsia-500 to-pink-500",
+              },
+              {
+                icon: "📊",
+                title: "リアルタイム分析",
+                desc: "回答データをリアルタイムで分析。改善点が一目瞭然",
+                gradient: "from-amber-500 to-orange-500",
+              },
+              {
+                icon: "🎨",
+                title: "カスタマイズ自由",
+                desc: "ロゴ、カラー、質問内容を自由にカスタマイズ",
+                gradient: "from-emerald-500 to-teal-500",
+              },
+              {
+                icon: "🏪",
+                title: "複数業種対応",
+                desc: "飲食店、美容室、整骨院、バー、エステ、ラウンジなど幅広く対応",
+                gradient: "from-rose-500 to-red-500",
+              },
+            ].map((f) => (
+              <div
+                key={f.title}
+                className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:bg-white/10 hover:-translate-y-1 transition-all group"
+              >
+                <div className={`inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br ${f.gradient} text-2xl mb-4 shadow-lg`}>
+                  {f.icon}
+                </div>
+                <h3 className="font-bold text-lg mb-2 text-white">
+                  {f.title}
+                </h3>
+                <p className="text-gray-400 text-sm leading-relaxed">
+                  {f.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      {/* ───────── Target Industries ───────── */}
+      <Section id="industries" className="relative py-16 sm:py-24 md:py-32 bg-white overflow-hidden">
+        <BgBlob className="w-[500px] h-[500px] bg-cyan-200 top-0 -right-60" />
+        <BgBlob className="w-[400px] h-[400px] bg-violet-200 -bottom-40 left-0" />
+        <div className="relative max-w-5xl mx-auto px-4">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-10 sm:mb-16 px-2">
+            {t("industries.title1")}
+            <br className="sm:hidden" />
+            <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+              {t("industries.title2")}
+            </span>
+          </h2>
+          <p className="text-center text-gray-500 mb-10 sm:mb-16 text-sm sm:text-base">{t("industries.desc")}</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            {[
+              { icon: "🍽️", label: "飲食店・レストラン" },
+              { icon: "💇", label: "美容室・ヘアサロン" },
+              { icon: "💆", label: "整骨院・整体院" },
+              { icon: "✨", label: "エステサロン" },
+              { icon: "🍸", label: "バー" },
+              { icon: "🌙", label: "ラウンジ・スナック" },
+            ].map((ind) => (
+              <div
+                key={ind.label}
+                className="flex items-center gap-3 bg-white/70 backdrop-blur-sm rounded-2xl p-5 border border-gray-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all"
+              >
+                <span className="text-3xl">{ind.icon}</span>
+                <span className="font-bold text-sm">{ind.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      {/* ───────── Pricing ───────── */}
+      <Section id="pricing" className="relative py-16 sm:py-24 md:py-32 overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-violet-50">
+        <BgBlob className="w-[600px] h-[600px] bg-cyan-300 -top-60 -left-60" />
+        <BgBlob className="w-[500px] h-[500px] bg-violet-300 bottom-0 -right-60" />
+        <div
+          className="absolute inset-0 opacity-[0.02]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, #6366f1 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+          }}
+        />
+        <div className="relative max-w-6xl mx-auto px-4">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-3 px-2">
+            {t("pricing.title1")}
+            <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+              {t("pricing.title2")}
+            </span>
+          </h2>
+          <p className="text-center text-gray-500 mb-10 sm:mb-16 text-base sm:text-lg">
+            {t("pricing.desc")}
+          </p>
+          <div className="grid md:grid-cols-3 gap-6 items-start">
+            {[
+              {
+                name: "ライトプラン",
+                price: "6,000",
+                installmentPrice: "6,600",
+                limit: "月20件",
+                target: "小規模店舗",
+                popular: false,
+                features: [
+                  "AIによる口コミ自動生成",
+                  "チャット形式アンケート",
+                  "QRコード発行",
+                ],
+              },
+              {
+                name: "スタンダードプラン",
+                price: "10,000",
+                installmentPrice: "11,000",
+                limit: "月50件",
+                target: "中規模店舗",
+                popular: true,
+                features: [
+                  "AIによる口コミ自動生成",
+                  "チャット形式アンケート",
+                  "QRコード発行",
+                  "リアルタイム分析",
+                  "メール通知",
+                  "カスタマーサポート",
+                ],
+              },
+              {
+                name: "プレミアムプラン",
+                price: "20,000",
+                installmentPrice: "22,000",
+                limit: "無制限",
+                target: "大規模・複数店舗",
+                popular: false,
+                features: [
+                  "AIによる口コミ自動生成",
+                  "チャット形式アンケート",
+                  "QRコード発行",
+                  "リアルタイム分析",
+                  "AI分析レポート",
+                  "CSVデータエクスポート",
+                  "カスタムプロンプト",
+                  "メール通知",
+                  "口コミ生成 無制限",
+                  "カスタマーサポート",
+                ],
+              },
+            ].map((plan) => (
+              <div
+                key={plan.name}
+                className={`relative bg-white/70 backdrop-blur-sm rounded-3xl p-8 border transition-all hover:-translate-y-1 ${
+                  plan.popular
+                    ? "border-transparent shadow-2xl shadow-violet-500/25 ring-2 ring-violet-400 md:scale-[1.06] animate-[popularPulse_4s_ease-in-out_infinite]"
+                    : "border-gray-200 shadow-lg hover:shadow-xl"
+                }`}
+              >
+                {plan.popular && (
+                  <>
+                    {/* Animated glow effect */}
+                    <div className="absolute -inset-[3px] rounded-3xl bg-gradient-to-r from-cyan-500 via-violet-500 to-fuchsia-500 opacity-25 blur-lg -z-10 animate-[glowPulse_3s_ease-in-out_infinite]" />
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-500 to-violet-500 text-white text-xs font-bold px-5 py-1.5 rounded-full shadow-lg animate-[badgeBounce_2s_ease-in-out_infinite]">
+                      🏆 人気No.1
+                    </div>
+                  </>
+                )}
+                <h3 className="font-bold text-lg mb-1">{plan.name}</h3>
+                <p className="text-xs text-gray-500 mb-4">{plan.target}</p>
+                <div className="mb-4">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl sm:text-5xl font-black bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+                      ¥{plan.price}
+                    </span>
+                    <span className="text-gray-500 text-sm">/月</span>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">一括払いの場合（分割: ¥{plan.installmentPrice}/月）</p>
+                </div>
+                <p className="text-sm text-cyan-600 font-semibold mb-6">
+                  {plan.limit}
+                </p>
+                <ul className="space-y-3 text-sm text-gray-600">
+                  {plan.features.map((feat) => (
+                    <li key={feat} className="flex items-center gap-2">
+                      <svg
+                        className="w-4 h-4 text-cyan-500 shrink-0"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      {feat}
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  onClick={() => scrollTo("contact")}
+                  className={`mt-8 w-full py-3.5 rounded-full font-semibold transition-all ${
+                    plan.popular
+                      ? "bg-gradient-to-r from-cyan-500 to-violet-500 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:scale-105"
+                      : "border border-gray-300 text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  お問い合わせ
+                </button>
+              </div>
+            ))}
+          </div>
+          {/* Lifetime Licenses */}
+          <h3 className="text-xl sm:text-2xl font-extrabold text-center mt-16 mb-3 px-2">
+            永年ライセンス
+            <span className="text-base sm:text-lg font-medium text-gray-500 ml-2">（買い切り）</span>
+          </h3>
+          <p className="text-center text-sm text-gray-500 mb-8">月額不要・一括払いでずっと使える</p>
+          <div className="grid md:grid-cols-3 gap-6 items-start">
+            {[
+              { name: "ライト", price: "90,000", limit: "月20件", popular: false, features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行"] },
+              { name: "スタンダード", price: "150,000", limit: "月50件", popular: true, features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行", "リアルタイム分析", "メール通知", "カスタマーサポート"] },
+              { name: "プレミアム", price: "250,000", limit: "無制限", popular: false, features: ["AIによる口コミ自動生成", "チャット形式アンケート", "QRコード発行", "リアルタイム分析", "AI分析レポート", "CSVデータエクスポート", "カスタムプロンプト", "メール通知", "口コミ生成 無制限", "カスタマーサポート"] },
+            ].map((plan) => (
+              <div key={plan.name} className={`relative bg-white/70 backdrop-blur-sm rounded-3xl p-8 border transition-all hover:-translate-y-1 ${plan.popular ? "border-transparent shadow-2xl shadow-amber-500/20 ring-2 ring-amber-400 md:scale-[1.06]" : "border-amber-200 shadow-lg hover:shadow-xl"}`}>
+                {plan.popular && (
+                  <>
+                    <div className="absolute -inset-[3px] rounded-3xl bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 opacity-20 blur-lg -z-10" />
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold px-5 py-1.5 rounded-full shadow-lg">
+                      おすすめ
+                    </div>
+                  </>
+                )}
+                <h3 className="font-bold text-lg mb-1">{plan.name}</h3>
+                <div className="mb-6">
+                  <span className="text-3xl sm:text-4xl font-black bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">¥{plan.price}</span>
+                  <span className="text-gray-500 text-sm ml-1">一括</span>
+                </div>
+                <p className="text-sm text-amber-600 font-semibold mb-6">{plan.limit}</p>
+                <ul className="space-y-2.5 text-sm text-gray-600">
+                  {plan.features.map((f) => (
+                    <li key={f} className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  onClick={() => scrollTo("contact")}
+                  className={`mt-8 w-full py-3.5 rounded-full font-semibold transition-all ${plan.popular ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg hover:shadow-xl hover:scale-105" : "border border-amber-400 text-amber-700 hover:bg-amber-50"}`}
+                >
+                  お問い合わせ
+                </button>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-xs text-gray-400 mt-6">※ 分割払いにも対応しております。詳しくはお問い合わせください。</p>
+
+          {/* Payment & contract info */}
+          <div className="mt-12 bg-white/60 backdrop-blur-sm rounded-2xl border border-gray-200 p-6 sm:p-8">
+            <h3 className="text-base font-bold text-gray-800 mb-4 text-center">お支払い・ご契約について</h3>
+            <div className="grid sm:grid-cols-2 gap-6">
+              <div>
+                <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                  <svg className="w-4 h-4 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+                  対応支払い方法
+                </h4>
+                <ul className="text-sm text-gray-600 space-y-1.5">
+                  <li>・クレジットカード（Visa / Mastercard / AMEX / JCB）</li>
+                  <li>・請求書払い（法人のみ・要相談）</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                  <svg className="w-4 h-4 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                  ご契約について
+                </h4>
+                <ul className="text-sm text-gray-600 space-y-1.5">
+                  <li>・最低契約期間: 6ヶ月</li>
+                  <li>・契約期間中の途中解約はできません</li>
+                  <li>・契約期間中のプランアップグレードは差額精算で即時反映</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      {/* ───────── Case Studies ───────── */}
+      <Section id="cases" className="relative py-16 sm:py-24 md:py-32 overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-violet-50">
+        <BgBlob className="w-[500px] h-[500px] bg-violet-200 -top-40 -right-60" />
+        <BgBlob className="w-[400px] h-[400px] bg-cyan-200 -bottom-40 -left-40" />
+        <div className="relative max-w-5xl mx-auto px-4">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-4 px-2">
+            {t("cases.title1")}
+            <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+              {t("cases.title2")}
+            </span>
+          </h2>
+          <p className="text-center text-gray-500 mb-10 sm:mb-14 text-sm sm:text-base">{t("cases.desc")}</p>
+          <div className="grid md:grid-cols-2 gap-6">
+            {[
+              {
+                shop: "焼肉 花火",
+                industry: "飲食店",
+                stars: 5,
+                title: "口コミ数が3ヶ月で4倍に",
+                content: "以前はお客様に口コミをお願いするのが申し訳なく、月に2〜3件程度でした。ComiSta導入後はアンケートに答えるだけで口コミが自動生成されるので、お客様の負担もなく自然に口コミが集まるようになりました。",
+                result: "口コミ数: 月3件 → 月12件 / Google評価: ★3.8 → ★4.5",
+              },
+              {
+                shop: "HAIR SALON Luce",
+                industry: "美容室",
+                stars: 5,
+                title: "新規のお客様が30%増加",
+                content: "SNSでの集客に限界を感じていました。ComiStaを導入してGoogleマップの口コミが増えたことで、「口コミを見て来ました」というお客様が明らかに増えました。",
+                result: "新規客数: 月20名 → 月26名 / リピート率も5%向上",
+              },
+              {
+                shop: "ほねつぎ やまと",
+                industry: "整骨院",
+                stars: 4,
+                title: "スタッフの負担なしで口コミ対策",
+                content: "施術後にQRコードを渡すだけで完結するので、受付スタッフの手間がほとんどありません。チャット形式のアンケートは患者さんからも「答えやすい」と好評です。",
+                result: "口コミ数: 月1件 → 月8件 / Googleマップからの予約が2倍に",
+              },
+              {
+                shop: "Bar CROSS",
+                industry: "バー",
+                stars: 5,
+                title: "常連さんが口コミを書いてくれるように",
+                content: "バーという業態上、口コミを書いてもらうハードルが高かったのですが、会計時にQRコードを見せるだけで自然な流れで口コミを書いてもらえるようになりました。",
+                result: "口コミ数: ほぼ0件 → 月6件 / 新規来店のきっかけ1位に",
+              },
+              {
+                shop: "Nail Salon Petite",
+                industry: "ネイルサロン",
+                stars: 5,
+                title: "AIが書く口コミの自然さに驚き",
+                content: "最初は「AIが書いた口コミって不自然じゃないの？」と心配でしたが、実際にお客様のアンケート回答をもとに生成された文章は、本当にお客様が書いたような自然な口コミでした。",
+                result: "Google評価: ★4.0 → ★4.7 / 口コミの文章品質が大幅向上",
+              },
+            ].map((c, i) => (
+              <div
+                key={i}
+                className={`bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-white/60 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all ${i === 4 ? "md:col-span-2 md:max-w-lg md:mx-auto" : ""}`}
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-violet-500 flex items-center justify-center text-white font-bold text-sm">
+                    {c.shop.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="font-bold text-sm text-gray-800">{c.shop}</p>
+                    <span className="text-xs text-gray-500">{c.industry}</span>
+                  </div>
+                  <span className="ml-auto text-amber-400 text-sm">{"★".repeat(c.stars)}</span>
+                </div>
+                <h3 className="font-bold text-base text-gray-900 mb-2">{c.title}</h3>
+                <p className="text-sm text-gray-600 leading-relaxed mb-3">{c.content}</p>
+                <div className="bg-gradient-to-r from-cyan-50 to-violet-50 rounded-xl p-3">
+                  <p className="text-xs font-semibold text-violet-700">{c.result}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      {/* ───────── Comparison ───────── */}
+      <Section id="comparison" className="relative py-16 sm:py-24 md:py-32 bg-white overflow-hidden">
+        <BgBlob className="w-[500px] h-[500px] bg-cyan-200 -top-40 -left-60" />
+        <BgBlob className="w-[400px] h-[400px] bg-violet-200 -bottom-40 -right-40" />
+        <div className="relative max-w-4xl mx-auto px-4">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-4 px-2">
+            {t("comparison.title1")}
+            <br className="sm:hidden" />
+            <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+              {t("comparison.title2")}
+            </span>
+          </h2>
+          <p className="text-center text-gray-500 mb-10 sm:mb-14 text-sm sm:text-base">{t("comparison.desc")}</p>
+          <div className="rounded-2xl shadow-lg border border-gray-200">
+            <table className="w-full text-xs sm:text-sm">
+              <thead>
+                <tr>
+                  <th className="text-left px-2 sm:px-6 py-3 sm:py-4 bg-gray-50 font-semibold text-gray-600">比較項目</th>
+                  <th className="px-2 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold text-center">
+                    ComiSta
+                  </th>
+                  <th className="px-2 sm:px-6 py-3 sm:py-4 bg-gray-100 text-gray-500 font-medium text-center">他社A</th>
+                  <th className="px-2 sm:px-6 py-3 sm:py-4 bg-gray-100 text-gray-500 font-medium text-center">他社B</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {[
+                  { item: "初期費用", comista: "0円", a: "50,000円〜", b: "30,000円〜" },
+                  { item: "月額料金", comista: "¥6,000〜", a: "¥15,000〜", b: "¥10,000〜" },
+                  { item: "口コミ自動生成（AI）", comista: true, a: false, b: false },
+                  { item: "チャット形式アンケート", comista: true, a: false, b: true },
+                  { item: "QRコードで即導入", comista: true, a: true, b: false },
+                  { item: "リアルタイム分析・レポート", comista: true, a: true, b: false },
+                  { item: "カスタムブランディング", comista: true, a: false, b: true },
+                  { item: "アプリ不要（ブラウザ完結）", comista: true, a: false, b: true },
+                  { item: "最短導入期間", comista: "即日", a: "1〜2週間", b: "3〜5日" },
+                  { item: "契約期間の縛り", comista: "6ヶ月〜", a: "12ヶ月〜", b: "6ヶ月〜" },
+                ].map((row) => (
+                  <tr key={row.item} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-2 sm:px-6 py-3 sm:py-4 font-medium text-gray-800">{row.item}</td>
+                    <td className="px-2 sm:px-6 py-3 sm:py-4 text-center">
+                      {typeof row.comista === "boolean" ? (
+                        row.comista ? (
+                          <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-cyan-100">
+                            <svg className="w-4 h-4 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                          </span>
+                        ) : (
+                          <span className="text-gray-300 text-lg">—</span>
+                        )
+                      ) : (
+                        <span className="font-bold text-cyan-600">{row.comista}</span>
+                      )}
+                    </td>
+                    <td className="px-2 sm:px-6 py-3 sm:py-4 text-center">
+                      {typeof row.a === "boolean" ? (
+                        row.a ? (
+                          <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gray-100">
+                            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                          </span>
+                        ) : (
+                          <span className="text-gray-300 text-lg">—</span>
+                        )
+                      ) : (
+                        <span className="text-gray-500">{row.a}</span>
+                      )}
+                    </td>
+                    <td className="px-2 sm:px-6 py-3 sm:py-4 text-center">
+                      {typeof row.b === "boolean" ? (
+                        row.b ? (
+                          <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gray-100">
+                            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                          </span>
+                        ) : (
+                          <span className="text-gray-300 text-lg">—</span>
+                        )
+                      ) : (
+                        <span className="text-gray-500">{row.b}</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-center text-xs text-gray-400 mt-4">※ 2026年4月時点の一般的な口コミ支援サービスとの比較です</p>
+        </div>
+      </Section>
+
+      {/* ───────── Flow ───────── */}
+      <Section id="flow" className="relative py-16 sm:py-24 md:py-32 bg-white overflow-hidden">
+        <BgBlob className="w-[500px] h-[500px] bg-cyan-200 -top-40 left-1/3" />
+        <BgBlob className="w-[400px] h-[400px] bg-violet-200 -bottom-40 right-1/4" />
+        <div className="relative max-w-5xl mx-auto px-4">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-10 sm:mb-16 px-2">
+            {t("flow.title1")}
+            <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+              {t("flow.title2")}
+            </span>
+          </h2>
+          <p className="text-center text-gray-500 mb-10 sm:mb-16 text-sm sm:text-base">{t("flow.desc")}</p>
+          <div className="grid md:grid-cols-4 gap-8">
+            {[
+              {
+                num: "1",
+                title: "お問い合わせ",
+                desc: "まずはお気軽にご相談ください",
+              },
+              {
+                num: "2",
+                title: "アカウント発行",
+                desc: "最短即日でご利用開始",
+              },
+              {
+                num: "3",
+                title: "アンケート設定",
+                desc: "質問内容やデザインをカスタマイズ",
+              },
+              {
+                num: "4",
+                title: "運用開始",
+                desc: "QRコードを設置して口コミ収集スタート",
+              },
+            ].map((s, i) => (
+              <div key={s.num} className="text-center relative">
+                {i < 3 && (
+                  <div className="hidden md:block absolute top-8 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-cyan-300 to-violet-300" />
+                )}
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-cyan-500 to-violet-500 text-white font-black text-2xl mb-4 relative z-10 shadow-lg shadow-violet-500/25">
+                  {s.num}
+                </div>
+                <h3 className="font-bold text-lg mb-2">{s.title}</h3>
+                <p className="text-gray-500 text-sm">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      {/* ───────── FAQ ───────── */}
+      <Section id="faq" className="relative py-16 sm:py-24 md:py-32 overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-violet-50">
+        <BgBlob className="w-[500px] h-[500px] bg-cyan-200 -top-60 -left-40" />
+        <BgBlob className="w-[400px] h-[400px] bg-violet-200 bottom-0 -right-40" />
+        <div className="relative max-w-3xl mx-auto px-4">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-10 sm:mb-16 px-2">
+            {t("faq.title1")}
+            <br className="sm:hidden" />
+            <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+              {t("faq.title2")}
+            </span>
+          </h2>
+          <p className="text-center text-gray-500 mb-10 sm:mb-14 text-sm sm:text-base">{t("faq.desc")}</p>
+          <div className="space-y-4">
+            <FaqItem
+              q="初期費用はかかりますか？"
+              a="いいえ、初期費用は一切かかりません。月額プランのみでご利用いただけます。"
+            />
+            <FaqItem
+              q="契約期間の縛りはありますか？"
+              a="最低6ヶ月からのご契約となります。詳しくはお問い合わせください。"
+            />
+            <FaqItem
+              q="どんな業種でも使えますか？"
+              a="飲食店、美容室、整骨院、エステ、バー、ラウンジ、スナックなど、店舗型ビジネスであれば業種を問わずご利用いただけます。"
+            />
+            <FaqItem
+              q="導入にどれくらい時間がかかりますか？"
+              a="最短即日で導入可能です。アカウント発行後すぐにご利用いただけます。"
+            />
+            <FaqItem
+              q="お客様にアプリをインストールしてもらう必要がありますか？"
+              a="いいえ、アプリのインストールは不要です。QRコードを読み取るだけでブラウザ上でアンケートに回答できます。"
+            />
+            <FaqItem
+              q="生成された口コミは編集できますか？"
+              a="はい、AIが生成した文章はお客様が自由に編集してから投稿できます。"
+            />
+          </div>
+        </div>
+      </Section>
+
+      {/* ───────── CTA / Contact ───────── */}
+      <Section id="contact" className="relative py-16 sm:py-24 md:py-32 overflow-hidden">
+        {/* Dark gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-indigo-950 to-violet-950" />
+        <BgBlob className="w-[600px] h-[600px] bg-cyan-500 -top-60 -left-40 opacity-25" />
+        <BgBlob className="w-[500px] h-[500px] bg-fuchsia-500 -bottom-40 -right-40 opacity-20" />
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, white 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
+          }}
+        />
+        <div className="relative max-w-3xl mx-auto px-4 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold mb-4 px-2">
+            <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+              {t("cta.title1")}
+              <br className="sm:hidden" />
+              {t("cta.title2")}
+            </span>
+          </h2>
+          <p className="text-gray-300 mb-6 text-base sm:text-lg px-2">
+            {t("cta.desc1")}
+            <br className="sm:hidden" />
+            {t("cta.desc2")}
+          </p>
+          {/* Urgency badge */}
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-400/30 text-orange-300 font-bold text-sm px-5 py-2.5 rounded-full mb-10">
+            <span>🔥</span>
+            <span>{t("cta.campaign")}</span>
+          </div>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a
+              href="/contact"
+              className="inline-block bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold px-8 sm:px-12 py-4 sm:py-5 rounded-full text-base sm:text-lg shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-all"
+            >
+              {t("cta.contact")}
+            </a>
+            <a
+              href="https://lin.ee/6C7mwFK"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-[#06C755] text-white font-bold px-8 sm:px-10 py-4 sm:py-5 rounded-full text-base sm:text-lg shadow-2xl shadow-green-500/30 hover:shadow-green-500/50 hover:scale-105 transition-all"
+            >
+              <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.066-.022.137-.033.194-.033.195 0 .375.104.515.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" /></svg>
+              {t("cta.line")}
+            </a>
+          </div>
+          <p className="mt-8 text-sm text-gray-400">
+            {t("cta.sub")}
+          </p>
+        </div>
+      </Section>
+
+      {/* ───────── Footer ───────── */}
+      <footer className="bg-gray-950 text-gray-400 py-12 border-t border-white/5">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <Image src="/logo.png" alt="ComiSta" width={100} height={30} />
+            <nav className="flex flex-wrap items-center justify-center gap-6 text-sm">
+              {navLinks.map((l) => (
+                <button
+                  key={l.id}
+                  onClick={() => scrollTo(l.id)}
+                  className="hover:text-white transition-colors"
+                >
+                  {l.label}
+                </button>
+              ))}
+              <a
+                href="/login"
+                className="hover:text-white transition-colors"
+              >
+                {t("footer.login")}
+              </a>
+              <a
+                href="/legal/tokushoho"
+                className="hover:text-white transition-colors"
+              >
+                {t("footer.tokushoho")}
+              </a>
+              <a
+                href="/legal/privacy"
+                className="hover:text-white transition-colors"
+              >
+                {t("footer.privacy")}
+              </a>
+              <a
+                href="/legal/terms"
+                className="hover:text-white transition-colors"
+              >
+                {t("footer.terms")}
+              </a>
+              <a
+                href="https://lin.ee/6C7mwFK"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors"
+              >
+                {t("footer.line")}
+              </a>
+            </nav>
+          </div>
+          <div className="mt-8 border-t border-gray-800 pt-6 text-center text-xs">
+            &copy; 2026 ComiSta. All Rights Reserved.
+          </div>
+        </div>
+      </footer>
+
+      {/* ───────── Back to Top ───────── */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        className={`fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-gradient-to-r from-cyan-500 to-violet-500 text-white shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 ${showTop ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"}`}
+        aria-label="トップへ戻る"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 15l7-7 7 7" />
+        </svg>
+      </button>
+    </div>
+  );
 }

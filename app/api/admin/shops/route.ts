@@ -49,6 +49,7 @@ export async function GET(request: NextRequest) {
           id: true, name: true, email: true, loginId: true, shopName: true,
           address: true, industry: true, agencyId: true,
           contractStart: true, contractEnd: true, noContractLimit: true,
+          stripeSubscriptionId: true, planType: true,
           agency: { select: { id: true, name: true } },
           createdAt: true,
           surveys: {
@@ -159,7 +160,7 @@ export async function POST(request: NextRequest) {
     finalLoginId = "AG-" + String(lastNum + 1).padStart(6, "0");
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(password, 12);
   const user = await prisma.user.create({
     data: {
       name: name.trim(), email: email?.trim() ?? null, loginId: finalLoginId,

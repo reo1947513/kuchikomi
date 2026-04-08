@@ -1,15 +1,19 @@
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 
-const JWT_SECRET = process.env.JWT_SECRET || "fallback-secret-change-in-production";
+function getSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) throw new Error("JWT_SECRET environment variable is required");
+  return secret;
+}
 
 export function signToken(payload: { userId: string; role: string }): string {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
+  return jwt.sign(payload, getSecret(), { expiresIn: "7d", algorithm: "HS256" });
 }
 
 export function verifyToken(token: string): { userId: string; role: string } | null {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string; role: string };
+    const decoded = jwt.verify(token, getSecret(), { algorithms: ["HS256"] }) as unknown as { userId: string; role: string };
     return decoded;
   } catch {
     return null;

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import ChatMessage from "@/components/ChatMessage";
-import { useLang } from "@/lib/i18n";
+import { useLang, LangToggle } from "@/lib/i18n";
 import { surveyDict } from "@/lib/dictionaries/lp";
 
 interface Choice {
@@ -85,15 +85,16 @@ export default function SurveyPage({
   useEffect(() => {
     async function init() {
       try {
+        const isPreview = new URLSearchParams(window.location.search).get("preview") === "true";
         const res = await fetch("/api/sessions", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ surveyId }),
+          body: JSON.stringify({ surveyId, isTest: isPreview }),
         });
 
         if (!res.ok) {
           const data = await res.json();
-          setPhase({ type: "error", message: data.error ?? t("survey.error") });
+          setPhase({ type: "error", message: data.error ?? "エラーが発生しました" });
           return;
         }
 
@@ -129,12 +130,12 @@ export default function SurveyPage({
           role: "bot",
           text:
             data.survey.description ??
-            `${data.survey.title}${t("survey.welcome")}`,
+            `${data.survey.title}のアンケートへようこそ！いくつか質問させていただきます。`,
         };
 
         if (questions.length === 0) {
           setMessages([intro]);
-          setPhase({ type: "error", message: t("survey.noQuestions") });
+          setPhase({ type: "error", message: "質問が設定されていません。" });
           return;
         }
 
@@ -151,7 +152,7 @@ export default function SurveyPage({
           setPhase({ type: "questioning", questionIndex: 0 });
         }
       } catch {
-        setPhase({ type: "error", message: t("survey.sessionFailed") });
+        setPhase({ type: "error", message: "セッションの作成に失敗しました。" });
       }
     }
 
@@ -209,6 +210,7 @@ export default function SurveyPage({
       setMessages((prev) => [...prev, botMsg]);
 
       if (nextQ.type === "text") {
+        setTextInput("");
         setPhase({ type: "text_input", questionIndex: nextIndex });
       } else {
         setPhase({ type: "questioning", questionIndex: nextIndex });
@@ -217,7 +219,7 @@ export default function SurveyPage({
       // All questions answered — generate review
       const thankMsg: Message = {
         role: "bot",
-        text: session?.survey?.closingMessage || t("survey.thankYou"),
+        text: session?.survey?.closingMessage || "ありがとうございました！",
       };
       setMessages((prev) => [...prev, userMsg]);
       await new Promise((r) => setTimeout(r, 800));
@@ -237,9 +239,12 @@ export default function SurveyPage({
 
       if (!res.ok) {
         const data = await res.json();
+        const isLimitReached = res.status === 429;
         setPhase({
           type: "error",
-          message: data.error ?? t("survey.generateFailed"),
+          message: isLimitReached
+            ? t("survey.paused")
+            : data.error ?? t("survey.generateFailed"),
         });
         return;
       }
@@ -253,7 +258,7 @@ export default function SurveyPage({
       // Redirect to result page
       window.location.href = `/survey/${surveyId}/result/${session.id}`;
     } catch {
-      setPhase({ type: "error", message: t("survey.generateFailed") });
+      setPhase({ type: "error", message: "口コミの生成に失敗しました。" });
     }
   }
 
@@ -304,11 +309,19 @@ export default function SurveyPage({
       ? Math.round((answeredCount / totalQuestions) * 100)
       : 0;
 
+  const isPreview = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("preview") === "true";
+
   return (
     <div
       className="min-h-screen flex flex-col"
       style={{ backgroundColor: "#F5F3FF" }}
     >
+      {/* Test mode banner */}
+      {isPreview && (
+        <div className="bg-amber-500 text-white text-center text-xs font-bold py-1.5 z-20">
+          {t("survey.testMode")}
+        </div>
+      )}
       {/* Top bar */}
       <header className="sticky top-0 z-10 bg-white shadow-sm">
         <div className="max-w-lg mx-auto px-4 py-3">
@@ -322,12 +335,15 @@ export default function SurveyPage({
                 />
               )}
               <h1 className="text-base font-semibold text-gray-800 truncate">
-                {session?.survey.title ?? t("survey.title")}
+                {session?.survey.title ?? "アンケート"}
               </h1>
             </div>
-            <span className="text-xs text-gray-500 ml-2 flex-shrink-0">
-              {answeredCount}/{totalQuestions}
-            </span>
+            <div className="flex items-center gap-2 ml-2 flex-shrink-0">
+              <span className="text-xs text-gray-500">
+                {answeredCount}/{totalQuestions}
+              </span>
+              <LangToggle className="border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400" />
+            </div>
           </div>
           {/* Progress bar */}
           <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">

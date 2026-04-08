@@ -22,10 +22,11 @@ export async function GET() {
         orderBy: { order: "asc" },
       },
       sessions: {
-        where: { status: "completed" },
+        where: { status: "completed", isTest: false },
         select: {
           id: true,
           createdAt: true,
+          googleClickedAt: true,
           answers: { select: { questionId: true, choiceId: true, textValue: true } },
         },
         orderBy: { createdAt: "desc" },
@@ -55,20 +56,36 @@ export async function GET() {
       };
     });
 
+  // Get all sessions (including in_progress) for access count
+  const allSessions = await prisma.reviewSession.findMany({
+    where: { surveyId: survey.id, isTest: false },
+    select: { id: true, createdAt: true, status: true },
+  });
+
   const now = new Date();
-  const monthlySessions: { month: string; count: number }[] = [];
+  const monthlyData: { month: string; access: number; completed: number; googleClick: number }[] = [];
   for (let i = 5; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
     const start = new Date(d.getFullYear(), d.getMonth(), 1);
     const end = new Date(d.getFullYear(), d.getMonth() + 1, 1);
-    const count = survey.sessions.filter(
+
+    const access = allSessions.filter(
       (s) => new Date(s.createdAt) >= start && new Date(s.createdAt) < end
     ).length;
-    monthlySessions.push({ month: `${d.getFullYear()}/${d.getMonth() + 1}`, count });
+    const completed = survey.sessions.filter(
+      (s) => new Date(s.createdAt) >= start && new Date(s.createdAt) < end
+    ).length;
+    const googleClick = survey.sessions.filter(
+      (s) => new Date(s.createdAt) >= start && new Date(s.createdAt) < end && s.googleClickedAt
+    ).length;
+
+    monthlyData.push({ month: `${d.getFullYear()}/${d.getMonth() + 1}`, access, completed, googleClick });
   }
 
-  return NextResponse.json({ totalSessions: survey.sessions.length, chartData, monthlySessions });
+  return NextResponse.json({ totalSessions: survey.sessions.length, chartData, monthlyData });
 }
+
+const PREMIUM_PLANS = ["premium", "lifetime_premium"];
 
 export async function POST() {
   const session = getSessionForRole("admin") || getSessionForRole("super");
@@ -78,8 +95,13 @@ export async function POST() {
 
   const user = await prisma.user.findUnique({
     where: { id: session.userId },
-    select: { lastAnalysisAt: true },
+    select: { lastAnalysisAt: true, planType: true },
   });
+
+  // AI analysis report is premium-only
+  if (!user || !PREMIUM_PLANS.includes(user.planType ?? "")) {
+    return NextResponse.json({ error: "AI分析レポートはプレミアムプランでのみご利用いただけます" }, { status: 403 });
+  }
 
   if (user?.lastAnalysisAt) {
     const last = new Date(user.lastAnalysisAt);

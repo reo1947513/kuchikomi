@@ -22,6 +22,8 @@ type Shop = {
   contractEnd?: string | null;
   noContractLimit?: boolean;
   sessionCount?: number;
+  stripeSubscriptionId?: string | null;
+  planType?: string | null;
 };
 
 type EditForm = {
@@ -187,6 +189,21 @@ export default function ShopsPage() {
     }
   };
 
+  const handleCancelContract = async (shop: Shop) => {
+    if (!confirm(`「${shop.shopName ?? shop.name}」の契約を解約しますか？Stripeのサブスクリプションもキャンセルされます。`)) return;
+    try {
+      const res = await fetch(`/api/admin/shops/${shop.id}/cancel`, { method: "POST" });
+      if (!res.ok) {
+        const d = await res.json();
+        throw new Error(d.error || "解約に失敗しました");
+      }
+      alert("解約処理が完了しました");
+      fetchShops();
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "解約に失敗しました");
+    }
+  };
+
   const handleDelete = async (shop: Shop) => {
     if (!confirm(`「${shop.shopName ?? shop.name}」を削除しますか？`)) return;
     try {
@@ -251,15 +268,33 @@ export default function ShopsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <h1 className="text-xl md:text-2xl font-bold text-gray-900">ショップ管理</h1>
-        <button
-          onClick={() => setAddOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white font-semibold rounded-xl shadow transition-colors text-sm w-full sm:w-auto justify-center sm:justify-start"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          新規ショップ登録
-        </button>
+        <div className="flex gap-2 w-full sm:w-auto">
+          <button
+            onClick={async () => {
+              try {
+                const res = await fetch("/api/admin/invite");
+                const d = await res.json();
+                await navigator.clipboard.writeText(d.url);
+                alert("招待リンクをコピーしました");
+              } catch { alert("コピーに失敗しました"); }
+            }}
+            className="flex items-center gap-2 px-4 py-2 border border-violet-400 text-violet-600 font-semibold rounded-xl hover:bg-violet-50 transition-colors text-sm flex-1 sm:flex-none justify-center"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+            </svg>
+            招待リンクをコピー
+          </button>
+          <button
+            onClick={() => setAddOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 text-white font-semibold rounded-xl shadow transition-colors text-sm flex-1 sm:flex-none justify-center"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            新規ショップ登録
+          </button>
+        </div>
       </div>
 
       {/* Stats + Search */}
@@ -283,8 +318,8 @@ export default function ShopsPage() {
 
       {error && <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">{error}</div>}
 
-      {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
+      {/* Table - Desktop */}
+      <div className="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
         <table className="w-full text-sm min-w-[800px]">
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50">
@@ -292,6 +327,8 @@ export default function ShopsPage() {
               <th className="text-left px-4 py-3 font-semibold text-gray-700 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("name")}>担当者名{sortKey === "name" && (sortDir === "asc" ? " ▲" : " ▼")}</th>
               <th className="text-left px-4 py-3 font-semibold text-gray-700 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("sessionCount")}>アクセス回数{sortKey === "sessionCount" && (sortDir === "asc" ? " ▲" : " ▼")}</th>
               <th className="text-left px-4 py-3 font-semibold text-gray-700 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("contractDays")}>契約残日数{sortKey === "contractDays" && (sortDir === "asc" ? " ▲" : " ▼")}</th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-700">プラン</th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-700">メール</th>
               <th className="text-left px-4 py-3 font-semibold text-gray-700">住所</th>
               <th className="text-left px-4 py-3 font-semibold text-gray-700">代理店</th>
               <th className="text-right px-4 py-3 font-semibold text-gray-700">操作</th>
@@ -326,6 +363,23 @@ export default function ShopsPage() {
                     <span className="text-gray-400">未設定</span>
                   )}
                 </td>
+                <td className="px-4 py-3">
+                  {(() => {
+                    const p = shop.planType;
+                    if (!p) return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">無料</span>;
+                    const labels: Record<string, { label: string; cls: string }> = {
+                      light: { label: "ライト", cls: "bg-blue-100 text-blue-700" },
+                      standard: { label: "スタンダード", cls: "bg-violet-100 text-violet-700" },
+                      premium: { label: "プレミアム", cls: "bg-amber-100 text-amber-700" },
+                      lifetime_light: { label: "永年ライト", cls: "bg-blue-100 text-blue-700" },
+                      lifetime_standard: { label: "永年スタンダード", cls: "bg-violet-100 text-violet-700" },
+                      lifetime_premium: { label: "永年プレミアム", cls: "bg-amber-100 text-amber-700" },
+                    };
+                    const info = labels[p] || { label: p, cls: "bg-gray-100 text-gray-600" };
+                    return <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${info.cls}`}>{info.label}</span>;
+                  })()}
+                </td>
+                <td className="px-4 py-3 text-xs text-gray-500 max-w-[180px] truncate">{shop.email ?? "—"}</td>
                 <td className="px-4 py-3 text-gray-600 max-w-xs truncate">{shop.address ?? "—"}</td>
                 <td className="px-4 py-3 text-gray-600">{shop.agencyName ?? "—"}</td>
                 <td className="px-4 py-3">
@@ -347,6 +401,13 @@ export default function ShopsPage() {
                       編集
                     </button>
                     <button
+                      onClick={() => handleCancelContract(shop)}
+                      disabled={!shop.stripeSubscriptionId && !shop.planType}
+                      className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-orange-500 hover:bg-orange-600 text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      解約
+                    </button>
+                    <button
                       onClick={() => handleDelete(shop)}
                       className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg bg-red-500 hover:bg-red-600 text-white transition-colors"
                     >
@@ -359,6 +420,57 @@ export default function ShopsPage() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Cards */}
+      <div className="md:hidden space-y-3">
+        {loading && <p className="text-center py-8 text-gray-400 text-sm">読み込み中...</p>}
+        {!loading && shops.length === 0 && <p className="text-center py-8 text-gray-400 text-sm">ショップが見つかりません</p>}
+        {!loading && shops.map((shop) => {
+          const planLabelsM: Record<string, { label: string; cls: string }> = {
+            light: { label: "ライト", cls: "bg-blue-100 text-blue-700" },
+            standard: { label: "スタンダード", cls: "bg-violet-100 text-violet-700" },
+            premium: { label: "プレミアム", cls: "bg-amber-100 text-amber-700" },
+            lifetime_light: { label: "永年ライト", cls: "bg-blue-100 text-blue-700" },
+            lifetime_standard: { label: "永年スタンダード", cls: "bg-violet-100 text-violet-700" },
+            lifetime_premium: { label: "永年プレミアム", cls: "bg-amber-100 text-amber-700" },
+          };
+          const planInfo = shop.planType ? planLabelsM[shop.planType] || { label: shop.planType, cls: "bg-gray-100 text-gray-600" } : { label: "無料", cls: "bg-gray-100 text-gray-500" };
+          const contractLabel = shop.noContractLimit ? "無期限" : shop.contractEnd ? (() => {
+            const days = Math.ceil((new Date(shop.contractEnd).getTime() - Date.now()) / 86400000);
+            return days > 0 ? `残り${days}日` : "契約終了";
+          })() : "未設定";
+
+          return (
+            <div key={shop.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+              <div className="flex items-start justify-between mb-2">
+                <div>
+                  <p className="font-bold text-gray-900">{shop.shopName ?? shop.name}</p>
+                  <p className="text-xs text-gray-400">{shop.loginId}</p>
+                </div>
+                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${planInfo.cls}`}>{planInfo.label}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs mb-3">
+                <div><span className="text-gray-400">担当者: </span><span className="text-gray-700">{shop.name}</span></div>
+                <div><span className="text-gray-400">アクセス: </span><span className="text-gray-700">{shop.sessionCount ?? 0}回</span></div>
+                <div><span className="text-gray-400">契約: </span><span className="text-gray-700">{contractLabel}</span></div>
+                <div><span className="text-gray-400">メール: </span><span className="text-gray-700 truncate">{shop.email ?? "—"}</span></div>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {shop.firstSurveyId && (
+                  <button onClick={() => router.push(`/dashboard/surveys/${shop.firstSurveyId}/settings`)}
+                    className="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-blue-500 text-white">アンケート</button>
+                )}
+                <button onClick={() => openEdit(shop)}
+                  className="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-gradient-to-r from-cyan-500 to-violet-500 text-white">編集</button>
+                <button onClick={() => handleCancelContract(shop)} disabled={!shop.stripeSubscriptionId && !shop.planType}
+                  className="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-orange-500 text-white disabled:opacity-40">解約</button>
+                <button onClick={() => handleDelete(shop)}
+                  className="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-red-500 text-white">削除</button>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* Pagination */}
