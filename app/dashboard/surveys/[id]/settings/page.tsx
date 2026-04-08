@@ -507,15 +507,12 @@ export default function SurveySettingsPage() {
   }
 
   const isPremiumUser = userPlanType === "premium" || userPlanType === "lifetime_premium";
+  const canEditAll = isPremiumUser || userRole === "super";
 
   const tabs: { key: Tab; label: string; locked?: boolean }[] = [
-    ...(userRole === "super" ? [
-      { key: "basic" as Tab, label: "基本設定" },
-    ] : []),
-    { key: "ai" as Tab, label: "AI設定", locked: !isPremiumUser && userRole !== "super" },
-    ...(userRole === "super" ? [
-      { key: "questions" as Tab, label: "質問管理" },
-    ] : []),
+    { key: "basic" as Tab, label: "基本設定", locked: !canEditAll },
+    { key: "ai" as Tab, label: "AI設定", locked: !canEditAll },
+    { key: "questions" as Tab, label: "質問管理", locked: !canEditAll },
     { key: "logo", label: "ロゴ・クーポン" },
     { key: "color", label: "カラー設定" },
   ];
@@ -602,8 +599,24 @@ export default function SurveySettingsPage() {
           </nav>
         </div>
 
-        {/* ===== Tab: 基本設定 ===== */}
-        {activeTab === "basic" && (
+        {/* ===== Tab: 基本設定 (locked for non-premium) ===== */}
+        {activeTab === "basic" && !canEditAll && (
+          <div className="bg-white rounded-xl shadow p-6 sm:p-10 text-center space-y-4 premium-fade-in">
+            <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center mx-auto premium-lock-float">
+              <svg className="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold text-gray-700">基本設定はプレミアムプラン限定です</h3>
+            <p className="text-sm text-gray-500 max-w-md mx-auto">
+              プレミアムプランにアップグレードすると、アンケートタイトル・挨拶文・GoogleビジネスURL・公開設定などを自由に編集できます。
+            </p>
+            <a href="/dashboard/billing" className="inline-block px-6 py-3 text-white font-bold text-sm rounded-xl shadow premium-shimmer-btn premium-pulse">
+              プランをアップグレード
+            </a>
+          </div>
+        )}
+        {activeTab === "basic" && canEditAll && (
           <div className="bg-white rounded-xl shadow p-4 sm:p-6 space-y-4">
             <Field label="アンケートタイトル" required>
               <input
@@ -695,7 +708,7 @@ export default function SurveySettingsPage() {
         )}
 
         {/* ===== Tab: AI設定 ===== */}
-        {activeTab === "ai" && !isPremiumUser && userRole !== "super" && (
+        {activeTab === "ai" && !canEditAll && (
           <div className="bg-white rounded-xl shadow p-6 sm:p-10 text-center space-y-4 premium-fade-in">
             <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center mx-auto premium-lock-float">
               <svg className="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -719,7 +732,7 @@ export default function SurveySettingsPage() {
             </a>
           </div>
         )}
-        {activeTab === "ai" && (isPremiumUser || userRole === "super") && (
+        {activeTab === "ai" && canEditAll && (
           <div className="bg-white rounded-xl shadow p-4 sm:p-6 space-y-4">
             {/* 固定プロンプト表示 */}
             <div>
@@ -730,7 +743,7 @@ export default function SurveySettingsPage() {
             </div>
 
             <Field label="AIプロンプトテンプレート（カスタム部分）">
-              {(userPlanType === "premium" || userPlanType === "lifetime_premium" || userRole === "super") ? (
+              {canEditAll ? (
                 <>
                   <p className="text-xs text-gray-400 mb-1">
                     変数: &#123;tone&#125;, &#123;keywords&#125;
@@ -816,8 +829,24 @@ export default function SurveySettingsPage() {
           </div>
         )}
 
-        {/* ===== Tab: 質問管理 ===== */}
-        {activeTab === "questions" && (
+        {/* ===== Tab: 質問管理 (locked for non-premium) ===== */}
+        {activeTab === "questions" && !canEditAll && (
+          <div className="bg-white rounded-xl shadow p-6 sm:p-10 text-center space-y-4 premium-fade-in">
+            <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center mx-auto premium-lock-float">
+              <svg className="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold text-gray-700">質問管理はプレミアムプラン限定です</h3>
+            <p className="text-sm text-gray-500 max-w-md mx-auto">
+              プレミアムプランにアップグレードすると、アンケートの質問内容・選択肢・順序を自由に編集できます。
+            </p>
+            <a href="/dashboard/billing" className="inline-block px-6 py-3 text-white font-bold text-sm rounded-xl shadow premium-shimmer-btn premium-pulse">
+              プランをアップグレード
+            </a>
+          </div>
+        )}
+        {activeTab === "questions" && canEditAll && (
           <div className="space-y-4">
             <div className="bg-white rounded-xl shadow divide-y divide-gray-100">
 
