@@ -546,10 +546,21 @@ export default function SurveySettingsPage() {
           </div>
         )}
         {saveMsg && (
-          <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm">
-            {saveMsg}
+          <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none" style={{ animation: "toastIn 0.3s ease-out" }}>
+            <div className="bg-gray-900/90 text-white px-8 py-4 rounded-2xl shadow-2xl flex items-center gap-3 pointer-events-auto" style={{ animation: "toastIn 0.3s ease-out" }}>
+              <svg className="w-6 h-6 text-green-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+              </svg>
+              <span className="text-sm font-semibold">{saveMsg}</span>
+            </div>
           </div>
         )}
+        <style>{`
+          @keyframes toastIn {
+            from { opacity: 0; transform: scale(0.85); }
+            to { opacity: 1; transform: scale(1); }
+          }
+        `}</style>
 
         {/* Survey URL & QR Code */}
         <div className="bg-white rounded-xl shadow-sm p-3 sm:p-5 mb-6">
