@@ -6,7 +6,8 @@ import crypto from "crypto";
 export async function GET() {
   const session = getSession();
   if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://comista-kuchikomi.com";
+    return NextResponse.redirect(`${appUrl}/login?redirect=/api/line/auth`);
   }
 
   const channelId = process.env.LINE_LOGIN_CHANNEL_ID;
