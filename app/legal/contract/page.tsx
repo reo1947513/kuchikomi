@@ -5,7 +5,7 @@ export default function ContractPage() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200 print:hidden">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-          <a href="/lp"><img src="/logo.png" alt="ComiSta" className="h-8" /></a>
+          <a href="/"><img src="/logo.png" alt="ComiSta" className="h-8" /></a>
           <button
             onClick={() => { if (typeof window !== 'undefined') window.print(); }}
             className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-violet-500 text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity"
