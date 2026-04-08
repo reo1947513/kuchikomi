@@ -23,14 +23,6 @@ interface PlanCard {
 
 const subscriptionPlans: PlanCard[] = [
   {
-    name: "ライトプラン",
-    priceLabel: "¥6,000/月",
-    reviews: 50,
-    priceId: "", // Will be set from Stripe
-    mode: "subscription",
-    planType: "light",
-  },
-  {
     name: "スタンダードプラン",
     priceLabel: "¥10,000/月",
     reviews: 100,
@@ -49,14 +41,6 @@ const subscriptionPlans: PlanCard[] = [
 ];
 
 const lifetimePlans: PlanCard[] = [
-  {
-    name: "永年ライセンス ライト",
-    priceLabel: "¥90,000（一括）",
-    reviews: 50,
-    priceId: "",
-    mode: "payment",
-    planType: "lifetime_light",
-  },
   {
     name: "永年ライセンス スタンダード",
     priceLabel: "¥150,000（一括）",
@@ -93,10 +77,8 @@ const additionalPacks = [
 ];
 
 const planLabels: Record<string, string> = {
-  light: "ライトプラン",
   standard: "スタンダードプラン",
   premium: "プレミアムプラン",
-  lifetime_light: "永年ライセンス ライト",
   lifetime_standard: "永年ライセンス スタンダード",
   lifetime_premium: "永年ライセンス プレミアム",
 };
@@ -237,7 +219,7 @@ export default function BillingPage() {
       {/* Subscription Plans */}
       <section>
         <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-4">月額サブスクリプション</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {prices.subscriptions.map((plan) => {
             const isCurrent = user.planType === plan.planType;
             return (
@@ -274,7 +256,7 @@ export default function BillingPage() {
       {/* Lifetime Licenses */}
       <section>
         <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-4">永年ライセンス（買い切り）</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {prices.lifetime.map((plan) => {
             const isCurrent = user.planType === plan.planType;
             return (

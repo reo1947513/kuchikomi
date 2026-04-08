@@ -14,14 +14,12 @@ function getPlanFromPrice(priceId: string, amount: number | null, interval: stri
 } | null {
   // Subscription plans (recurring)
   if (interval === "month") {
-    if (amount === 6000) return { planType: "light", planReviewLimit: 50 };
     if (amount === 10000) return { planType: "standard", planReviewLimit: 100 };
     if (amount === 20000) return { planType: "premium", planReviewLimit: 300 };
   }
 
   // One-time: lifetime licenses
   if (!interval || interval === null) {
-    if (amount === 90000) return { planType: "lifetime_light", planReviewLimit: 50 };
     if (amount === 150000) return { planType: "lifetime_standard", planReviewLimit: 100 };
     if (amount === 250000) return { planType: "lifetime_premium", planReviewLimit: 300 };
 

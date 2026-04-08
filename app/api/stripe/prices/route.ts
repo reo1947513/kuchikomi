@@ -5,13 +5,11 @@ import { stripe } from "@/lib/stripe";
 
 // Map Stripe amounts to plan config
 const SUBSCRIPTION_AMOUNTS: Record<number, { name: string; planType: string; reviews: number; priceLabel: string }> = {
-  6000: { name: "ライトプラン", planType: "light", reviews: 50, priceLabel: "¥6,000/月" },
   10000: { name: "スタンダードプラン", planType: "standard", reviews: 100, priceLabel: "¥10,000/月" },
   20000: { name: "プレミアムプラン", planType: "premium", reviews: 300, priceLabel: "¥20,000/月" },
 };
 
 const LIFETIME_AMOUNTS: Record<number, { name: string; planType: string; reviews: number; priceLabel: string }> = {
-  90000: { name: "永年ライセンス ライト", planType: "lifetime_light", reviews: 50, priceLabel: "¥90,000（一括）" },
   150000: { name: "永年ライセンス スタンダード", planType: "lifetime_standard", reviews: 100, priceLabel: "¥150,000（一括）" },
   250000: { name: "永年ライセンス プレミアム", planType: "lifetime_premium", reviews: 300, priceLabel: "¥250,000（一括）" },
 };

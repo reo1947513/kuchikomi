@@ -543,15 +543,8 @@ export default function LpPage() {
           <p className="text-center text-gray-500 mb-16 text-lg">
             {t("pricing.desc")}
           </p>
-          <div className="grid md:grid-cols-3 gap-6 items-start">
+          <div className="grid md:grid-cols-2 gap-6 items-start max-w-4xl mx-auto">
             {[
-              {
-                name: t("pricing.light"),
-                price: "6,000",
-                limit: t("pricing.light.limit"),
-                target: t("pricing.light.target"),
-                popular: false,
-              },
               {
                 name: t("pricing.standard"),
                 price: "10,000",
