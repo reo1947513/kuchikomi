@@ -24,10 +24,10 @@ export async function GET() {
     redirect_uri: redirectUri,
     state,
     scope: "profile openid",
-    bot_prompt: "aggressive", // 友だち追加を積極的に促す
+    bot_prompt: "aggressive",
   });
 
-  const url = `https://access.line.me/oauth2/v2.1/authorize?${params.toString()}`;
+  const lineAuthUrl = `https://access.line.me/oauth2/v2.1/authorize?${params.toString()}`;
 
-  return NextResponse.redirect(url);
+  return NextResponse.redirect(lineAuthUrl);
 }
