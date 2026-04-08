@@ -12,6 +12,7 @@ export async function GET(request: NextRequest) {
   const dashboardUrl = `${appUrl}/dashboard/settings`;
 
   if (error || !code || !state) {
+    console.error("LINE callback params missing:", { error, hasCode: !!code, hasState: !!state });
     return NextResponse.redirect(`${dashboardUrl}?line=error`);
   }
 
@@ -19,14 +20,16 @@ export async function GET(request: NextRequest) {
   const parts = state.split(":");
   const userId = parts[1];
   if (!userId) {
+    console.error("LINE callback: userId not found in state:", state);
     return NextResponse.redirect(`${dashboardUrl}?line=error`);
   }
 
   try {
-    // Exchange code for access token
     const channelId = process.env.LINE_LOGIN_CHANNEL_ID;
     const channelSecret = process.env.LINE_LOGIN_CHANNEL_SECRET;
     const redirectUri = `${appUrl}/api/line/callback`;
+
+    console.log("LINE callback: exchanging token", { channelId, redirectUri, userId });
 
     const tokenRes = await fetch("https://api.line.me/oauth2/v2.1/token", {
       method: "POST",
@@ -41,14 +44,14 @@ export async function GET(request: NextRequest) {
     });
 
     if (!tokenRes.ok) {
-      console.error("LINE token exchange failed:", await tokenRes.text());
+      const errText = await tokenRes.text();
+      console.error("LINE token exchange failed:", tokenRes.status, errText);
       return NextResponse.redirect(`${dashboardUrl}?line=error`);
     }
 
     const tokenData = await tokenRes.json();
     const accessToken = tokenData.access_token;
 
-    // Get LINE profile
     const profileRes = await fetch("https://api.line.me/v2/profile", {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
@@ -61,12 +64,14 @@ export async function GET(request: NextRequest) {
     const profile = await profileRes.json();
     const lineUserId = profile.userId;
 
-    // Save LINE user ID to the user record
+    console.log("LINE callback: saving lineUserId for user", userId);
+
     await prisma.user.update({
       where: { id: userId },
       data: { lineUserId },
     });
 
+    console.log("LINE callback: success");
     return NextResponse.redirect(`${dashboardUrl}?line=success`);
   } catch (e) {
     console.error("LINE callback error:", e);
