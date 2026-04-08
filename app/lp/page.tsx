@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useLang, LangToggle } from "@/lib/i18n";
+import { lpDict } from "@/lib/dictionaries/lp";
 
 /* ─── Scroll‑reveal hook ─── */
 function useReveal() {
@@ -110,6 +112,8 @@ function BgBlob({
 
 /* ─── Main Page ─── */
 export default function LpPage() {
+  const { lang } = useLang();
+  const t = (key: string) => lpDict[key]?.[lang] ?? lpDict[key]?.ja ?? key;
   const [menuOpen, setMenuOpen] = useState(false);
   const [showTop, setShowTop] = useState(false);
 
@@ -127,10 +131,10 @@ export default function LpPage() {
   }, []);
 
   const navLinks = [
-    { label: "特徴", id: "features" },
-    { label: "料金", id: "pricing" },
-    { label: "導入の流れ", id: "flow" },
-    { label: "FAQ", id: "faq" },
+    { label: t("nav.features"), id: "features" },
+    { label: t("nav.pricing"), id: "pricing" },
+    { label: t("nav.flow"), id: "flow" },
+    { label: t("nav.faq"), id: "faq" },
   ];
 
   return (
@@ -155,8 +159,9 @@ export default function LpPage() {
               onClick={() => scrollTo("contact")}
               className="bg-gradient-to-r from-cyan-500 to-violet-500 text-white text-sm font-semibold px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity shadow-lg shadow-cyan-500/25"
             >
-              お問い合わせ
+              {t("nav.contact")}
             </button>
+            <LangToggle className="border-gray-300 text-gray-500 hover:text-gray-800 hover:border-gray-400" />
           </nav>
 
           {/* Mobile hamburger */}
@@ -206,8 +211,11 @@ export default function LpPage() {
               onClick={() => handleNav("contact")}
               className="mt-2 w-full bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-semibold py-3 rounded-full"
             >
-              お問い合わせ
+              {t("nav.contact")}
             </button>
+            <div className="mt-2 flex justify-center">
+              <LangToggle className="border-gray-300 text-gray-500 hover:text-gray-800 hover:border-gray-400" />
+            </div>
           </div>
         )}
       </header>
@@ -255,21 +263,21 @@ export default function LpPage() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white/90 text-sm font-medium px-5 py-2 rounded-full mb-8" style={{ animation: "heroFadeUp 0.8s ease-out forwards", opacity: 0 }}>
             <span>🚀</span>
-            <span>店舗集客の新常識</span>
+            <span>{t("hero.badge")}</span>
           </div>
           <h1 className="text-4xl md:text-6xl lg:text-8xl font-extrabold leading-tight tracking-tight" style={{ animation: "heroScale 1s ease-out 0.3s forwards", opacity: 0 }}>
             <span style={{ backgroundImage: "linear-gradient(90deg, #22d3ee, #a78bfa, #d946ef, #22d3ee)", backgroundSize: "200% auto", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", animation: "shimmer 4s linear infinite" }}>
-              口コミが、
+              {t("hero.title1")}
             </span>
             <br />
             <span style={{ backgroundImage: "linear-gradient(90deg, #22d3ee, #a78bfa, #d946ef, #22d3ee)", backgroundSize: "200% auto", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", animation: "shimmer 4s linear infinite 0.5s" }}>
-              勝手に増える。
+              {t("hero.title2")}
             </span>
           </h1>
           <p className="mt-8 text-lg md:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed" style={{ animation: "heroFadeUp 0.8s ease-out 0.6s forwards", opacity: 0 }}>
-            たった3分のアンケートで、AIが高品質な口コミを自動生成。
+            {t("hero.desc1")}{t("hero.desc2")}
             <br className="hidden md:block" />
-            Googleマップの評価を劇的に改善します。
+            {t("hero.desc3")}
           </p>
           <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4" style={{ animation: "heroFadeUp 0.8s ease-out 0.9s forwards", opacity: 0 }}>
             <button
@@ -277,11 +285,11 @@ export default function LpPage() {
               className="bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold px-10 py-5 rounded-full text-lg shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-all"
               style={{ animation: "heroPulse 3s ease-in-out infinite 1.5s" }}
             >
-              お問い合わせはこちら
+              {t("hero.cta")}
             </button>
           </div>
           <p className="mt-5 text-sm text-gray-400">
-            初期費用0円・最短即日導入
+            {t("hero.sub")}
           </p>
         </div>
         {/* Bottom fade to white */}
@@ -294,33 +302,33 @@ export default function LpPage() {
         <BgBlob className="w-[400px] h-[400px] bg-orange-300 bottom-0 -left-40" />
         <div className="relative max-w-6xl mx-auto px-4">
           <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-16">
-            その悩み、
+            {t("problem.title1")}
             <span className="bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
               ComiSta
             </span>
-            が終わらせます。
+            {t("problem.title2")}
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
                 icon: "😔",
-                title: "口コミを書いてもらえない",
-                desc: "お客様に口コミをお願いするのが気まずい",
+                title: t("problem.1.title"),
+                desc: t("problem.1.desc"),
               },
               {
                 icon: "⭐",
-                title: "Googleマップの評価が低い",
-                desc: "競合に比べて星の数が少ない",
+                title: t("problem.2.title"),
+                desc: t("problem.2.desc"),
               },
               {
                 icon: "⏰",
-                title: "口コミ対策に時間がかかる",
-                desc: "忙しくて口コミ管理まで手が回らない",
+                title: t("problem.3.title"),
+                desc: t("problem.3.desc"),
               },
               {
                 icon: "❓",
-                title: "何を書けばいいかわからない",
-                desc: "お客様が口コミの書き方に困っている",
+                title: t("problem.4.title"),
+                desc: t("problem.4.desc"),
               },
             ].map((item) => (
               <div
@@ -353,36 +361,36 @@ export default function LpPage() {
         />
         <div className="relative max-w-5xl mx-auto px-4">
           <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-4">
-            仕組みはシンプル。
+            {t("solution.title1")}
             <br className="md:hidden" />
             <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
-              効果は絶大。
+              {t("solution.title2")}
             </span>
           </h2>
           <p className="text-center text-gray-500 mb-16 text-lg">
-            3ステップで口コミを簡単収集
+            {t("solution.desc")}
           </p>
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
                 num: "01",
                 icon: "📱",
-                title: "アンケートに回答",
-                desc: "QRコードを読み取って簡単なアンケートに回答",
+                title: t("solution.1.title"),
+                desc: t("solution.1.desc"),
                 gradient: "from-cyan-500 to-blue-500",
               },
               {
                 num: "02",
                 icon: "🤖",
-                title: "AIが口コミを自動生成",
-                desc: "回答内容をもとにAIが自然な口コミ文章を作成",
+                title: t("solution.2.title"),
+                desc: t("solution.2.desc"),
                 gradient: "from-violet-500 to-purple-500",
               },
               {
                 num: "03",
                 icon: "📍",
-                title: "Googleマップに投稿",
-                desc: "ワンタップでGoogleマップに口コミを投稿",
+                title: t("solution.3.title"),
+                desc: t("solution.3.desc"),
                 gradient: "from-fuchsia-500 to-pink-500",
               },
             ].map((step) => (
@@ -419,45 +427,45 @@ export default function LpPage() {
         <div className="relative max-w-6xl mx-auto px-4">
           <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-16">
             <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-              選ばれ続ける、6つの理由
+              {t("features.title")}
             </span>
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
                 icon: "✨",
-                title: "AIによる自然な文章生成",
-                desc: "実際のお客様の声に基づいた自然な口コミを自動生成",
+                title: t("features.1.title"),
+                desc: t("features.1.desc"),
                 gradient: "from-cyan-500 to-blue-500",
               },
               {
                 icon: "💬",
-                title: "チャット形式のアンケート",
-                desc: "LINEのようなUIで回答率90%以上",
+                title: t("features.2.title"),
+                desc: t("features.2.desc"),
                 gradient: "from-violet-500 to-purple-500",
               },
               {
                 icon: "📷",
-                title: "QRコードで簡単導入",
-                desc: "お客様はQRコードを読み取るだけ。アプリ不要",
+                title: t("features.3.title"),
+                desc: t("features.3.desc"),
                 gradient: "from-fuchsia-500 to-pink-500",
               },
               {
                 icon: "📊",
-                title: "リアルタイム分析",
-                desc: "回答データをリアルタイムで分析。改善点が一目瞭然",
+                title: t("features.4.title"),
+                desc: t("features.4.desc"),
                 gradient: "from-amber-500 to-orange-500",
               },
               {
                 icon: "🎨",
-                title: "カスタマイズ自由",
-                desc: "ロゴ、カラー、質問内容を自由にカスタマイズ",
+                title: t("features.5.title"),
+                desc: t("features.5.desc"),
                 gradient: "from-emerald-500 to-teal-500",
               },
               {
                 icon: "🏪",
-                title: "複数業種対応",
-                desc: "飲食店、美容室、整骨院、バー、エステ、ラウンジなど幅広く対応",
+                title: t("features.6.title"),
+                desc: t("features.6.desc"),
                 gradient: "from-rose-500 to-red-500",
               },
             ].map((f) => (
@@ -486,20 +494,20 @@ export default function LpPage() {
         <BgBlob className="w-[400px] h-[400px] bg-violet-200 -bottom-40 left-0" />
         <div className="relative max-w-5xl mx-auto px-4">
           <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-16">
-            あらゆる店舗ビジネスに、
+            {t("industries.title1")}
             <br className="md:hidden" />
             <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
-              すぐ導入。
+              {t("industries.title2")}
             </span>
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {[
-              { icon: "🍽️", label: "飲食店・レストラン" },
-              { icon: "💇", label: "美容室・ヘアサロン" },
-              { icon: "💆", label: "整骨院・整体院" },
-              { icon: "✨", label: "エステサロン" },
-              { icon: "🍸", label: "バー" },
-              { icon: "🌙", label: "ラウンジ・スナック" },
+              { icon: "🍽️", label: t("industries.restaurant") },
+              { icon: "💇", label: t("industries.salon") },
+              { icon: "💆", label: t("industries.clinic") },
+              { icon: "✨", label: t("industries.spa") },
+              { icon: "🍸", label: t("industries.bar") },
+              { icon: "🌙", label: t("industries.lounge") },
             ].map((ind) => (
               <div
                 key={ind.label}
@@ -527,35 +535,35 @@ export default function LpPage() {
         />
         <div className="relative max-w-6xl mx-auto px-4">
           <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-3">
-            始めやすい、
+            {t("pricing.title1")}
             <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
-              続けやすい。
+              {t("pricing.title2")}
             </span>
           </h2>
           <p className="text-center text-gray-500 mb-16 text-lg">
-            全プラン初期費用0円
+            {t("pricing.desc")}
           </p>
           <div className="grid md:grid-cols-3 gap-6 items-start">
             {[
               {
-                name: "ライトプラン",
+                name: t("pricing.light"),
                 price: "6,000",
-                limit: "月50件",
-                target: "小規模店舗",
+                limit: t("pricing.light.limit"),
+                target: t("pricing.light.target"),
                 popular: false,
               },
               {
-                name: "スタンダードプラン",
+                name: t("pricing.standard"),
                 price: "10,000",
-                limit: "月100件",
-                target: "中規模店舗",
+                limit: t("pricing.standard.limit"),
+                target: t("pricing.standard.target"),
                 popular: true,
               },
               {
-                name: "プレミアムプラン",
+                name: t("pricing.premium"),
                 price: "20,000",
-                limit: "月300件",
-                target: "大規模・複数店舗",
+                limit: t("pricing.premium.limit"),
+                target: t("pricing.premium.target"),
                 popular: false,
               },
             ].map((plan) => (
@@ -572,7 +580,7 @@ export default function LpPage() {
                     {/* Glow effect */}
                     <div className="absolute -inset-[2px] rounded-3xl bg-gradient-to-r from-cyan-500 via-violet-500 to-fuchsia-500 opacity-20 blur-md -z-10" />
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-500 to-violet-500 text-white text-xs font-bold px-5 py-1.5 rounded-full shadow-lg">
-                      🏆 人気No.1
+                      {t("pricing.popular")}
                     </div>
                   </>
                 )}
@@ -582,18 +590,18 @@ export default function LpPage() {
                   <span className="text-5xl font-black bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
                     ¥{plan.price}
                   </span>
-                  <span className="text-gray-500 text-sm">/月</span>
+                  <span className="text-gray-500 text-sm">{t("pricing.perMonth")}</span>
                 </div>
                 <p className="text-sm text-cyan-600 font-semibold mb-6">
                   {plan.limit}
                 </p>
                 <ul className="space-y-3 text-sm text-gray-600">
                   {[
-                    "AIによる口コミ自動生成",
-                    "チャット形式アンケート",
-                    "QRコード発行",
-                    "リアルタイム分析",
-                    "カスタマーサポート",
+                    t("pricing.feat.ai"),
+                    t("pricing.feat.chat"),
+                    t("pricing.feat.qr"),
+                    t("pricing.feat.analytics"),
+                    t("pricing.feat.support"),
                   ].map((feat) => (
                     <li key={feat} className="flex items-center gap-2">
                       <svg
@@ -621,13 +629,13 @@ export default function LpPage() {
                       : "border border-gray-300 text-gray-700 hover:bg-gray-50"
                   }`}
                 >
-                  お問い合わせ
+                  {t("pricing.contact")}
                 </button>
               </div>
             ))}
           </div>
           <p className="text-center text-sm text-gray-500 mt-10">
-            永年ライセンスもご用意しています。詳しくはお問い合わせください。
+            {t("pricing.lifetimeNote")}
           </p>
         </div>
       </Section>
@@ -638,32 +646,32 @@ export default function LpPage() {
         <BgBlob className="w-[400px] h-[400px] bg-violet-200 -bottom-40 right-1/4" />
         <div className="relative max-w-5xl mx-auto px-4">
           <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-16">
-            最短即日、
+            {t("flow.title1")}
             <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
-              かんたん4ステップ
+              {t("flow.title2")}
             </span>
           </h2>
           <div className="grid md:grid-cols-4 gap-8">
             {[
               {
                 num: "1",
-                title: "お問い合わせ",
-                desc: "まずはお気軽にご相談ください",
+                title: t("flow.1.title"),
+                desc: t("flow.1.desc"),
               },
               {
                 num: "2",
-                title: "アカウント発行",
-                desc: "最短即日でご利用開始",
+                title: t("flow.2.title"),
+                desc: t("flow.2.desc"),
               },
               {
                 num: "3",
-                title: "アンケート設定",
-                desc: "質問内容やデザインをカスタマイズ",
+                title: t("flow.3.title"),
+                desc: t("flow.3.desc"),
               },
               {
                 num: "4",
-                title: "運用開始",
-                desc: "QRコードを設置して口コミ収集スタート",
+                title: t("flow.4.title"),
+                desc: t("flow.4.desc"),
               },
             ].map((s, i) => (
               <div key={s.num} className="text-center relative">
@@ -687,36 +695,36 @@ export default function LpPage() {
         <BgBlob className="w-[400px] h-[400px] bg-violet-200 bottom-0 -right-40" />
         <div className="relative max-w-3xl mx-auto px-4">
           <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-16">
-            気になるギモン、
+            {t("faq.title1")}
             <br className="md:hidden" />
             <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
-              すべて解消。
+              {t("faq.title2")}
             </span>
           </h2>
           <div className="space-y-4">
             <FaqItem
-              q="初期費用はかかりますか？"
-              a="いいえ、初期費用は一切かかりません。月額プランのみでご利用いただけます。"
+              q={t("faq.1.q")}
+              a={t("faq.1.a")}
             />
             <FaqItem
-              q="契約期間の縛りはありますか？"
-              a="最低6ヶ月からのご契約となります。詳しくはお問い合わせください。"
+              q={t("faq.2.q")}
+              a={t("faq.2.a")}
             />
             <FaqItem
-              q="どんな業種でも使えますか？"
-              a="飲食店、美容室、整骨院、エステ、バー、ラウンジ、スナックなど、店舗型ビジネスであれば業種を問わずご利用いただけます。"
+              q={t("faq.3.q")}
+              a={t("faq.3.a")}
             />
             <FaqItem
-              q="導入にどれくらい時間がかかりますか？"
-              a="最短即日で導入可能です。アカウント発行後すぐにご利用いただけます。"
+              q={t("faq.4.q")}
+              a={t("faq.4.a")}
             />
             <FaqItem
-              q="お客様にアプリをインストールしてもらう必要がありますか？"
-              a="いいえ、アプリのインストールは不要です。QRコードを読み取るだけでブラウザ上でアンケートに回答できます。"
+              q={t("faq.5.q")}
+              a={t("faq.5.a")}
             />
             <FaqItem
-              q="生成された口コミは編集できますか？"
-              a="はい、AIが生成した文章はお客様が自由に編集してから投稿できます。"
+              q={t("faq.6.q")}
+              a={t("faq.6.a")}
             />
           </div>
         </div>
@@ -739,27 +747,27 @@ export default function LpPage() {
         <div className="relative max-w-3xl mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-5xl font-extrabold mb-4">
             <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-              今日から、口コミで差をつけよう。
+              {t("cta.title1")}{t("cta.title2")}
             </span>
           </h2>
           <p className="text-gray-300 mb-6 text-lg">
-            お問い合わせは1分で完了。お気軽にご連絡ください。
+            {t("cta.desc1")}{t("cta.desc2")}
           </p>
           {/* Urgency badge */}
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-400/30 text-orange-300 font-bold text-sm px-5 py-2.5 rounded-full mb-10">
             <span>🔥</span>
-            <span>今なら初月50%OFF キャンペーン実施中</span>
+            <span>{t("cta.campaign")}</span>
           </div>
           <div className="block">
             <a
               href="/contact"
               className="inline-block bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold px-12 py-5 rounded-full text-lg shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-all"
             >
-              お問い合わせ
+              {t("cta.contact")}
             </a>
           </div>
           <p className="mt-8 text-sm text-gray-400">
-            お問い合わせフォームよりお気軽にご連絡ください
+            {t("cta.sub")}
           </p>
         </div>
       </Section>
@@ -783,7 +791,7 @@ export default function LpPage() {
                 href="/login"
                 className="hover:text-white transition-colors"
               >
-                ログイン
+                {t("footer.login")}
               </a>
             </nav>
           </div>

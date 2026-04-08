@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useLang } from "@/lib/i18n";
+import { shareDict } from "@/lib/dictionaries/lp";
 
 interface Survey {
   id: string;
@@ -12,6 +14,8 @@ interface Survey {
 
 export default function SharePage({ params }: { params: { id: string } }) {
   const surveyId = params.id;
+  const { lang } = useLang();
+  const t = (key: string) => shareDict[key]?.[lang] ?? shareDict[key]?.ja ?? key;
   const [survey, setSurvey] = useState<Survey | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,13 +31,13 @@ export default function SharePage({ params }: { params: { id: string } }) {
       try {
         const res = await fetch(`/api/surveys/${surveyId}`);
         if (!res.ok) {
-          setError("アンケートが見つかりませんでした。");
+          setError(t("share.notFound"));
           return;
         }
         const data: Survey = await res.json();
         setSurvey(data);
       } catch {
-        setError("データの取得に失敗しました。");
+        setError(t("share.fetchFailed"));
       } finally {
         setLoading(false);
       }
@@ -82,7 +86,7 @@ export default function SharePage({ params }: { params: { id: string } }) {
               clipRule="evenodd"
             />
           </svg>
-          ダッシュボードに戻る
+          {t("share.backToDashboard")}
         </Link>
       </div>
 
@@ -138,7 +142,7 @@ export default function SharePage({ params }: { params: { id: string } }) {
             {/* QR code section */}
             <div className="mb-5">
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-                アンケートURL
+                {t("share.surveyUrl")}
               </p>
               <div className="flex items-center justify-center bg-white border-2 border-dashed border-violet-300 rounded-xl py-8 px-4 mb-3">
                 <div className="text-center">
@@ -158,7 +162,7 @@ export default function SharePage({ params }: { params: { id: string } }) {
                     </svg>
                   </div>
                   <p className="text-xs text-gray-400">
-                    QRコードは準備中です
+                    {t("share.qrPreparing")}
                   </p>
                 </div>
               </div>
@@ -196,7 +200,7 @@ export default function SharePage({ params }: { params: { id: string } }) {
                         clipRule="evenodd"
                       />
                     </svg>
-                    コピーしました！
+                    {t("share.copied")}
                   </>
                 ) : (
                   <>
@@ -212,7 +216,7 @@ export default function SharePage({ params }: { params: { id: string } }) {
                         clipRule="evenodd"
                       />
                     </svg>
-                    リンクをコピーする
+                    {t("share.copyLink")}
                   </>
                 )}
               </button>
@@ -234,7 +238,7 @@ export default function SharePage({ params }: { params: { id: string } }) {
                     clipRule="evenodd"
                   />
                 </svg>
-                アンケートを開始する
+                {t("share.startSurvey")}
               </Link>
             </div>
           </div>

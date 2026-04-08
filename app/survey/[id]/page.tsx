@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import ChatMessage from "@/components/ChatMessage";
+import { useLang } from "@/lib/i18n";
+import { surveyDict } from "@/lib/dictionaries/lp";
 
 interface Choice {
   id: string;
@@ -61,6 +63,8 @@ export default function SurveyPage({
   params: { id: string };
 }) {
   const surveyId = params.id;
+  const { lang } = useLang();
+  const t = (key: string) => surveyDict[key]?.[lang] ?? surveyDict[key]?.ja ?? key;
 
   const [session, setSession] = useState<Session | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -89,7 +93,7 @@ export default function SurveyPage({
 
         if (!res.ok) {
           const data = await res.json();
-          setPhase({ type: "error", message: data.error ?? "エラーが発生しました" });
+          setPhase({ type: "error", message: data.error ?? t("survey.error") });
           return;
         }
 
@@ -125,12 +129,12 @@ export default function SurveyPage({
           role: "bot",
           text:
             data.survey.description ??
-            `${data.survey.title}のアンケートへようこそ！いくつか質問させていただきます。`,
+            `${data.survey.title}${t("survey.welcome")}`,
         };
 
         if (questions.length === 0) {
           setMessages([intro]);
-          setPhase({ type: "error", message: "質問が設定されていません。" });
+          setPhase({ type: "error", message: t("survey.noQuestions") });
           return;
         }
 
@@ -147,7 +151,7 @@ export default function SurveyPage({
           setPhase({ type: "questioning", questionIndex: 0 });
         }
       } catch {
-        setPhase({ type: "error", message: "セッションの作成に失敗しました。" });
+        setPhase({ type: "error", message: t("survey.sessionFailed") });
       }
     }
 
@@ -213,7 +217,7 @@ export default function SurveyPage({
       // All questions answered — generate review
       const thankMsg: Message = {
         role: "bot",
-        text: session?.survey?.closingMessage || "ありがとうございました！",
+        text: session?.survey?.closingMessage || t("survey.thankYou"),
       };
       setMessages((prev) => [...prev, userMsg]);
       await new Promise((r) => setTimeout(r, 800));
@@ -235,7 +239,7 @@ export default function SurveyPage({
         const data = await res.json();
         setPhase({
           type: "error",
-          message: data.error ?? "口コミの生成に失敗しました",
+          message: data.error ?? t("survey.generateFailed"),
         });
         return;
       }
@@ -249,7 +253,7 @@ export default function SurveyPage({
       // Redirect to result page
       window.location.href = `/survey/${surveyId}/result/${session.id}`;
     } catch {
-      setPhase({ type: "error", message: "口コミの生成に失敗しました。" });
+      setPhase({ type: "error", message: t("survey.generateFailed") });
     }
   }
 
@@ -318,7 +322,7 @@ export default function SurveyPage({
                 />
               )}
               <h1 className="text-base font-semibold text-gray-800 truncate">
-                {session?.survey.title ?? "アンケート"}
+                {session?.survey.title ?? t("survey.title")}
               </h1>
             </div>
             <span className="text-xs text-gray-500 ml-2 flex-shrink-0">
@@ -401,7 +405,7 @@ export default function SurveyPage({
                     } as React.CSSProperties
                   }
                   rows={2}
-                  placeholder="ご回答を入力してください..."
+                  placeholder={t("survey.textPlaceholder")}
                   value={textInput}
                   onChange={(e) => setTextInput(e.target.value)}
                   onKeyDown={(e) => {

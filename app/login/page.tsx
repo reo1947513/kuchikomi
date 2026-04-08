@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { useLang, LangToggle } from "@/lib/i18n";
+import { loginDict } from "@/lib/dictionaries/lp";
 
 type LoginFormValues = {
   identifier: string;
@@ -13,6 +15,8 @@ export default function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const { lang } = useLang();
+  const t = (key: string) => loginDict[key]?.[lang] ?? loginDict[key]?.ja ?? key;
 
   const {
     register,
@@ -32,7 +36,7 @@ export default function LoginPage() {
       const json = await res.json();
 
       if (!res.ok) {
-        setServerError(json.error || "ログインに失敗しました");
+        setServerError(json.error || t("login.failed"));
         return;
       }
 
@@ -42,7 +46,7 @@ export default function LoginPage() {
         router.push("/dashboard");
       }
     } catch {
-      setServerError("サーバーに接続できませんでした。しばらくしてから再度お試しください。");
+      setServerError(t("login.serverError"));
     }
   };
 
@@ -55,7 +59,8 @@ export default function LoginPage() {
           <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent tracking-tight">
             ComiSta
           </h1>
-          <p className="text-sm text-slate-400 mt-1">アカウントにログイン</p>
+          <p className="text-sm text-slate-400 mt-1">{t("login.title")}</p>
+          <LangToggle className="mt-2 border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400" />
         </div>
 
         {/* Form */}
@@ -66,7 +71,7 @@ export default function LoginPage() {
               htmlFor="identifier"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              メールアドレス / ログインID
+              {t("login.identifier")}
             </label>
             <input
               id="identifier"
@@ -77,7 +82,7 @@ export default function LoginPage() {
                 errors.identifier ? "border-red-400" : "border-gray-300"
               }`}
               {...register("identifier", {
-                required: "メールアドレスまたはログインIDを入力してください",
+                required: t("login.identifierRequired"),
               })}
             />
             {errors.identifier && (
@@ -91,24 +96,24 @@ export default function LoginPage() {
               htmlFor="password"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              パスワード
+              {t("login.password")}
             </label>
             <div className="relative">
               <input
                 id="password"
                 type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
-                placeholder="パスワードを入力"
+                placeholder={t("login.passwordPlaceholder")}
                 className={`w-full rounded-lg border px-4 py-2.5 pr-11 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition ${
                   errors.password ? "border-red-400" : "border-gray-300"
                 }`}
                 {...register("password", {
-                  required: "パスワードを入力してください",
+                  required: t("login.passwordRequired"),
                 })}
               />
               <button
                 type="button"
-                aria-label={showPassword ? "パスワードを隠す" : "パスワードを表示する"}
+                aria-label={showPassword ? t("login.hidePassword") : t("login.showPassword")}
                 onClick={() => setShowPassword((prev) => !prev)}
                 className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-gray-600 focus:outline-none"
               >
@@ -170,7 +175,7 @@ export default function LoginPage() {
             disabled={isSubmitting}
             className="w-full rounded-lg bg-gradient-to-r from-cyan-500 to-violet-500 hover:from-cyan-600 hover:to-violet-600 active:from-cyan-700 active:to-violet-700 text-white font-semibold py-2.5 text-sm transition disabled:opacity-60 disabled:cursor-not-allowed shadow-sm"
           >
-            {isSubmitting ? "ログイン中..." : "ログイン"}
+            {isSubmitting ? t("login.submitting") : t("login.submit")}
           </button>
         </form>
       </div>
