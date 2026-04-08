@@ -19,6 +19,15 @@ type Choice = {
   score: number;
 };
 
+type BranchQuestion = {
+  id?: string;
+  text: string;
+  type: "choice" | "text";
+  order: number;
+  triggerChoiceId: string | null;
+  choices: Choice[];
+};
+
 type Question = {
   id: string;
   text: string;
@@ -27,6 +36,7 @@ type Question = {
   isRandom: boolean;
   groupName: string | null;
   choices: Choice[];
+  branchQuestions: BranchQuestion[];
 };
 
 type Survey = {
@@ -218,7 +228,10 @@ export default function SurveySettingsPage() {
       setTones(
         (data.tones ?? []).map((t) => ({ localId: newLocalToneId(), name: t.name, id: t.id }))
       );
-      setQuestions(data.questions ?? []);
+      setQuestions((data.questions ?? []).filter((q: any) => !q.parentQuestionId).map((q: any) => ({
+        ...q,
+        branchQuestions: q.branchQuestions ?? [],
+      })));
       setLogoUrl(data.logoUrl ?? "");
       setCouponImageUrl(data.couponImageUrl ?? "");
       setCouponEnabled(data.couponEnabled ?? false);
@@ -399,9 +412,21 @@ export default function SurveySettingsPage() {
       const res = await fetch(`/api/surveys/${surveyId}/questions`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ questions }),
+        body: JSON.stringify({
+          questions: questions.map((q) => ({
+            ...q,
+            branchQuestions: (q.branchQuestions ?? []).map((bq) => ({
+              ...bq,
+              triggerChoiceId: bq.triggerChoiceId
+                ? String(q.choices.findIndex((c) => (c.id || "") === bq.triggerChoiceId))
+                : null,
+            })),
+          })),
+        }),
       });
       if (!res.ok) throw new Error("保存に失敗しました");
+      const saved = await res.json();
+      setQuestions(saved.map((q: any) => ({ ...q, branchQuestions: q.branchQuestions ?? [] })));
       setSaveMsg("質問を保存しました");
       setTimeout(() => setSaveMsg(null), 3000);
     } catch (e) {
@@ -941,20 +966,158 @@ export default function SurveySettingsPage() {
                       {q.type === "choice" && q.choices.length > 0 && (
                         <div className="pl-2 space-y-1.5 mt-1">
                           <p className="text-xs text-gray-400 font-medium">選択肢:</p>
-                          {q.choices.map((c, ci) => (
-                            <div key={c.id || ci} className="flex items-center gap-2">
-                              <span className="text-xs text-gray-300 w-4 text-right shrink-0">{ci + 1}.</span>
-                              <input
-                                type="text"
-                                value={c.text}
-                                onChange={(e) => setQuestions((prev) => prev.map((item) => item.id === q.id ? {
-                                  ...item,
-                                  choices: item.choices.map((ch, chIdx) => chIdx === ci ? { ...ch, text: e.target.value } : ch)
-                                } : item))}
-                                className="flex-1 border border-gray-100 rounded-lg px-2.5 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent bg-gray-50"
-                              />
-                            </div>
-                          ))}
+                          {q.choices.map((c, ci) => {
+                            const branchForChoice = (q.branchQuestions ?? []).find((bq) => bq.triggerChoiceId === (c.id || ""));
+                            return (
+                              <div key={c.id || ci}>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs text-gray-300 w-4 text-right shrink-0">{ci + 1}.</span>
+                                  <input
+                                    type="text"
+                                    value={c.text}
+                                    onChange={(e) => setQuestions((prev) => prev.map((item) => item.id === q.id ? {
+                                      ...item,
+                                      choices: item.choices.map((ch, chIdx) => chIdx === ci ? { ...ch, text: e.target.value } : ch)
+                                    } : item))}
+                                    className="flex-1 border border-gray-100 rounded-lg px-2.5 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent bg-gray-50"
+                                  />
+                                </div>
+                                {/* Branch question for this choice */}
+                                {branchForChoice ? (
+                                  <div className="ml-6 mt-1.5 mb-1 pl-3 border-l-2 border-violet-200">
+                                    <div className="flex items-center gap-1 mb-1">
+                                      <span className="text-xs text-violet-500 font-medium">↳ 分岐質問</span>
+                                      <button type="button" onClick={() => setQuestions((prev) => prev.map((item) => item.id === q.id ? {
+                                        ...item, branchQuestions: item.branchQuestions.filter((bq) => bq.triggerChoiceId !== (c.id || ""))
+                                      } : item))} className="text-gray-300 hover:text-red-400 transition-colors ml-auto">
+                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                                      </button>
+                                    </div>
+                                    <input
+                                      type="text"
+                                      value={branchForChoice.text}
+                                      onChange={(e) => setQuestions((prev) => prev.map((item) => item.id === q.id ? {
+                                        ...item, branchQuestions: item.branchQuestions.map((bq) => bq.triggerChoiceId === (c.id || "") ? { ...bq, text: e.target.value } : bq)
+                                      } : item))}
+                                      placeholder="分岐質問を入力..."
+                                      className="w-full border border-violet-100 rounded-lg px-2.5 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-400 bg-violet-50/30"
+                                    />
+                                    <select
+                                      value={branchForChoice.type}
+                                      onChange={(e) => setQuestions((prev) => prev.map((item) => item.id === q.id ? {
+                                        ...item, branchQuestions: item.branchQuestions.map((bq) => bq.triggerChoiceId === (c.id || "") ? {
+                                          ...bq, type: e.target.value as "choice" | "text",
+                                          choices: e.target.value === "choice" && bq.choices.length === 0 ? [{text:"はい",order:0,score:1},{text:"いいえ",order:1,score:0}] : e.target.value === "text" ? [] : bq.choices,
+                                        } : bq)
+                                      } : item))}
+                                      className="mt-1 border border-gray-200 rounded-lg px-2 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-violet-400"
+                                    >
+                                      <option value="choice">選択式</option>
+                                      <option value="text">記述式</option>
+                                    </select>
+                                    {branchForChoice.type === "choice" && branchForChoice.choices.length > 0 && (
+                                      <div className="mt-1 space-y-1">
+                                        {branchForChoice.choices.map((bc, bci) => (
+                                          <input
+                                            key={bci}
+                                            type="text"
+                                            value={bc.text}
+                                            onChange={(e) => setQuestions((prev) => prev.map((item) => item.id === q.id ? {
+                                              ...item, branchQuestions: item.branchQuestions.map((bq) => bq.triggerChoiceId === (c.id || "") ? {
+                                                ...bq, choices: bq.choices.map((bch, bi) => bi === bci ? { ...bch, text: e.target.value } : bch)
+                                              } : bq)
+                                            } : item))}
+                                            className="w-full border border-gray-100 rounded px-2 py-1 text-xs bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-400"
+                                          />
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    onClick={() => setQuestions((prev) => prev.map((item) => item.id === q.id ? {
+                                      ...item, branchQuestions: [...(item.branchQuestions ?? []), {
+                                        text: "", type: "text" as const, order: 0, triggerChoiceId: c.id || "", choices: []
+                                      }]
+                                    } : item))}
+                                    className="ml-6 mt-0.5 mb-1 flex items-center gap-1 text-xs text-violet-400 hover:text-violet-600 transition-colors"
+                                  >
+                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                                    分岐質問を追加
+                                  </button>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                      {/* Branch question for text-type questions */}
+                      {q.type === "text" && (
+                        <div className="pl-2 mt-2">
+                          {(q.branchQuestions ?? []).filter((bq) => !bq.triggerChoiceId).length > 0 ? (
+                            (q.branchQuestions ?? []).filter((bq) => !bq.triggerChoiceId).map((bq, bqi) => (
+                              <div key={bqi} className="pl-3 border-l-2 border-violet-200 mb-2">
+                                <div className="flex items-center gap-1 mb-1">
+                                  <span className="text-xs text-violet-500 font-medium">↳ 回答後の分岐質問</span>
+                                  <button type="button" onClick={() => setQuestions((prev) => prev.map((item) => item.id === q.id ? {
+                                    ...item, branchQuestions: item.branchQuestions.filter((b) => b.triggerChoiceId !== null || b !== bq)
+                                  } : item))} className="text-gray-300 hover:text-red-400 transition-colors ml-auto">
+                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                                  </button>
+                                </div>
+                                <input
+                                  type="text"
+                                  value={bq.text}
+                                  onChange={(e) => setQuestions((prev) => prev.map((item) => item.id === q.id ? {
+                                    ...item, branchQuestions: item.branchQuestions.map((b) => b === bq ? { ...b, text: e.target.value } : b)
+                                  } : item))}
+                                  placeholder="分岐質問を入力..."
+                                  className="w-full border border-violet-100 rounded-lg px-2.5 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-400 bg-violet-50/30"
+                                />
+                                <select
+                                  value={bq.type}
+                                  onChange={(e) => setQuestions((prev) => prev.map((item) => item.id === q.id ? {
+                                    ...item, branchQuestions: item.branchQuestions.map((b) => b === bq ? {
+                                      ...b, type: e.target.value as "choice" | "text",
+                                      choices: e.target.value === "choice" && b.choices.length === 0 ? [{text:"はい",order:0,score:1},{text:"いいえ",order:1,score:0}] : e.target.value === "text" ? [] : b.choices,
+                                    } : b)
+                                  } : item))}
+                                  className="mt-1 border border-gray-200 rounded-lg px-2 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-violet-400"
+                                >
+                                  <option value="choice">選択式</option>
+                                  <option value="text">記述式</option>
+                                </select>
+                                {bq.type === "choice" && bq.choices.length > 0 && (
+                                  <div className="mt-1 space-y-1">
+                                    {bq.choices.map((bc, bci) => (
+                                      <input key={bci} type="text" value={bc.text}
+                                        onChange={(e) => setQuestions((prev) => prev.map((item) => item.id === q.id ? {
+                                          ...item, branchQuestions: item.branchQuestions.map((b) => b === bq ? {
+                                            ...b, choices: b.choices.map((bch, bi) => bi === bci ? { ...bch, text: e.target.value } : bch)
+                                          } : b)
+                                        } : item))}
+                                        className="w-full border border-gray-100 rounded px-2 py-1 text-xs bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-400"
+                                      />
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            ))
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => setQuestions((prev) => prev.map((item) => item.id === q.id ? {
+                                ...item, branchQuestions: [...(item.branchQuestions ?? []), {
+                                  text: "", type: "text" as const, order: 0, triggerChoiceId: null, choices: []
+                                }]
+                              } : item))}
+                              className="flex items-center gap-1 text-xs text-violet-400 hover:text-violet-600 transition-colors"
+                            >
+                              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                              分岐質問を追加
+                            </button>
+                          )}
                         </div>
                       )}
                     </div>

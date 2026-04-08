@@ -99,16 +99,20 @@ model Tone {
 }
 
 model Question {
-  id        String   @id @default(cuid())
-  text      String
-  order     Int
-  type      String   @default("choice") // "choice" | "text"
-  isRandom  Boolean  @default(false)
-  groupName String?
-  surveyId  String
-  survey    Survey   @relation(fields: [surveyId], references: [id], onDelete: Cascade)
-  choices   Choice[]
-  answers   Answer[]
+  id               String    @id @default(cuid())
+  text             String
+  order            Int
+  type             String    @default("choice") // "choice" | "text"
+  isRandom         Boolean   @default(false)
+  groupName        String?
+  surveyId         String
+  survey           Survey    @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  parentQuestionId String?
+  triggerChoiceId  String?
+  parentQuestion   Question? @relation("QuestionBranch", fields: [parentQuestionId], references: [id], onDelete: Cascade)
+  branchQuestions  Question[] @relation("QuestionBranch")
+  choices          Choice[]
+  answers          Answer[]
 }
 
 model Choice {

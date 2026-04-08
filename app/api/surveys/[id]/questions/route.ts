@@ -5,6 +5,14 @@ import { prisma } from "@/lib/db";
 
 type Params = { params: { id: string } };
 
+type BranchQuestionInput = {
+  text: string;
+  order: number;
+  type: "choice" | "text";
+  triggerChoiceId?: string | null;
+  choices?: Array<{ text: string; order: number; score: number }>;
+};
+
 type QuestionInput = {
   text: string;
   order: number;
@@ -12,6 +20,7 @@ type QuestionInput = {
   isRandom?: boolean;
   groupName?: string | null;
   choices?: Array<{ text: string; order: number; score: number }>;
+  branchQuestions?: BranchQuestionInput[];
 };
 
 async function checkSurveyAccess(surveyId: string, userId: string, role: string) {
@@ -93,35 +102,77 @@ export async function PUT(request: NextRequest, { params }: Params) {
   // Replace all questions in a transaction
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updatedQuestions = await prisma.$transaction(async (tx: any) => {
-    // Delete answers, choices, then questions
+    // Delete answers, choices, then questions (branch questions cascade via onDelete)
     const qIds = (await tx.question.findMany({ where: { surveyId: params.id }, select: { id: true } })).map((q: {id: string}) => q.id);
     await tx.answer.deleteMany({ where: { questionId: { in: qIds } } });
     await tx.choice.deleteMany({ where: { questionId: { in: qIds } } });
+    // Delete branch questions first, then parent questions
+    await tx.question.deleteMany({ where: { surveyId: params.id, parentQuestionId: { not: null } } });
     await tx.question.deleteMany({ where: { surveyId: params.id } });
 
-    // Create new questions
-    const created = await Promise.all(
-      questions.map((q) =>
-        tx.question.create({
-          data: {
-            text: q.text,
-            order: q.order,
-            type: q.type ?? "choice",
-            isRandom: q.isRandom ?? false,
-            groupName: q.groupName ?? null,
-            surveyId: params.id,
-            choices: {
-              create: (q.choices ?? []).map((c) => ({
-                text: c.text,
-                order: c.order,
-                score: c.score ?? 0,
-              })),
-            },
+    // Create new questions (parent first, then branches)
+    const created = [];
+    for (const q of questions) {
+      const parent = await tx.question.create({
+        data: {
+          text: q.text,
+          order: q.order,
+          type: q.type ?? "choice",
+          isRandom: q.isRandom ?? false,
+          groupName: q.groupName ?? null,
+          surveyId: params.id,
+          choices: {
+            create: (q.choices ?? []).map((c) => ({
+              text: c.text,
+              order: c.order,
+              score: c.score ?? 0,
+            })),
           },
-          include: { choices: { orderBy: { order: "asc" } } },
-        })
-      )
-    );
+        },
+        include: { choices: { orderBy: { order: "asc" } } },
+      });
+
+      // Create branch questions if any
+      const branches = [];
+      if (q.branchQuestions && q.branchQuestions.length > 0) {
+        // Map old triggerChoiceId (index-based) to new choice IDs
+        for (const bq of q.branchQuestions) {
+          let resolvedTriggerChoiceId: string | null = null;
+          if (bq.triggerChoiceId && parent.choices.length > 0) {
+            // triggerChoiceId may be an index like "0", "1" etc. or actual ID
+            const idx = parseInt(bq.triggerChoiceId, 10);
+            if (!isNaN(idx) && idx >= 0 && idx < parent.choices.length) {
+              resolvedTriggerChoiceId = parent.choices[idx].id;
+            } else {
+              resolvedTriggerChoiceId = bq.triggerChoiceId;
+            }
+          }
+
+          const branch = await tx.question.create({
+            data: {
+              text: bq.text,
+              order: bq.order,
+              type: bq.type ?? "choice",
+              isRandom: false,
+              surveyId: params.id,
+              parentQuestionId: parent.id,
+              triggerChoiceId: resolvedTriggerChoiceId,
+              choices: {
+                create: (bq.choices ?? []).map((c) => ({
+                  text: c.text,
+                  order: c.order,
+                  score: c.score ?? 0,
+                })),
+              },
+            },
+            include: { choices: { orderBy: { order: "asc" } } },
+          });
+          branches.push(branch);
+        }
+      }
+
+      created.push({ ...parent, branchQuestions: branches });
+    }
 
     return created;
   });

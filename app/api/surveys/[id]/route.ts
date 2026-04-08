@@ -17,6 +17,10 @@ export async function GET(request: NextRequest, { params }: Params) {
       questions: {
         include: {
           choices: { orderBy: { order: "asc" } },
+          branchQuestions: {
+            include: { choices: { orderBy: { order: "asc" } } },
+            orderBy: { order: "asc" },
+          },
         },
         orderBy: { order: "asc" },
       },

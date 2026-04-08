@@ -20,6 +20,9 @@ interface Question {
   type: "choice" | "text";
   groupName: string | null;
   choices: Choice[];
+  parentQuestionId?: string | null;
+  triggerChoiceId?: string | null;
+  branchQuestions?: Question[];
 }
 
 interface Survey {
@@ -101,7 +104,8 @@ export default function SurveyPage({
         const data: Session = await res.json();
 
         // Group random: pick one question per group
-        const allQuestions = data.survey.questions;
+        // Filter out branch questions from top-level (they are nested in branchQuestions)
+        const allQuestions = (data.survey.questions as Question[]).filter((q) => !q.parentQuestionId);
         const fixedQuestions: Question[] = [];
         const randomPool: Question[] = [];
         for (const q of allQuestions) {
@@ -193,6 +197,53 @@ export default function SurveyPage({
 
     const newAnsweredCount = answeredCount + 1;
     setAnsweredCount(newAnsweredCount);
+
+    // Check for branch questions triggered by this answer
+    const branchQ = (question.branchQuestions ?? []).find((bq) => {
+      if (question.type === "choice" && choiceId) {
+        return bq.triggerChoiceId === choiceId;
+      }
+      // For text questions, branch with no triggerChoiceId
+      return question.type === "text" && !bq.triggerChoiceId;
+    });
+
+    if (branchQ) {
+      // Show branch question next
+      const botMsg: Message = { role: "bot", text: branchQ.text };
+      setMessages((prev) => [...prev, userMsg]);
+      setPhase({ type: "waiting" });
+      await new Promise((r) => setTimeout(r, 800));
+      setMessages((prev) => [...prev, botMsg]);
+
+      // Insert branch question into the questions array right after current
+      const insertIdx = questionIndex + 1;
+      const branchAsQuestion: Question = {
+        id: branchQ.id || `branch-${Date.now()}`,
+        text: branchQ.text,
+        order: 0,
+        type: branchQ.type,
+        groupName: null,
+        choices: branchQ.choices ?? [],
+        branchQuestions: [],
+      };
+
+      // Insert only if not already inserted
+      if (!questions[insertIdx] || questions[insertIdx].id !== branchAsQuestion.id) {
+        const updated = [...questions];
+        updated.splice(insertIdx, 0, branchAsQuestion);
+        if (session) {
+          session.survey.questions = updated;
+        }
+      }
+
+      if (branchQ.type === "text") {
+        setTextInput("");
+        setPhase({ type: "text_input", questionIndex: insertIdx });
+      } else {
+        setPhase({ type: "questioning", questionIndex: insertIdx });
+      }
+      return;
+    }
 
     const nextIndex = questionIndex + 1;
 
