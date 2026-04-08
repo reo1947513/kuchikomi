@@ -365,7 +365,7 @@ export default function SurveyPage({
   return (
     <div
       className="min-h-screen flex flex-col"
-      style={{ backgroundColor: "#F5F3FF" }}
+      style={{ backgroundColor: `${mainColor}10` }}
     >
       {/* Test mode banner */}
       {isPreview && (
