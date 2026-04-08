@@ -15,7 +15,7 @@ function getPlanFromPrice(priceId: string, amount: number | null, interval: stri
   // Subscription plans (recurring)
   if (interval === "month") {
     if (amount === 10000) return { planType: "standard", planReviewLimit: 100 };
-    if (amount === 20000) return { planType: "premium", planReviewLimit: 300 };
+    if (amount === 20000) return { planType: "premium", planReviewLimit: 0 };
   }
 
   // One-time: additional reviews

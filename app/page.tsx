@@ -173,7 +173,7 @@ export default function LpPage() {
     "pricing.standard": "スタンダードプラン",
     "pricing.premium": "プレミアムプラン",
     "pricing.standard.limit": "月100件",
-    "pricing.premium.limit": "月300件",
+    "pricing.premium.limit": "無制限",
     "pricing.standard.target": "中規模店舗",
     "pricing.premium.target": "大規模・複数店舗",
     "pricing.feat.ai": "AIによる口コミ下書き作成",

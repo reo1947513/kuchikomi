@@ -6,7 +6,7 @@ import { stripe } from "@/lib/stripe";
 // Map Stripe amounts to plan config
 const SUBSCRIPTION_AMOUNTS: Record<number, { name: string; planType: string; reviews: number; priceLabel: string }> = {
   10000: { name: "スタンダードプラン", planType: "standard", reviews: 100, priceLabel: "¥10,000/月" },
-  20000: { name: "プレミアムプラン", planType: "premium", reviews: 300, priceLabel: "¥20,000/月" },
+  20000: { name: "プレミアムプラン", planType: "premium", reviews: 0, priceLabel: "¥20,000/月" },
 };
 
 const ADDITIONAL_AMOUNTS: Record<number, { name: string; reviews: number; priceLabel: string }> = {
