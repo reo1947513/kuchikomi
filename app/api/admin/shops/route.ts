@@ -135,12 +135,12 @@ export async function POST(request: NextRequest) {
 
   let body: {
     name: string; email?: string; loginId?: string; password: string;
-    shopName?: string; address?: string; industry?: string; agencyId?: string;
+    shopName?: string; address?: string; phone?: string; industry?: string; agencyId?: string;
     monthlyReviewLimit?: number; contractStart?: string; contractEnd?: string; noContractLimit?: boolean;
   };
   try { body = await request.json(); } catch { return NextResponse.json({ error: "Invalid JSON" }, { status: 400 }); }
 
-  const { name, email, loginId, password, shopName, address, industry, agencyId, monthlyReviewLimit, contractStart, contractEnd, noContractLimit } = body;
+  const { name, email, loginId, password, shopName, address, phone, industry, agencyId, monthlyReviewLimit, contractStart, contractEnd, noContractLimit } = body;
 
   if (!name || typeof name !== "string" || name.trim() === "") {
     return NextResponse.json({ error: "name is required" }, { status: 400 });
@@ -165,7 +165,7 @@ export async function POST(request: NextRequest) {
     data: {
       name: name.trim(), email: email?.trim() ?? null, loginId: finalLoginId,
       password: hashedPassword, role: "admin",
-      shopName: shopName?.trim() ?? null, address: address?.trim() ?? null,
+      shopName: shopName?.trim() ?? null, address: address?.trim() ?? null, phone: phone?.trim() ?? null,
       industry: industry?.trim() ?? null, agencyId: agencyId ?? null,
       contractStart: contractStart ? new Date(contractStart) : null,
       contractEnd: contractEnd ? new Date(contractEnd) : null,

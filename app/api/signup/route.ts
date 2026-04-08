@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
     if (!name?.trim()) return NextResponse.json({ error: "担当者名を入力してください" }, { status: 400 });
     if (!email?.trim()) return NextResponse.json({ error: "メールアドレスを入力してください" }, { status: 400 });
     if (!password || password.length < 6) return NextResponse.json({ error: "パスワードは6文字以上で設定してください" }, { status: 400 });
+    if (!phone?.trim()) return NextResponse.json({ error: "電話番号を入力してください" }, { status: 400 });
 
     // Check email uniqueness
     const existing = await prisma.user.findFirst({ where: { email: email.trim().toLowerCase() } });
@@ -47,6 +48,7 @@ export async function POST(request: NextRequest) {
         shopName: shopName.trim(),
         address: address?.trim() || null,
         industry: industry?.trim() || null,
+        phone: phone?.trim() || null,
         surveys: {
           create: [{ title: shopName.trim(), monthlyReviewLimit: 0 }],
         },

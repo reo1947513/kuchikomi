@@ -10,6 +10,7 @@ type Shop = {
   shopName?: string | null;
   name: string;
   email?: string | null;
+  phone?: string | null;
   loginId?: string | null;
   address?: string | null;
   industry?: string | null;
@@ -29,6 +30,7 @@ type Shop = {
 type EditForm = {
   shopName: string;
   address: string;
+  phone: string;
   googleBusinessUrl: string;
   industry: string;
   agencyId: string;
@@ -42,7 +44,7 @@ type EditForm = {
 };
 
 const emptyEdit = (): EditForm => ({
-  shopName: "", address: "", googleBusinessUrl: "", industry: "",
+  shopName: "", address: "", phone: "", googleBusinessUrl: "", industry: "",
   agencyId: "", monthlyReviewLimit: 100, email: "", password: "",
   contractStart: "", contractEnd: "", noContractLimit: false,
   staffName: "",
@@ -74,9 +76,9 @@ export default function ShopsPage() {
   const [addOpen, setAddOpen] = useState(false);
   const [addForm, setAddForm] = useState({
     shopName: "", email: "", loginId: "", password: "",
-    address: "", industry: "", agencyId: "", monthlyReviewLimit: 100,
+    address: "", phone: "", industry: "", agencyId: "", monthlyReviewLimit: 100,
     contractStart: "", contractEnd: "", noContractLimit: false,
-  staffName: "",
+    staffName: "",
   });
   const [addError, setAddError] = useState<string | null>(null);
   const [addSubmitting, setAddSubmitting] = useState(false);
@@ -136,6 +138,7 @@ export default function ShopsPage() {
     setForm({
       shopName: shop.shopName ?? shop.name,
       address: shop.address ?? "",
+      phone: shop.phone ?? "",
       googleBusinessUrl: shop.googleBusinessUrl ?? "",
       industry: shop.industry ?? "",
       contractStart: shop.contractStart ? new Date(shop.contractStart).toISOString().split("T")[0] : "",
@@ -160,6 +163,7 @@ export default function ShopsPage() {
       const payload: Record<string, unknown> = {
         shopName: form.shopName.trim(),
         address: form.address.trim(),
+        phone: form.phone.trim() || null,
         googleBusinessUrl: form.googleBusinessUrl.trim(),
         industry: form.industry,
         contractStart: form.contractStart || null,
@@ -233,6 +237,7 @@ export default function ShopsPage() {
           loginId: addForm.loginId.trim(),
           password: addForm.password.trim(),
           address: addForm.address.trim() || null,
+          phone: addForm.phone.trim() || null,
           industry: addForm.industry || null,
           contractStart: addForm.contractStart || undefined,
           contractEnd: addForm.contractEnd || undefined,
@@ -246,7 +251,7 @@ export default function ShopsPage() {
         throw new Error(d.error ?? "登録に失敗しました");
       }
       setAddOpen(false);
-      setAddForm({ shopName: "", email: "", loginId: "", password: "", address: "", industry: "", agencyId: "", monthlyReviewLimit: 100, contractStart: "", contractEnd: "", noContractLimit: false, staffName: "" });
+      setAddForm({ shopName: "", email: "", loginId: "", password: "", address: "", phone: "", industry: "", agencyId: "", monthlyReviewLimit: 100, contractStart: "", contractEnd: "", noContractLimit: false, staffName: "" });
       fetchShops();
     } catch (e) {
       setAddError(e instanceof Error ? e.message : "エラー");
@@ -516,6 +521,10 @@ export default function ShopsPage() {
                 <input type="text" value={form.shopName} onChange={(e) => setForm({ ...form, shopName: e.target.value })} className={inputCls} />
               </div>
               <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">電話番号 <span className="text-red-500">*</span></label>
+                <input type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="090-0000-0000" className={inputCls} />
+              </div>
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">住所</label>
                 <input type="text" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className={inputCls} />
               </div>
@@ -619,6 +628,7 @@ export default function ShopsPage() {
                 { label: "メールアドレス", key: "email", type: "email", required: false },
                 { label: "ログインID（自動割り当て）", key: "loginId", type: "text", required: false, placeholder: "自動で割り当てられます", readOnly: true },
                 { label: "パスワード", key: "password", type: "password", required: true },
+                { label: "電話番号", key: "phone", type: "tel", required: true, placeholder: "090-0000-0000" },
                 { label: "住所", key: "address", type: "text", required: false },
               ].map(({ label, key, type, required, placeholder, readOnly }: any) => (
                 <div key={key}>

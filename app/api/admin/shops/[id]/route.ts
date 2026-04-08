@@ -77,6 +77,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
     password?: string;
     shopName?: string;
     address?: string;
+    phone?: string;
     industry?: string;
     agencyId?: string;
     googleBusinessUrl?: string;
@@ -92,7 +93,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { name, email, loginId, password, shopName, address, industry, agencyId, googleBusinessUrl, monthlyReviewLimit, contractStart, contractEnd, noContractLimit } = body;
+  const { name, email, loginId, password, shopName, address, phone, industry, agencyId, googleBusinessUrl, monthlyReviewLimit, contractStart, contractEnd, noContractLimit } = body;
 
   const updateData: Record<string, unknown> = {};
   if (name !== undefined) updateData.name = name.trim();
@@ -100,6 +101,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
   if (loginId !== undefined) updateData.loginId = loginId.trim() || null;
   if (shopName !== undefined) updateData.shopName = shopName.trim() || null;
   if (address !== undefined) updateData.address = address.trim() || null;
+  if (phone !== undefined) updateData.phone = phone.trim() || null;
   if (industry !== undefined) updateData.industry = industry.trim() || null;
   if (agencyId !== undefined) updateData.agencyId = agencyId || null;
   if (contractStart !== undefined) updateData.contractStart = contractStart ? new Date(contractStart) : null;
