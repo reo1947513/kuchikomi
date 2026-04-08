@@ -654,6 +654,54 @@ export default function SurveySettingsPage() {
         )}
         {activeTab === "basic" && canEditAll && (
           <div className="bg-white rounded-xl shadow p-4 sm:p-6 space-y-4">
+            {/* Greeting templates */}
+            <div className="bg-gray-50 rounded-xl p-4">
+              <label className="block text-sm font-semibold text-gray-700 mb-1">挨拶文テンプレート</label>
+              <p className="text-xs text-gray-400 mb-3">選択すると開始・終了・レビュー確認の3つの挨拶文が一括で入力されます。</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {[
+                  {
+                    label: "丁寧（敬語）",
+                    opening: "ご来店いただき誠にありがとうございます。サービス向上のため、簡単なアンケートにご協力いただけますと幸いです。",
+                    closing: "ご回答いただき誠にありがとうございました。お客様のお声を今後のサービス改善に活かしてまいります。",
+                    completion: "口コミ文章が完成いたしました。内容をご確認いただき、よろしければGoogleマップへの投稿をお願いいたします。",
+                  },
+                  {
+                    label: "やわらかい",
+                    opening: "ご来店ありがとうございます！簡単なアンケートにご協力をお願いします。",
+                    closing: "ありがとうございました！いただいたお声をもとに、より良いサービスを目指します。",
+                    completion: "口コミの下書きができました！内容を確認して、よければGoogleマップに投稿してくださいね。",
+                  },
+                  {
+                    label: "カジュアル",
+                    opening: "今日はありがとうございます！かんたんなアンケートに答えてもらえると嬉しいです！",
+                    closing: "回答ありがとうございます！またのご来店お待ちしてます！",
+                    completion: "口コミの下書きができました！チェックしてOKならGoogleマップに投稿してみてください！",
+                  },
+                  {
+                    label: "フレンドリー",
+                    opening: "いらっしゃいませ！今日の体験について、ぜひ感想を聞かせてください♪",
+                    closing: "感想を教えてくれてありがとう！またぜひ遊びに来てくださいね！",
+                    completion: "口コミの下書きを作りました！よかったら内容を確認して投稿してもらえると嬉しいです！",
+                  },
+                ].map((tmpl) => (
+                  <button
+                    key={tmpl.label}
+                    type="button"
+                    onClick={() => {
+                      setOpeningMessage(tmpl.opening);
+                      setClosingMessage(tmpl.closing);
+                      setCompletionMessage(tmpl.completion);
+                    }}
+                    className="text-left border border-gray-200 rounded-lg px-3 py-2.5 hover:border-violet-400 hover:bg-violet-50/50 transition-colors group"
+                  >
+                    <span className="text-sm font-medium text-gray-700 group-hover:text-violet-600">{tmpl.label}</span>
+                    <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{tmpl.opening}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <Field label="アンケートタイトル" required>
               <input
                 type="text"
