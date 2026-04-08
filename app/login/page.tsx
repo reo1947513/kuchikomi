@@ -53,7 +53,9 @@ function LoginForm() {
         return;
       }
 
-      if (redirectTo) {
+      if (redirectTo && redirectTo.startsWith("/api/")) {
+        window.location.href = redirectTo;
+      } else if (redirectTo) {
         router.push(redirectTo);
       } else if (json.user?.role === "super") {
         router.push("/admin");
