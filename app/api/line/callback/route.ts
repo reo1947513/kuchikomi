@@ -16,15 +16,8 @@ export async function GET(request: NextRequest) {
   }
 
   // No code/state = prefetch or direct navigation
-  // Return a waiting page instead of redirect to prevent prefetch from navigating away
   if (!code || !state) {
-    return new NextResponse(
-      `<!DOCTYPE html><html><head><meta charset="utf-8"><title>LINE連携処理中</title></head>
-      <body style="display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;color:#555;">
-      <p>LINE連携処理中...</p>
-      </body></html>`,
-      { status: 200, headers: { "Content-Type": "text/html", "Cache-Control": "no-store" } }
-    );
+    return NextResponse.redirect(dashboardUrl);
   }
 
   const parts = state.split(":");
