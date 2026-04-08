@@ -96,13 +96,13 @@ export async function PUT(request: NextRequest, { params }: Params) {
   const { name, email, loginId, password, shopName, address, phone, industry, agencyId, googleBusinessUrl, monthlyReviewLimit, contractStart, contractEnd, noContractLimit } = body;
 
   const updateData: Record<string, unknown> = {};
-  if (name !== undefined) updateData.name = name.trim();
-  if (email !== undefined) updateData.email = email.trim() || null;
-  if (loginId !== undefined) updateData.loginId = loginId.trim() || null;
-  if (shopName !== undefined) updateData.shopName = shopName.trim() || null;
-  if (address !== undefined) updateData.address = address.trim() || null;
-  if (phone !== undefined) updateData.phone = phone.trim() || null;
-  if (industry !== undefined) updateData.industry = industry.trim() || null;
+  if (name !== undefined) updateData.name = typeof name === "string" ? name.trim() : name;
+  if (email !== undefined) updateData.email = typeof email === "string" && email.trim() ? email.trim() : null;
+  if (loginId !== undefined) updateData.loginId = typeof loginId === "string" && loginId.trim() ? loginId.trim() : null;
+  if (shopName !== undefined) updateData.shopName = typeof shopName === "string" && shopName.trim() ? shopName.trim() : null;
+  if (address !== undefined) updateData.address = typeof address === "string" && address.trim() ? address.trim() : null;
+  if (phone !== undefined) updateData.phone = typeof phone === "string" && phone.trim() ? phone.trim() : null;
+  if (industry !== undefined) updateData.industry = typeof industry === "string" && industry.trim() ? industry.trim() : null;
   if (agencyId !== undefined) updateData.agencyId = agencyId || null;
   if (contractStart !== undefined) updateData.contractStart = contractStart ? new Date(contractStart) : null;
   if (contractEnd !== undefined) updateData.contractEnd = contractEnd ? new Date(contractEnd) : null;
@@ -121,7 +121,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
       await prisma.survey.update({
         where: { id: firstSurvey.id },
         data: {
-          ...(googleBusinessUrl !== undefined && { googleBusinessUrl: googleBusinessUrl.trim() || null }),
+          ...(googleBusinessUrl !== undefined && { googleBusinessUrl: typeof googleBusinessUrl === "string" && googleBusinessUrl.trim() ? googleBusinessUrl.trim() : null }),
           ...(monthlyReviewLimit !== undefined && { monthlyReviewLimit }),
         },
       });
