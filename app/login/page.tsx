@@ -3,8 +3,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { useLang, LangToggle } from "@/lib/i18n";
-import { loginDict } from "@/lib/dictionaries/lp";
 
 type LoginFormValues = {
   identifier: string;
@@ -15,8 +13,21 @@ export default function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
-  const { lang } = useLang();
-  const t = (key: string) => loginDict[key]?.[lang] ?? loginDict[key]?.ja ?? key;
+  const ja: Record<string, string> = {
+    "login.title": "アカウントにログイン",
+    "login.identifier": "メールアドレス / ログインID",
+    "login.identifierRequired": "メールアドレスまたはログインIDを入力してください",
+    "login.password": "パスワード",
+    "login.passwordPlaceholder": "パスワードを入力",
+    "login.passwordRequired": "パスワードを入力してください",
+    "login.hidePassword": "パスワードを隠す",
+    "login.showPassword": "パスワードを表示する",
+    "login.submitting": "ログイン中...",
+    "login.submit": "ログイン",
+    "login.failed": "ログインに失敗しました",
+    "login.serverError": "サーバーに接続できませんでした。しばらくしてから再度お試しください。",
+  };
+  const t = (key: string) => ja[key] ?? key;
 
   const {
     register,
@@ -60,7 +71,6 @@ export default function LoginPage() {
             ComiSta
           </h1>
           <p className="text-sm text-slate-400 mt-1">{t("login.title")}</p>
-          <LangToggle className="mt-2 border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400" />
         </div>
 
         {/* Form */}

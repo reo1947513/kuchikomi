@@ -2,8 +2,6 @@
 
 import Image from "next/image";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useLang, LangToggle } from "@/lib/i18n";
-import { lpDict } from "@/lib/dictionaries/lp";
 
 /* ─── Scroll‑reveal hook ─── */
 function useReveal() {
@@ -112,8 +110,111 @@ function BgBlob({
 
 /* ─── Main Page ─── */
 export default function LpPage() {
-  const { lang } = useLang();
-  const t = (key: string) => lpDict[key]?.[lang] ?? lpDict[key]?.ja ?? key;
+  const ja: Record<string, string> = {
+    "nav.features": "特徴",
+    "nav.pricing": "料金",
+    "nav.flow": "導入の流れ",
+    "nav.faq": "FAQ",
+    "nav.contact": "お問い合わせ",
+    "hero.badge": "店舗集客の新常識",
+    "hero.title1": "口コミが、",
+    "hero.title2": "勝手に増える。",
+    "hero.desc1": "たった3分のアンケートで、",
+    "hero.desc2": "AIが高品質な口コミを自動生成。",
+    "hero.desc3": "Googleマップの評価を劇的に改善します。",
+    "hero.cta": "お問い合わせはこちら",
+    "hero.sub": "初期費用0円・最短即日導入",
+    "problem.title1": "その悩み、",
+    "problem.title2": "が終わらせます。",
+    "problem.1.title": "口コミを書いてもらえない",
+    "problem.1.desc": "お客様に口コミをお願いするのが気まずい",
+    "problem.2.title": "Googleマップの評価が低い",
+    "problem.2.desc": "競合に比べて星の数が少ない",
+    "problem.3.title": "口コミ対策に時間がかかる",
+    "problem.3.desc": "忙しくて口コミ管理まで手が回らない",
+    "problem.4.title": "何を書けばいいかわからない",
+    "problem.4.desc": "お客様が口コミの書き方に困っている",
+    "solution.title1": "仕組みはシンプル。",
+    "solution.title2": "効果は絶大。",
+    "solution.desc": "3ステップで口コミを簡単収集",
+    "solution.1.title": "アンケートに回答",
+    "solution.1.desc": "QRコードを読み取って簡単なアンケートに回答",
+    "solution.2.title": "AIが口コミを自動生成",
+    "solution.2.desc": "回答内容をもとにAIが自然な口コミ文章を作成",
+    "solution.3.title": "Googleマップに投稿",
+    "solution.3.desc": "ワンタップでGoogleマップに口コミを投稿",
+    "features.title": "選ばれ続ける、6つの理由",
+    "features.1.title": "AIによる自然な文章生成",
+    "features.1.desc": "実際のお客様の声に基づいた自然な口コミを自動生成",
+    "features.2.title": "チャット形式のアンケート",
+    "features.2.desc": "LINEのようなUIで回答率90%以上",
+    "features.3.title": "QRコードで簡単導入",
+    "features.3.desc": "お客様はQRコードを読み取るだけ。アプリ不要",
+    "features.4.title": "リアルタイム分析",
+    "features.4.desc": "回答データをリアルタイムで分析。改善点が一目瞭然",
+    "features.5.title": "カスタマイズ自由",
+    "features.5.desc": "ロゴ、カラー、質問内容を自由にカスタマイズ",
+    "features.6.title": "複数業種対応",
+    "features.6.desc": "飲食店、美容室、整骨院、バー、エステ、ラウンジなど幅広く対応",
+    "industries.title1": "あらゆる店舗ビジネスに、",
+    "industries.title2": "すぐ導入。",
+    "industries.restaurant": "飲食店・レストラン",
+    "industries.salon": "美容室・ヘアサロン",
+    "industries.clinic": "整骨院・整体院",
+    "industries.spa": "エステサロン",
+    "industries.bar": "バー",
+    "industries.lounge": "ラウンジ・スナック",
+    "pricing.title1": "始めやすい、",
+    "pricing.title2": "続けやすい。",
+    "pricing.desc": "全プラン初期費用0円",
+    "pricing.perMonth": "/月",
+    "pricing.popular": "🏆 人気No.1",
+    "pricing.contact": "お問い合わせ",
+    "pricing.standard": "スタンダードプラン",
+    "pricing.premium": "プレミアムプラン",
+    "pricing.standard.limit": "月100件",
+    "pricing.premium.limit": "月300件",
+    "pricing.standard.target": "中規模店舗",
+    "pricing.premium.target": "大規模・複数店舗",
+    "pricing.feat.ai": "AIによる口コミ下書き作成",
+    "pricing.feat.chat": "チャット形式アンケート",
+    "pricing.feat.qr": "QRコード発行",
+    "pricing.feat.analytics": "リアルタイム分析",
+    "pricing.feat.support": "カスタマーサポート",
+    "flow.title1": "最短即日、",
+    "flow.title2": "かんたん4ステップ",
+    "flow.1.title": "お問い合わせ",
+    "flow.1.desc": "まずはお気軽にご相談ください",
+    "flow.2.title": "アカウント発行",
+    "flow.2.desc": "最短即日でご利用開始",
+    "flow.3.title": "アンケート設定",
+    "flow.3.desc": "質問内容やデザインをカスタマイズ",
+    "flow.4.title": "運用開始",
+    "flow.4.desc": "QRコードを設置して口コミ収集スタート",
+    "faq.title1": "気になるギモン、",
+    "faq.title2": "すべて解消。",
+    "faq.1.q": "初期費用はかかりますか？",
+    "faq.1.a": "いいえ、初期費用は一切かかりません。月額プランのみでご利用いただけます。",
+    "faq.2.q": "契約期間の縛りはありますか？",
+    "faq.2.a": "最低6ヶ月からのご契約となります。詳しくはお問い合わせください。",
+    "faq.3.q": "どんな業種でも使えますか？",
+    "faq.3.a": "飲食店、美容室、整骨院、エステ、バー、ラウンジ、スナックなど、店舗型ビジネスであれば業種を問わずご利用いただけます。",
+    "faq.4.q": "導入にどれくらい時間がかかりますか？",
+    "faq.4.a": "最短即日で導入可能です。アカウント発行後すぐにご利用いただけます。",
+    "faq.5.q": "お客様にアプリをインストールしてもらう必要がありますか？",
+    "faq.5.a": "いいえ、アプリのインストールは不要です。QRコードを読み取るだけでブラウザ上でアンケートに回答できます。",
+    "faq.6.q": "生成された口コミは編集できますか？",
+    "faq.6.a": "はい、AIが生成した文章はお客様が自由に編集してから投稿できます。",
+    "cta.title1": "今日から、",
+    "cta.title2": "口コミで差をつけよう。",
+    "cta.desc1": "お問い合わせは1分で完了。",
+    "cta.desc2": "お気軽にご連絡ください。",
+    "cta.campaign": "今なら初月50%OFF キャンペーン実施中",
+    "cta.contact": "お問い合わせ",
+    "cta.sub": "お問い合わせフォームよりお気軽にご連絡ください",
+    "footer.login": "ログイン",
+  };
+  const t = (key: string) => ja[key] ?? key;
   const [menuOpen, setMenuOpen] = useState(false);
   const [showTop, setShowTop] = useState(false);
 
@@ -161,7 +262,6 @@ export default function LpPage() {
             >
               {t("nav.contact")}
             </button>
-            <LangToggle className="border-gray-300 text-gray-500 hover:text-gray-800 hover:border-gray-400" />
           </nav>
 
           {/* Mobile hamburger */}
@@ -213,9 +313,6 @@ export default function LpPage() {
             >
               {t("nav.contact")}
             </button>
-            <div className="mt-2 flex justify-center">
-              <LangToggle className="border-gray-300 text-gray-500 hover:text-gray-800 hover:border-gray-400" />
-            </div>
           </div>
         )}
       </header>

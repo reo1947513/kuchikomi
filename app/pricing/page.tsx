@@ -2,8 +2,6 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { useLang, LangToggle } from "@/lib/i18n";
-import { lpDict } from "@/lib/dictionaries/lp";
 
 /* ─── FAQ Accordion Item ─── */
 function FaqItem({ q, a }: { q: string; a: string }) {
@@ -48,8 +46,70 @@ function Dash() {
 }
 
 export default function PricingPage() {
-  const { lang } = useLang();
-  const t = (key: string) => lpDict[key]?.[lang] ?? lpDict[key]?.ja ?? key;
+  const ja: Record<string, string> = {
+    "pricing.page.title": "料金プラン",
+    "pricing.page.subtitle": "ComiStaの料金プランをご紹介します。すべてのプランで初期費用は無料です。",
+    "pricing.page.taxNote": "※ 表示価格はすべて税別です。",
+    "pricing.page.contactNote": "プランの詳細やお見積もりについてはお気軽にお問い合わせください。",
+    "pricing.page.cta": "まずは相談してみる",
+    "pricing.page.ctaSub": "初期費用0円 ・ 最短即日導入 ・ 1店舗から利用可能",
+    "pricing.standard": "スタンダードプラン",
+    "pricing.premium": "プレミアムプラン",
+    "pricing.standard.limit": "月100件",
+    "pricing.premium.limit": "月300件",
+    "pricing.standard.target": "中規模店舗",
+    "pricing.premium.target": "大規模・複数店舗",
+    "pricing.perMonth": "/月",
+    "pricing.popular": "🏆 人気No.1",
+    "pricing.contact": "お問い合わせ",
+    "pricing.feat.ai": "AIによる口コミ下書き作成",
+    "pricing.feat.chat": "チャット形式アンケート",
+    "pricing.feat.qr": "QRコード発行",
+    "pricing.feat.analytics": "リアルタイム分析",
+    "pricing.feat.support": "カスタマーサポート",
+    "pricing.compare.title": "プラン機能比較",
+    "pricing.compare.feature": "機能",
+    "pricing.compare.monthlyLimit": "月間レビュー生成数",
+    "pricing.compare.aiDraft": "AIによる口コミ下書き作成",
+    "pricing.compare.chatSurvey": "チャット形式アンケート",
+    "pricing.compare.qrCode": "QRコード発行",
+    "pricing.compare.analytics": "回答データ分析",
+    "pricing.compare.customDesign": "アンケートデザインカスタマイズ",
+    "pricing.compare.support": "カスタマーサポート",
+    "pricing.compare.email": "メールサポート",
+    "pricing.compare.priority": "優先サポート",
+    "pricing.compare.multiStore": "複数店舗管理",
+    "pricing.compare.unlimited": "月300件",
+    "pricing.compare.100": "月100件",
+    "pricing.fit.title": "どのプランが最適？",
+    "pricing.fit.standard.title": "スタンダードプランがおすすめの方",
+    "pricing.fit.standard.1": "1店舗で口コミ運用を始めたい方",
+    "pricing.fit.standard.2": "月間の来店数が100名程度までの店舗",
+    "pricing.fit.standard.3": "まずは手軽に導入してみたい方",
+    "pricing.fit.premium.title": "プレミアムプランがおすすめの方",
+    "pricing.fit.premium.1": "複数店舗を運営されている方",
+    "pricing.fit.premium.2": "月間の来店数が多い店舗",
+    "pricing.fit.premium.3": "優先サポートが必要な方",
+    "pricing.faq.title": "料金に関するよくある質問",
+    "pricing.faq.1.q": "初期費用はかかりますか？",
+    "pricing.faq.1.a": "いいえ、すべてのプランで初期費用は無料です。月額料金のみでご利用いただけます。",
+    "pricing.faq.2.q": "契約期間の縛りはありますか？",
+    "pricing.faq.2.a": "最低6ヶ月からのご契約となります。詳しくはお問い合わせください。",
+    "pricing.faq.3.q": "途中でプラン変更できますか？",
+    "pricing.faq.3.a": "はい、プランのアップグレード・ダウングレードは随時可能です。次回請求時から新しいプランが適用されます。",
+    "pricing.faq.4.q": "月間レビュー生成数の上限を超えた場合はどうなりますか？",
+    "pricing.faq.4.a": "上限に達した場合、追加レビューパックをご購入いただくか、翌月のリセットをお待ちいただくことになります。",
+    "pricing.faq.5.q": "支払い方法を教えてください。",
+    "pricing.faq.5.a": "クレジットカード（Visa、Mastercard、JCBなど）でのお支払いに対応しています。請求書払いについてはお問い合わせください。",
+    "pricing.faq.6.q": "解約はいつでもできますか？",
+    "pricing.faq.6.a": "契約期間中はご利用いただき、契約期間満了後に解約が可能です。詳しくはお問い合わせください。",
+    "nav.contact": "お問い合わせ",
+    "nav.features": "特徴",
+    "nav.flow": "導入の流れ",
+    "nav.faq": "FAQ",
+    "footer.login": "ログイン",
+  };
+  const t = (key: string) => ja[key] ?? key;
   const [showTop, setShowTop] = useState(false);
 
   useEffect(() => {
@@ -117,7 +177,6 @@ export default function PricingPage() {
             >
               {t("nav.contact")}
             </a>
-            <LangToggle className="border-gray-300 text-gray-500 hover:text-gray-800 hover:border-gray-400" />
           </nav>
         </div>
       </header>
@@ -332,7 +391,7 @@ export default function PricingPage() {
             </a>
             <nav className="flex flex-wrap items-center justify-center gap-6 text-sm">
               <a href="/lp" className="hover:text-white transition-colors">
-                {lang === "en" ? "Home" : "トップ"}
+                {"トップ"}
               </a>
               <a href="/lp#features" className="hover:text-white transition-colors">
                 {t("nav.features")}

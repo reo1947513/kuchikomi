@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { useLang, LangToggle } from "@/lib/i18n";
-import { contactDict } from "@/lib/dictionaries/lp";
 
 type Phase = "input" | "confirm" | "complete";
 
@@ -24,8 +22,37 @@ function CheckIcon() {
 }
 
 export default function PublicContactPage() {
-  const { lang } = useLang();
-  const t = (key: string) => contactDict[key]?.[lang] ?? contactDict[key]?.ja ?? key;
+  const ja: Record<string, string> = {
+    "contact.title": "お問い合わせ",
+    "contact.subtitle": "ComiStaに関するお問い合わせはこちらからお気軽にどうぞ。",
+    "contact.backToTop": "← トップに戻る",
+    "contact.required": "必須",
+    "contact.category": "お問い合わせ項目",
+    "contact.selectPlaceholder": "選択してください",
+    "contact.cat.service": "サービスについて",
+    "contact.cat.pricing": "料金について",
+    "contact.cat.intro": "導入について",
+    "contact.cat.other": "その他",
+    "contact.company": "会社名 / 店舗名",
+    "contact.name": "名前",
+    "contact.lastName": "姓",
+    "contact.firstName": "名",
+    "contact.email": "メールアドレス",
+    "contact.phone": "連絡先",
+    "contact.content": "お問い合わせ内容",
+    "contact.toConfirm": "確認画面へ",
+    "contact.confirmTitle": "お問い合わせ内容の確認",
+    "contact.confirmDesc": "送信前に入力内容をご確認ください。",
+    "contact.submitting": "送信中...",
+    "contact.submit": "送信する",
+    "contact.back": "戻る",
+    "contact.completeTitle": "送信が完了しました",
+    "contact.completeDesc": "お問い合わせいただきありがとうございます。担当者より折り返しご連絡いたします。",
+    "contact.backToHome": "トップページに戻る",
+    "contact.sendFailed": "送信に失敗しました。もう一度お試しください。",
+    "contact.notContracted": "未契約",
+  };
+  const t = (key: string) => ja[key] ?? key;
   const [phase, setPhase] = useState<Phase>("input");
   const [category, setCategory] = useState("");
   const [companyName, setCompanyName] = useState("");
@@ -93,7 +120,6 @@ export default function PublicContactPage() {
         <div className="max-w-4xl mx-auto flex items-center justify-between px-4 py-3">
           <a href="/lp"><Image src="/logo.png" alt="ComiSta" width={140} height={42} /></a>
           <div className="flex items-center gap-3">
-            <LangToggle className="border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400" />
             <a href="/lp" className="text-sm text-gray-500 hover:text-gray-800 transition-colors">{t("contact.backToTop")}</a>
           </div>
         </div>

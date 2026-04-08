@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useLang } from "@/lib/i18n";
-import { shareDict } from "@/lib/dictionaries/lp";
 
 interface Survey {
   id: string;
@@ -14,8 +12,17 @@ interface Survey {
 
 export default function SharePage({ params }: { params: { id: string } }) {
   const surveyId = params.id;
-  const { lang } = useLang();
-  const t = (key: string) => shareDict[key]?.[lang] ?? shareDict[key]?.ja ?? key;
+  const ja: Record<string, string> = {
+    "share.backToDashboard": "ダッシュボードに戻る",
+    "share.notFound": "アンケートが見つかりませんでした。",
+    "share.fetchFailed": "データの取得に失敗しました。",
+    "share.surveyUrl": "アンケートURL",
+    "share.qrPreparing": "QRコードは準備中です",
+    "share.copied": "コピーしました！",
+    "share.copyLink": "リンクをコピーする",
+    "share.startSurvey": "アンケートを開始する",
+  };
+  const t = (key: string) => ja[key] ?? key;
   const [survey, setSurvey] = useState<Survey | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
