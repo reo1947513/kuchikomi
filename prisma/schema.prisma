@@ -207,17 +207,18 @@ model Announcement {
 }
 
 model Campaign {
-  id          String   @id @default(cuid())
-  title       String
-  content     String
-  target      String   @default("all") // "all" | "free" | "paid" | "cancelled"
-  isPublished Boolean  @default(true)
-  emailSent   Boolean  @default(false)
-  emailSentAt DateTime?
-  startAt     DateTime @default(now())
-  endAt       DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String   @id @default(cuid())
+  title           String
+  content         String
+  target          String   @default("all") // "all" | "free" | "paid" | "cancelled"
+  isPublished     Boolean  @default(true)
+  emailSent       Boolean  @default(false)
+  emailSentAt     DateTime?
+  scheduledSendAt DateTime? // メール予約送信日時
+  startAt         DateTime @default(now())
+  endAt           DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model CaseStudy {

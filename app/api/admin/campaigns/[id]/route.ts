@@ -12,7 +12,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
   }
 
   const body = await request.json();
-  const { title, content, target, isPublished, startAt, endAt } = body;
+  const { title, content, target, isPublished, startAt, endAt, scheduledSendAt } = body;
 
   const updated = await prisma.campaign.update({
     where: { id: params.id },
@@ -23,6 +23,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
       ...(isPublished !== undefined && { isPublished }),
       ...(startAt !== undefined && { startAt: new Date(startAt) }),
       ...(endAt !== undefined && { endAt: endAt ? new Date(endAt) : null }),
+      ...(scheduledSendAt !== undefined && { scheduledSendAt: scheduledSendAt ? new Date(scheduledSendAt) : null }),
     },
   });
 

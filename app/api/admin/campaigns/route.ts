@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { title, content, target, startAt, endAt } = body;
+  const { title, content, target, startAt, endAt, scheduledSendAt } = body;
 
   if (!title?.trim() || !content?.trim()) {
     return NextResponse.json({ error: "タイトルと内容を入力してください" }, { status: 400 });
@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
       target: target || "all",
       startAt: startAt ? new Date(startAt) : new Date(),
       endAt: endAt ? new Date(endAt) : null,
+      scheduledSendAt: scheduledSendAt ? new Date(scheduledSendAt) : null,
     },
   });
 

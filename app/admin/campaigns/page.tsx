@@ -10,6 +10,7 @@ type Campaign = {
   isPublished: boolean;
   emailSent: boolean;
   emailSentAt: string | null;
+  scheduledSendAt: string | null;
   startAt: string;
   endAt: string | null;
   createdAt: string;
@@ -30,12 +31,14 @@ export default function CampaignsPage() {
   const [target, setTarget] = useState("all");
   const [startAt, setStartAt] = useState("");
   const [endAt, setEndAt] = useState("");
+  const [scheduledSendAt, setScheduledSendAt] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sending, setSending] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editStartAt, setEditStartAt] = useState("");
   const [editEndAt, setEditEndAt] = useState("");
+  const [editScheduledSendAt, setEditScheduledSendAt] = useState("");
 
   const fetchItems = () => {
     fetch("/api/admin/campaigns")
@@ -59,10 +62,11 @@ export default function CampaignsPage() {
           title, content, target,
           startAt: startAt ? new Date(startAt).toISOString() : undefined,
           endAt: endAt ? new Date(endAt).toISOString() : undefined,
+          scheduledSendAt: scheduledSendAt ? new Date(scheduledSendAt).toISOString() : undefined,
         }),
       });
       if (!res.ok) throw new Error("作成に失敗しました");
-      setTitle(""); setContent(""); setTarget("all"); setStartAt(""); setEndAt("");
+      setTitle(""); setContent(""); setTarget("all"); setStartAt(""); setEndAt(""); setScheduledSendAt("");
       fetchItems();
     } catch (e) {
       setError(e instanceof Error ? e.message : "エラー");
@@ -84,11 +88,16 @@ export default function CampaignsPage() {
     fetchItems();
   };
 
-  const handleSendEmail = async (id: string) => {
-    if (!confirm("対象ユーザーにメールを一斉送信しますか？この操作は取り消せません。")) return;
-    setSending(id);
+  const handleSendEmail = async (item: Campaign) => {
+    if (item.scheduledSendAt && !item.emailSent) {
+      const choice = confirm("予約送信が設定されています。\n\n「OK」→ 今すぐ送信\n「キャンセル」→ 何もしない");
+      if (!choice) return;
+    } else {
+      if (!confirm("対象ユーザーにメールを一斉送信しますか？この操作は取り消せません。")) return;
+    }
+    setSending(item.id);
     try {
-      const res = await fetch(`/api/admin/campaigns/${id}/send`, { method: "POST" });
+      const res = await fetch(`/api/admin/campaigns/${item.id}/send`, { method: "POST" });
       const d = await res.json();
       if (!res.ok) throw new Error(d.error || "送信に失敗しました");
       alert(`${d.sent}/${d.total}件 送信しました`);
@@ -109,6 +118,7 @@ export default function CampaignsPage() {
     setEditingId(item.id);
     setEditStartAt(toLocalDatetime(item.startAt));
     setEditEndAt(item.endAt ? toLocalDatetime(item.endAt) : "");
+    setEditScheduledSendAt(item.scheduledSendAt ? toLocalDatetime(item.scheduledSendAt) : "");
   };
 
   const handleSaveDates = async (id: string) => {
@@ -118,6 +128,7 @@ export default function CampaignsPage() {
       body: JSON.stringify({
         startAt: editStartAt ? new Date(editStartAt).toISOString() : new Date().toISOString(),
         endAt: editEndAt ? new Date(editEndAt).toISOString() : null,
+        scheduledSendAt: editScheduledSendAt ? new Date(editScheduledSendAt).toISOString() : null,
       }),
     });
     setEditingId(null);
@@ -170,17 +181,22 @@ export default function CampaignsPage() {
               {TARGETS.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
             </select>
           </div>
-          <div className="flex gap-3">
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">開始日時（任意）</label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">表示開始日時（任意）</label>
               <input type="datetime-local" value={startAt} onChange={(e) => setStartAt(e.target.value)} className={inputCls} />
-              <p className="text-xs text-gray-400 mt-0.5">未設定の場合は即時公開</p>
+              <p className="text-xs text-gray-400 mt-0.5">未設定＝即時公開</p>
             </div>
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">終了日時（任意）</label>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">表示終了日時（任意）</label>
               <input type="datetime-local" value={endAt} onChange={(e) => setEndAt(e.target.value)} className={inputCls} />
-              <p className="text-xs text-gray-400 mt-0.5">未設定の場合は無期限</p>
+              <p className="text-xs text-gray-400 mt-0.5">未設定＝無期限</p>
             </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">メール送信日時（任意）</label>
+            <input type="datetime-local" value={scheduledSendAt} onChange={(e) => setScheduledSendAt(e.target.value)} className={inputCls} />
+            <p className="text-xs text-gray-400 mt-0.5">設定すると指定日時に自動でメール送信されます。未設定の場合は手動送信。</p>
           </div>
           <div className="flex justify-end">
             <button type="submit" disabled={submitting}
@@ -213,27 +229,45 @@ export default function CampaignsPage() {
                   </div>
                   <p className="text-sm text-gray-600 whitespace-pre-wrap line-clamp-2">{item.content}</p>
                   {editingId === item.id ? (
-                    <div className="flex items-end gap-2 mt-2 flex-wrap">
-                      <div>
-                        <label className="block text-xs text-gray-500 mb-0.5">開始日時</label>
-                        <input type="datetime-local" value={editStartAt} onChange={(e) => setEditStartAt(e.target.value)}
-                          className="border border-gray-300 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-violet-400" />
+                    <div className="mt-2 space-y-2">
+                      <div className="flex items-end gap-2 flex-wrap">
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-0.5">表示開始</label>
+                          <input type="datetime-local" value={editStartAt} onChange={(e) => setEditStartAt(e.target.value)}
+                            className="border border-gray-300 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-violet-400" />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-0.5">表示終了</label>
+                          <input type="datetime-local" value={editEndAt} onChange={(e) => setEditEndAt(e.target.value)}
+                            className="border border-gray-300 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-violet-400" />
+                        </div>
                       </div>
-                      <div>
-                        <label className="block text-xs text-gray-500 mb-0.5">終了日時</label>
-                        <input type="datetime-local" value={editEndAt} onChange={(e) => setEditEndAt(e.target.value)}
-                          className="border border-gray-300 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-violet-400" />
+                      {!item.emailSent && (
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-0.5">メール送信日時</label>
+                          <input type="datetime-local" value={editScheduledSendAt} onChange={(e) => setEditScheduledSendAt(e.target.value)}
+                            className="border border-gray-300 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-violet-400" />
+                        </div>
+                      )}
+                      <div className="flex gap-2">
+                        <button onClick={() => handleSaveDates(item.id)}
+                          className="px-3 py-1 text-xs font-medium rounded-lg bg-violet-500 hover:bg-violet-600 text-white">保存</button>
+                        <button onClick={() => setEditingId(null)}
+                          className="px-3 py-1 text-xs font-medium rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-600">キャンセル</button>
                       </div>
-                      <button onClick={() => handleSaveDates(item.id)}
-                        className="px-3 py-1 text-xs font-medium rounded-lg bg-violet-500 hover:bg-violet-600 text-white">保存</button>
-                      <button onClick={() => setEditingId(null)}
-                        className="px-3 py-1 text-xs font-medium rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-600">キャンセル</button>
                     </div>
                   ) : (
-                    <p className="text-xs text-gray-400 mt-1 cursor-pointer hover:text-violet-500" onClick={() => startEditDates(item)}>
-                      {formatDate(item.startAt)}{item.endAt ? ` 〜 ${formatDate(item.endAt)}` : " 〜 無期限"}
-                      <span className="ml-1 text-gray-300">✎</span>
-                    </p>
+                    <div className="mt-1 cursor-pointer hover:text-violet-500" onClick={() => startEditDates(item)}>
+                      <p className="text-xs text-gray-400">
+                        表示: {formatDate(item.startAt)}{item.endAt ? ` 〜 ${formatDate(item.endAt)}` : " 〜 無期限"}
+                        <span className="ml-1 text-gray-300">✎</span>
+                      </p>
+                      {item.scheduledSendAt && !item.emailSent && (
+                        <p className="text-xs text-blue-500 mt-0.5">
+                          📩 メール予約: {formatDate(item.scheduledSendAt)}
+                        </p>
+                      )}
+                    </div>
                   )}
                 </div>
                 <div className="flex flex-col gap-1.5 flex-shrink-0">
@@ -241,9 +275,10 @@ export default function CampaignsPage() {
                     className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${item.isPublished ? "bg-gray-200 hover:bg-gray-300 text-gray-600" : "bg-green-500 hover:bg-green-600 text-white"}`}>
                     {item.isPublished ? "非公開" : "公開"}
                   </button>
-                  <button onClick={() => handleSendEmail(item.id)} disabled={item.emailSent || sending === item.id}
+                  <button onClick={() => handleSendEmail(item)}
+                    disabled={item.emailSent || sending === item.id}
                     className="px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition-colors disabled:opacity-40">
-                    {sending === item.id ? "送信中..." : item.emailSent ? "送信済" : "メール送信"}
+                    {sending === item.id ? "送信中..." : item.emailSent ? "送信済" : item.scheduledSendAt ? "予約済" : "即時送信"}
                   </button>
                   <button onClick={() => handleDelete(item.id)}
                     className="px-3 py-1.5 text-xs font-medium rounded-lg bg-red-500 hover:bg-red-600 text-white">
