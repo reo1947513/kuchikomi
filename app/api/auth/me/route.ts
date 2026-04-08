@@ -33,6 +33,7 @@ export async function GET(request: NextRequest) {
         planType: true,
         planReviewLimit: true,
         additionalReviews: true,
+        lineUserId: true,
       },
     });
 

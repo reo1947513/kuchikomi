@@ -35,7 +35,7 @@ export async function POST(
       survey: {
         include: {
           tones: { where: { isActive: true }, orderBy: { order: "asc" } },
-          user: { select: { id: true, additionalReviews: true, email: true, planType: true, shopName: true } },
+          user: { select: { id: true, additionalReviews: true, email: true, planType: true, shopName: true, lineUserId: true } },
         },
       },
       answers: {
@@ -190,6 +190,23 @@ export async function POST(
           session.survey.monthlyReviewCount + 1,
           session.survey.monthlyReviewLimit
         ).catch((e) => console.error("Review notification email failed:", e));
+      });
+    }
+  }
+
+  // Send LINE notification for real sessions (if user has LINE linked)
+  if (!isTest && session.survey.user?.lineUserId) {
+    const plan = session.survey.user.planType ?? "";
+    const notifyPlans = ["standard", "lifetime_standard", "premium", "lifetime_premium"];
+    if (notifyPlans.includes(plan)) {
+      import("@/lib/line").then(({ sendLineReviewNotification }) => {
+        sendLineReviewNotification(
+          session.survey.user!.lineUserId!,
+          session.survey.user!.shopName || session.survey.title,
+          reviewText,
+          session.survey.monthlyReviewCount + 1,
+          session.survey.monthlyReviewLimit
+        ).catch((e) => console.error("LINE review notification failed:", e));
       });
     }
   }

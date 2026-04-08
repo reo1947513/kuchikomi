@@ -49,6 +49,8 @@ model User {
   planReviewLimit      Int      @default(0)
   additionalReviews    Int      @default(0)
 
+  lineUserId           String?  // LINE連携用ユーザーID
+
   surveys        Survey[]
   contacts       Contact[]
   passwordResets PasswordReset[]
