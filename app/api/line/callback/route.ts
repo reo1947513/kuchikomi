@@ -11,9 +11,15 @@ export async function GET(request: NextRequest) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://comista-kuchikomi.com";
   const dashboardUrl = `${appUrl}/dashboard/settings`;
 
-  if (error || !code || !state) {
-    console.error("LINE callback params missing:", { error, hasCode: !!code, hasState: !!state });
+  // LINE sent an explicit error
+  if (error) {
+    console.error("LINE callback error param:", error);
     return NextResponse.redirect(`${dashboardUrl}?line=error`);
+  }
+
+  // No code/state = prefetch or direct navigation, just redirect without error
+  if (!code || !state) {
+    return NextResponse.redirect(dashboardUrl);
   }
 
   // Extract userId from state
@@ -28,8 +34,6 @@ export async function GET(request: NextRequest) {
     const channelId = process.env.LINE_LOGIN_CHANNEL_ID;
     const channelSecret = process.env.LINE_LOGIN_CHANNEL_SECRET;
     const redirectUri = `${appUrl}/api/line/callback`;
-
-    console.log("LINE callback: exchanging token", { channelId, redirectUri, userId });
 
     const tokenRes = await fetch("https://api.line.me/oauth2/v2.1/token", {
       method: "POST",
@@ -64,14 +68,11 @@ export async function GET(request: NextRequest) {
     const profile = await profileRes.json();
     const lineUserId = profile.userId;
 
-    console.log("LINE callback: saving lineUserId for user", userId);
-
     await prisma.user.update({
       where: { id: userId },
       data: { lineUserId },
     });
 
-    console.log("LINE callback: success");
     return NextResponse.redirect(`${dashboardUrl}?line=success`);
   } catch (e) {
     console.error("LINE callback error:", e);
