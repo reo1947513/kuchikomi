@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getSessionForRole } from "@/lib/auth";
 import DashboardNav from "./DashboardNav";
 import ExpiredNav from "./ExpiredNav";
+import NotificationBell from "./NotificationBell";
 import { prisma } from "@/lib/db";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -35,6 +36,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             </a>
           ) : (
             <div className="flex items-center gap-2 sm:gap-3">
+              <NotificationBell />
               <a href="/dashboard/contact" className="px-3 py-1.5 text-sm font-medium bg-white text-gray-800 rounded-lg hover:bg-gray-100 transition-colors">
                 お問い合わせ
               </a>
