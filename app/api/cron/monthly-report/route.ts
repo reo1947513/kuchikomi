@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
               answers: {
                 select: {
                   question: { select: { text: true } },
-                  choice: { select: { text: true } },
+                  choiceId: true,
                   textValue: true,
                 },
               },
@@ -69,11 +69,22 @@ export async function GET(request: NextRequest) {
     for (const survey of user.surveys) {
       totalReviews += survey.sessions.length;
 
-      // テキスト回答からキーワードを抽出（選択肢テキスト）
-      for (const s of survey.sessions) {
-        for (const a of s.answers) {
-          if (a.choice?.text) {
-            allKeywords.push(a.choice.text);
+      // 選択肢IDからテキストを取得してキーワードに追加
+      const choiceIds = survey.sessions
+        .flatMap((s) => s.answers.map((a) => a.choiceId))
+        .filter((id): id is string => !!id);
+
+      if (choiceIds.length > 0) {
+        const choices = await prisma.choice.findMany({
+          where: { id: { in: choiceIds } },
+          select: { id: true, text: true },
+        });
+        const choiceMap = new Map(choices.map((c) => [c.id, c.text]));
+        for (const s of survey.sessions) {
+          for (const a of s.answers) {
+            if (a.choiceId && choiceMap.has(a.choiceId)) {
+              allKeywords.push(choiceMap.get(a.choiceId)!);
+            }
           }
         }
       }
