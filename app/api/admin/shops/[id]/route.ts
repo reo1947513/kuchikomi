@@ -128,26 +128,41 @@ export async function PUT(request: NextRequest, { params }: Params) {
     }
   }
 
-  const updated = await prisma.user.update({
-    where: { id: params.id },
-    data: updateData,
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      loginId: true,
-      shopName: true,
-      address: true,
-      industry: true,
-      agencyId: true,
-      agency: { select: { id: true, name: true } },
-      createdAt: true,
-      updatedAt: true,
-      _count: { select: { surveys: true } },
-    },
-  });
+  try {
+    const updated = await prisma.user.update({
+      where: { id: params.id },
+      data: updateData,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        loginId: true,
+        shopName: true,
+        address: true,
+        industry: true,
+        agencyId: true,
+        agency: { select: { id: true, name: true } },
+        createdAt: true,
+        updatedAt: true,
+        _count: { select: { surveys: true } },
+      },
+    });
 
-  return NextResponse.json(updated);
+    return NextResponse.json(updated);
+  } catch (e: unknown) {
+    if (typeof e === "object" && e !== null && "code" in e && (e as { code: string }).code === "P2002") {
+      const target = (e as { meta?: { target?: string[] } }).meta?.target;
+      if (target?.includes("email")) {
+        return NextResponse.json({ error: "このメールアドレスは既に使用されています" }, { status: 409 });
+      }
+      if (target?.includes("loginId")) {
+        return NextResponse.json({ error: "このログインIDは既に使用されています" }, { status: 409 });
+      }
+      return NextResponse.json({ error: "入力内容が他のユーザーと重複しています" }, { status: 409 });
+    }
+    console.error("Shop update error:", e);
+    return NextResponse.json({ error: "更新に失敗しました" }, { status: 500 });
+  }
 }
 
 export async function DELETE(request: NextRequest, { params }: Params) {

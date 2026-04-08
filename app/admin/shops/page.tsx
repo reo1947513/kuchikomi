@@ -83,6 +83,13 @@ export default function ShopsPage() {
   const [addError, setAddError] = useState<string | null>(null);
   const [addSubmitting, setAddSubmitting] = useState(false);
 
+  // Toast
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const showToast = (message: string, type: "success" | "error") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 4000);
+  };
+
   useEffect(() => {
     fetch("/api/admin/agencies")
       .then((r) => r.json())
@@ -185,9 +192,10 @@ export default function ShopsPage() {
         throw new Error(d.error ?? "更新に失敗しました");
       }
       setModalOpen(false);
+      showToast("更新しました", "success");
       fetchShops();
     } catch (e) {
-      setFormError(e instanceof Error ? e.message : "エラー");
+      showToast(e instanceof Error ? e.message : "更新に失敗しました", "error");
     } finally {
       setSubmitting(false);
     }
@@ -201,10 +209,10 @@ export default function ShopsPage() {
         const d = await res.json();
         throw new Error(d.error || "解約に失敗しました");
       }
-      alert("解約処理が完了しました");
+      showToast("解約処理が完了しました", "success");
       fetchShops();
     } catch (e) {
-      alert(e instanceof Error ? e.message : "解約に失敗しました");
+      showToast(e instanceof Error ? e.message : "解約に失敗しました", "error");
     }
   };
 
@@ -213,9 +221,10 @@ export default function ShopsPage() {
     try {
       const res = await fetch(`/api/admin/shops/${shop.id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("削除に失敗しました");
+      showToast("削除しました", "success");
       fetchShops();
     } catch (e) {
-      alert(e instanceof Error ? e.message : "削除に失敗しました");
+      showToast(e instanceof Error ? e.message : "削除に失敗しました", "error");
     }
   };
 
@@ -252,6 +261,7 @@ export default function ShopsPage() {
       }
       setAddOpen(false);
       setAddForm({ shopName: "", email: "", loginId: "", password: "", address: "", phone: "", industry: "", agencyId: "", monthlyReviewLimit: 100, contractStart: "", contractEnd: "", noContractLimit: false, staffName: "" });
+      showToast("新規ショップを登録しました", "success");
       fetchShops();
     } catch (e) {
       setAddError(e instanceof Error ? e.message : "エラー");
@@ -280,8 +290,8 @@ export default function ShopsPage() {
                 const res = await fetch("/api/admin/invite");
                 const d = await res.json();
                 await navigator.clipboard.writeText(d.url);
-                alert("招待リンクをコピーしました");
-              } catch { alert("コピーに失敗しました"); }
+                showToast("招待リンクをコピーしました", "success");
+              } catch { showToast("コピーに失敗しました", "error"); }
             }}
             className="flex items-center gap-2 px-4 py-2 border border-violet-400 text-violet-600 font-semibold rounded-xl hover:bg-violet-50 transition-colors text-sm flex-1 sm:flex-none justify-center"
           >
@@ -680,6 +690,20 @@ export default function ShopsPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Toast */}
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-[100] animate-in slide-in-from-bottom-4 fade-in duration-300">
+          <div className={`flex items-center gap-2 px-5 py-3 rounded-xl shadow-lg text-sm font-medium ${toast.type === "success" ? "bg-green-600 text-white" : "bg-red-600 text-white"}`}>
+            {toast.type === "success" ? (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+            ) : (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            )}
+            {toast.message}
           </div>
         </div>
       )}
