@@ -874,6 +874,55 @@ export default function LpPage() {
         </div>
       </Section>
 
+      {/* ───────── Evolving Service ───────── */}
+      <Section className="relative py-20 md:py-28 bg-white overflow-hidden">
+        <div className="relative max-w-4xl mx-auto px-4 text-center">
+          <div className="inline-flex items-center gap-2 bg-violet-100 text-violet-700 text-xs font-bold px-4 py-1.5 rounded-full mb-6">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            常に進化するサービス
+          </div>
+          <h2 className="text-2xl md:text-4xl font-extrabold mb-4">
+            ComiStaは
+            <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">アップデートし続けます</span>
+          </h2>
+          <p className="text-gray-500 max-w-2xl mx-auto mb-10 text-sm md:text-base leading-relaxed">
+            お客様のご要望や最新の技術トレンドを取り入れ、便利な新機能を定期的に追加しています。<br className="hidden md:block" />
+            月額料金内で、追加費用なくすべてのアップデートをご利用いただけます。
+          </p>
+          <div className="grid sm:grid-cols-3 gap-4 text-left">
+            <div className="bg-gradient-to-br from-cyan-50 to-white rounded-2xl p-5 border border-cyan-100">
+              <div className="w-10 h-10 rounded-xl bg-cyan-100 flex items-center justify-center mb-3">
+                <svg className="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+              </div>
+              <h3 className="font-bold text-sm text-gray-800 mb-1">新機能を定期追加</h3>
+              <p className="text-xs text-gray-500">分析機能の強化、テンプレート追加、UI改善など、毎月アップデートを実施しています。</p>
+            </div>
+            <div className="bg-gradient-to-br from-violet-50 to-white rounded-2xl p-5 border border-violet-100">
+              <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center mb-3">
+                <svg className="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </div>
+              <h3 className="font-bold text-sm text-gray-800 mb-1">お客様の声を反映</h3>
+              <p className="text-xs text-gray-500">導入店舗様からのフィードバックをもとに、本当に必要な機能を優先して開発しています。</p>
+            </div>
+            <div className="bg-gradient-to-br from-fuchsia-50 to-white rounded-2xl p-5 border border-fuchsia-100">
+              <div className="w-10 h-10 rounded-xl bg-fuchsia-100 flex items-center justify-center mb-3">
+                <svg className="w-5 h-5 text-fuchsia-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="font-bold text-sm text-gray-800 mb-1">追加費用ゼロ</h3>
+              <p className="text-xs text-gray-500">すべてのアップデートは月額料金に含まれています。追加の開発費や更新費用は一切かかりません。</p>
+            </div>
+          </div>
+        </div>
+      </Section>
+
       {/* ───────── CTA / Contact ───────── */}
       <Section id="contact" className="relative py-24 md:py-32 overflow-hidden">
         {/* Dark gradient background */}
