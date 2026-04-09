@@ -334,18 +334,18 @@ export default function ShopsPage() {
 
       {/* Table - Desktop */}
       <div className="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
-        <table className="w-full text-sm min-w-[800px]">
+        <table className="w-full text-sm min-w-[1100px]">
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50">
-              <th className="text-left px-4 py-3 font-semibold text-gray-700 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("shopName")}>顧客名{sortKey === "shopName" && (sortDir === "asc" ? " ▲" : " ▼")}</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("name")}>担当者名{sortKey === "name" && (sortDir === "asc" ? " ▲" : " ▼")}</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("sessionCount")}>アクセス回数{sortKey === "sessionCount" && (sortDir === "asc" ? " ▲" : " ▼")}</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700 cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("contractDays")}>契約残日数{sortKey === "contractDays" && (sortDir === "asc" ? " ▲" : " ▼")}</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700">プラン</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700">メール</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700">住所</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700">代理店</th>
-              <th className="text-right px-4 py-3 font-semibold text-gray-700">操作</th>
+              <th className="text-left px-3 py-3 font-semibold text-gray-700 whitespace-nowrap cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("shopName")}>顧客名{sortKey === "shopName" && (sortDir === "asc" ? " ▲" : " ▼")}</th>
+              <th className="text-left px-3 py-3 font-semibold text-gray-700 whitespace-nowrap cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("name")}>担当者{sortKey === "name" && (sortDir === "asc" ? " ▲" : " ▼")}</th>
+              <th className="text-center px-2 py-3 font-semibold text-gray-700 whitespace-nowrap cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("sessionCount")}>アクセス{sortKey === "sessionCount" && (sortDir === "asc" ? " ▲" : " ▼")}</th>
+              <th className="text-center px-2 py-3 font-semibold text-gray-700 whitespace-nowrap cursor-pointer select-none hover:text-violet-600" onClick={() => toggleSort("contractDays")}>契約残{sortKey === "contractDays" && (sortDir === "asc" ? " ▲" : " ▼")}</th>
+              <th className="text-center px-2 py-3 font-semibold text-gray-700 whitespace-nowrap">プラン</th>
+              <th className="text-left px-3 py-3 font-semibold text-gray-700 whitespace-nowrap">メール</th>
+              <th className="text-left px-3 py-3 font-semibold text-gray-700 whitespace-nowrap">住所</th>
+              <th className="text-left px-2 py-3 font-semibold text-gray-700 whitespace-nowrap">代理店</th>
+              <th className="text-right px-3 py-3 font-semibold text-gray-700 whitespace-nowrap">操作</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -357,13 +357,13 @@ export default function ShopsPage() {
             )}
             {!loading && shops.map((shop) => (
               <tr key={shop.id} className="hover:bg-gray-50 transition-colors">
-                <td className="px-4 py-3">
-                  <div className="font-medium text-gray-900">{shop.shopName ?? shop.name}</div>
+                <td className="px-3 py-3">
+                  <div className="font-medium text-gray-900 whitespace-nowrap">{shop.shopName ?? shop.name}</div>
                   <div className="text-xs text-gray-400">{shop.loginId ?? ""}</div>
                 </td>
-                <td className="px-4 py-3 text-sm text-gray-600">{shop.name}</td>
-                <td className="px-4 py-3 text-sm text-gray-700 font-medium">{shop.sessionCount ?? 0}回</td>
-                <td className="px-4 py-3 text-sm">
+                <td className="px-3 py-3 text-sm text-gray-600 whitespace-nowrap">{shop.name}</td>
+                <td className="px-2 py-3 text-sm text-gray-700 font-medium text-center whitespace-nowrap">{shop.sessionCount ?? 0}回</td>
+                <td className="px-2 py-3 text-sm text-center whitespace-nowrap">
                   {shop.noContractLimit ? (
                     <span className="text-gray-400">無期限</span>
                   ) : shop.contractEnd ? (() => {
@@ -377,7 +377,7 @@ export default function ShopsPage() {
                     <span className="text-gray-400">未設定</span>
                   )}
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-2 py-3 text-center">
                   {(() => {
                     const p = shop.planType;
                     if (!p) return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">無料</span>;
@@ -391,13 +391,13 @@ export default function ShopsPage() {
                       agency30: { label: "代理店30店舗〜", cls: "bg-rose-100 text-rose-700" },
                     };
                     const info = labels[p] || { label: p, cls: "bg-gray-100 text-gray-600" };
-                    return <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${info.cls}`}>{info.label}</span>;
+                    return <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${info.cls}`}>{info.label}</span>;
                   })()}
                 </td>
-                <td className="px-4 py-3 text-xs text-gray-500 max-w-[180px] truncate">{shop.email ?? "—"}</td>
-                <td className="px-4 py-3 text-gray-600 max-w-xs truncate">{shop.address ?? "—"}</td>
-                <td className="px-4 py-3 text-gray-600">{shop.agencyName ?? "—"}</td>
-                <td className="px-4 py-3">
+                <td className="px-3 py-3 text-xs text-gray-500 max-w-[200px] truncate">{shop.email ?? "—"}</td>
+                <td className="px-3 py-3 text-xs text-gray-600 max-w-[200px] truncate">{shop.address ?? "—"}</td>
+                <td className="px-2 py-3 text-xs text-gray-600 whitespace-nowrap">{shop.agencyName ?? "—"}</td>
+                <td className="px-3 py-3">
                   <div className="flex items-center justify-end gap-2">
                     {shop.firstSurveyId && (
                       <button
