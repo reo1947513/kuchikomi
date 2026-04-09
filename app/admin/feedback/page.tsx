@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useToast, Toast } from "@/components/Toast";
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
 type ChoiceStat = { question: string; type: "choice"; data: { name: string; value: number }[] };
 type TextStat = { question: string; type: "text"; texts: string[] };
@@ -13,7 +14,7 @@ type FeedbackData = {
   stats: Stat[];
 };
 
-const COLORS = ["#06B6D4", "#8B5CF6", "#F59E0B", "#EF4444", "#10B981"];
+const COLORS = ["#06B6D4", "#8B5CF6", "#F59E0B", "#EF4444", "#10B981", "#EC4899", "#6366F1"];
 
 export default function FeedbackPage() {
   const [data, setData] = useState<FeedbackData | null>(null);
@@ -74,23 +75,50 @@ export default function FeedbackPage() {
         <div key={i} className="bg-white rounded-xl shadow-sm p-4 sm:p-6">
           <h3 className="text-sm font-semibold text-gray-800 mb-4">{stat.question}</h3>
           {stat.type === "choice" ? (
-            <div className="space-y-2">
-              {(stat as ChoiceStat).data.map((d, j) => {
-                const total = (stat as ChoiceStat).data.reduce((s, x) => s + x.value, 0);
-                const pct = total > 0 ? Math.round((d.value / total) * 100) : 0;
-                return (
-                  <div key={d.name} className="flex items-center gap-3">
-                    <span className="text-xs text-gray-600 w-32 sm:w-40 truncate">{d.name}</span>
-                    <div className="flex-1 h-6 bg-gray-100 rounded-full overflow-hidden">
-                      <div
-                        className="h-full rounded-full transition-all duration-500"
-                        style={{ width: `${pct}%`, backgroundColor: COLORS[j % COLORS.length] }}
-                      />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Bar chart */}
+              <div className="space-y-2">
+                {(stat as ChoiceStat).data.map((d, j) => {
+                  const total = (stat as ChoiceStat).data.reduce((s, x) => s + x.value, 0);
+                  const pct = total > 0 ? Math.round((d.value / total) * 100) : 0;
+                  return (
+                    <div key={d.name} className="flex items-center gap-3">
+                      <span className="text-xs text-gray-600 w-32 sm:w-40 truncate">{d.name}</span>
+                      <div className="flex-1 h-6 bg-gray-100 rounded-full overflow-hidden">
+                        <div
+                          className="h-full rounded-full transition-all duration-500"
+                          style={{ width: `${pct}%`, backgroundColor: COLORS[j % COLORS.length] }}
+                        />
+                      </div>
+                      <span className="text-xs font-medium text-gray-500 w-20 text-right">{d.value}件 ({pct}%)</span>
                     </div>
-                    <span className="text-xs font-medium text-gray-500 w-16 text-right">{d.value}件 ({pct}%)</span>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
+              {/* Pie chart */}
+              {(stat as ChoiceStat).data.some((d) => d.value > 0) && (
+                <div className="h-48 sm:h-56">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={(stat as ChoiceStat).data.filter((d) => d.value > 0)}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={40}
+                        outerRadius={70}
+                        dataKey="value"
+                        paddingAngle={2}
+                      >
+                        {(stat as ChoiceStat).data.filter((d) => d.value > 0).map((entry, j) => (
+                          <Cell key={entry.name} fill={COLORS[j % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Legend />
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
             </div>
           ) : (
             <div className="space-y-2 max-h-60 overflow-y-auto">
