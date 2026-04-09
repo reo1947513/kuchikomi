@@ -545,7 +545,7 @@ export default function SurveySettingsPage() {
   }
 
   const isPremiumUser = isPremiumPlan(userPlanType);
-  const canEditAll = isPremiumUser;
+  const canEditAll = isPremiumUser || userRole === "super";
 
   const tabs: { key: Tab; label: string; locked?: boolean }[] = [
     { key: "basic" as Tab, label: "基本設定", locked: !canEditAll },

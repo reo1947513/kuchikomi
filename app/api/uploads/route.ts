@@ -9,7 +9,7 @@ const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 
 export async function POST(request: NextRequest) {
-  const session = getSessionForRole("admin") || getSessionForRole("super");
+  const session = getSessionForRole("super") || getSessionForRole("admin");
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

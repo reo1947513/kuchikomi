@@ -4,7 +4,7 @@ import { getSessionForRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
 export async function GET(request: NextRequest) {
-  const session = getSessionForRole("admin") || getSessionForRole("super");
+  const session = getSessionForRole("super") || getSessionForRole("admin");
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const session = getSessionForRole("admin") || getSessionForRole("super");
+  const session = getSessionForRole("super") || getSessionForRole("admin");
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

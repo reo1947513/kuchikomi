@@ -6,7 +6,7 @@ import NotificationBell from "./NotificationBell";
 import { prisma } from "@/lib/db";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const session = getSessionForRole("admin") || getSessionForRole("super");
+  const session = getSessionForRole("super") || getSessionForRole("admin");
   if (!session) redirect("/login");
 
   // agent role is removed — redirect to login

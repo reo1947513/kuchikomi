@@ -7,7 +7,7 @@ import Anthropic from "@anthropic-ai/sdk";
 const MONTHLY_ADVICE_LIMIT = 5;
 
 export async function POST(request: NextRequest) {
-  const session = getSessionForRole("admin") || getSessionForRole("super");
+  const session = getSessionForRole("super") || getSessionForRole("admin");
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const survey = await prisma.survey.findFirst({
