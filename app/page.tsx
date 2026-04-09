@@ -683,43 +683,42 @@ export default function LpPage() {
           <p className="text-center text-gray-500 mb-16 text-lg">
             {t("pricing.desc")}
           </p>
+
+          {/* ── 店舗向けプラン ── */}
+          <h3 className="text-lg font-bold text-gray-800 mb-6 text-center">店舗向けプラン</h3>
           <div className="grid md:grid-cols-2 gap-6 items-start max-w-4xl mx-auto">
-            {[
+            {([
               {
-                name: t("pricing.standard"),
+                name: "スタンダードプラン",
                 price: "10,000",
-                limit: t("pricing.standard.limit"),
-                target: t("pricing.standard.target"),
+                limit: "月100件",
+                target: "個人店舗・中規模店舗",
                 popular: true,
                 features: [
-                  t("pricing.feat.ai"),
-                  t("pricing.feat.chat"),
-                  t("pricing.feat.qr"),
+                  "AIによる口コミ下書き作成",
+                  "チャット形式アンケート",
+                  "QRコード発行",
                   "分析ページ（グラフ）",
                   "メール通知",
-                  t("pricing.feat.support"),
+                  "カスタマーサポート",
                 ],
               },
               {
-                name: t("pricing.premium"),
+                name: "プレミアムプラン",
                 price: "20,000",
-                limit: t("pricing.premium.limit"),
-                target: t("pricing.premium.target"),
+                limit: "無制限",
+                target: "大規模・複数店舗",
                 popular: false,
                 features: [
-                  t("pricing.feat.ai"),
-                  t("pricing.feat.chat"),
-                  t("pricing.feat.qr"),
-                  "分析ページ（グラフ）",
+                  "スタンダードの全機能",
                   "AI分析レポート",
                   "CSVエクスポート",
                   "AIプロンプト編集",
-                  "複数店舗管理",
-                  "メール通知",
+                  "LINE通知連携",
                   "優先サポート",
                 ],
               },
-            ].map((plan) => (
+            ] as { name: string; price: string; limit: string; target: string; popular: boolean; features: string[] }[]).map((plan) => (
               <div
                 key={plan.name}
                 className={`relative bg-white/70 backdrop-blur-sm rounded-3xl p-8 border transition-all hover:-translate-y-1 ${
@@ -730,7 +729,6 @@ export default function LpPage() {
               >
                 {plan.popular && (
                   <>
-                    {/* Glow effect */}
                     <div className="absolute -inset-[2px] rounded-3xl bg-gradient-to-r from-cyan-500 via-violet-500 to-fuchsia-500 opacity-20 blur-md -z-10" />
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-500 to-violet-500 text-white text-xs font-bold px-5 py-1.5 rounded-full shadow-lg">
                       {t("pricing.popular")}
@@ -743,44 +741,131 @@ export default function LpPage() {
                   <span className="text-5xl font-black bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
                     ¥{plan.price}
                   </span>
-                  <span className="text-gray-500 text-sm">{t("pricing.perMonth")}</span>
+                  <span className="text-gray-500 text-sm">/月</span>
                 </div>
-                <p className="text-sm text-cyan-600 font-semibold mb-6">
-                  {plan.limit}
-                </p>
+                <p className="text-sm text-cyan-600 font-semibold mb-6">{plan.limit}</p>
                 <ul className="space-y-3 text-sm text-gray-600">
                   {plan.features.map((feat) => (
                     <li key={feat} className="flex items-center gap-2">
-                      <svg
-                        className="w-4 h-4 text-cyan-500 shrink-0"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
+                      <svg className="w-4 h-4 text-cyan-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                       {feat}
                     </li>
                   ))}
                 </ul>
-                <button
-                  onClick={() => scrollTo("contact")}
-                  className={`mt-8 w-full py-3.5 rounded-full font-semibold transition-all ${
-                    plan.popular
-                      ? "bg-gradient-to-r from-cyan-500 to-violet-500 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:scale-105"
-                      : "border border-gray-300 text-gray-700 hover:bg-gray-50"
-                  }`}
-                >
-                  {t("pricing.contact")}
+                <button onClick={() => scrollTo("contact")} className={`mt-8 w-full py-3.5 rounded-full font-semibold transition-all ${plan.popular ? "bg-gradient-to-r from-cyan-500 to-violet-500 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:scale-105" : "border border-gray-300 text-gray-700 hover:bg-gray-50"}`}>
+                  お問い合わせ
                 </button>
               </div>
             ))}
           </div>
+
+          {/* ── チェーン・複数店舗パック ── */}
+          <h3 className="text-lg font-bold text-gray-800 mt-20 mb-6 text-center">チェーン・複数店舗パック</h3>
+          <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {([
+              { name: "3店舗パック", price: "50,000", save: "¥10,000お得", target: "小規模チェーン", features: ["プレミアム機能 × 3店舗", "店舗横断ダッシュボード", "一括管理・レポート"] },
+              { name: "5店舗パック", price: "80,000", save: "¥20,000お得", target: "中規模チェーン", features: ["プレミアム機能 × 5店舗", "店舗横断ダッシュボード", "一括管理・レポート", "専任サポート"] },
+            ] as { name: string; price: string; save: string; target: string; features: string[] }[]).map((plan) => (
+              <div key={plan.name} className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 border border-gray-200 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="font-bold text-lg">{plan.name}</h3>
+                  <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">{plan.save}</span>
+                </div>
+                <p className="text-xs text-gray-500 mb-4">{plan.target}</p>
+                <div className="mb-6">
+                  <span className="text-4xl font-black bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">¥{plan.price}</span>
+                  <span className="text-gray-500 text-sm">/月</span>
+                </div>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  {plan.features.map((feat) => (
+                    <li key={feat} className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-cyan-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                      {feat}
+                    </li>
+                  ))}
+                </ul>
+                <button onClick={() => scrollTo("contact")} className="mt-6 w-full py-3 rounded-full font-semibold border border-gray-300 text-gray-700 hover:bg-gray-50 transition-all">お問い合わせ</button>
+              </div>
+            ))}
+          </div>
+
+          {/* ── エージェンシー・代理店プラン ── */}
+          <h3 className="text-lg font-bold text-gray-800 mt-20 mb-6 text-center">エージェンシー・代理店プラン</h3>
+          <div className="grid sm:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {([
+              { name: "5店舗プラン", price: "40,000", target: "小規模代理店", features: ["5店舗一括管理", "ホワイトラベル対応", "代理店ダッシュボード", "メール＆LINE通知"] },
+              { name: "10店舗プラン", price: "70,000", target: "中規模代理店", popular: true, features: ["10店舗一括管理", "ホワイトラベル対応", "専用ダッシュボード", "全分析機能", "優先サポート"] },
+              { name: "30店舗〜", price: null, target: "大規模代理店", features: ["30店舗以上の一括管理", "ホワイトラベル対応", "API連携", "専任アカウントマネージャー", "カスタム開発対応"] },
+            ] as { name: string; price: string | null; target: string; popular?: boolean; features: string[] }[]).map((plan) => (
+              <div key={plan.name} className={`relative bg-white/70 backdrop-blur-sm rounded-3xl p-7 border transition-all hover:-translate-y-1 ${plan.popular ? "border-transparent shadow-2xl ring-2 ring-violet-400" : "border-gray-200 shadow-lg hover:shadow-xl"}`}>
+                {plan.popular && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white text-xs font-bold px-4 py-1 rounded-full shadow-lg">おすすめ</div>
+                )}
+                <h3 className="font-bold text-lg mb-1">{plan.name}</h3>
+                <p className="text-xs text-gray-500 mb-4">{plan.target}</p>
+                <div className="mb-6">
+                  {plan.price ? (
+                    <>
+                      <span className="text-4xl font-black bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">¥{plan.price}</span>
+                      <span className="text-gray-500 text-sm">/月</span>
+                    </>
+                  ) : (
+                    <span className="text-3xl font-black bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">要見積</span>
+                  )}
+                </div>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  {plan.features.map((feat) => (
+                    <li key={feat} className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-cyan-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                      {feat}
+                    </li>
+                  ))}
+                </ul>
+                <button onClick={() => scrollTo("contact")} className={`mt-6 w-full py-3 rounded-full font-semibold transition-all ${plan.popular ? "bg-gradient-to-r from-cyan-500 to-violet-500 text-white shadow-lg hover:scale-105" : "border border-gray-300 text-gray-700 hover:bg-gray-50"}`}>
+                  お問い合わせ
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* ── オプション ── */}
+          <div className="mt-20 max-w-4xl mx-auto">
+            <h3 className="text-lg font-bold text-gray-800 mb-6 text-center">オプションサービス</h3>
+            <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 border border-gray-200 shadow-lg">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <h4 className="font-bold text-base text-gray-800">Google口コミ管理代行</h4>
+                    <span className="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">月額アドオン</span>
+                  </div>
+                  <p className="text-sm text-gray-500 mb-2">Googleビジネスプロフィールの口コミ返信・管理を代行します。</p>
+                  <ul className="space-y-1 text-sm text-gray-600">
+                    <li className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-cyan-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                      口コミへの返信代行
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-cyan-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                      ネガティブレビュー対応
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-cyan-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                      月次レポート提出
+                    </li>
+                  </ul>
+                </div>
+                <div className="text-right shrink-0">
+                  <p className="text-sm text-gray-400 mb-1">料金</p>
+                  <p className="text-2xl font-black bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">要相談</p>
+                  <button onClick={() => scrollTo("contact")} className="mt-3 px-6 py-2 rounded-full text-sm font-semibold border border-gray-300 text-gray-700 hover:bg-gray-50 transition-all">お問い合わせ</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-center text-sm text-gray-400 mt-10">全プラン初期費用0円・最低契約期間6ヶ月</p>
         </div>
       </Section>
 
