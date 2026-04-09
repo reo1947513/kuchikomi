@@ -20,7 +20,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-base font-bold text-gray-900 mb-3">1. はじめに</h2>
-            <p>川上玲央（以下「当社」）は、ComiSta（以下「本サービス」）におけるお客様の個人情報の取り扱いについて、以下のとおりプライバシーポリシーを定めます。</p>
+            <p>RRL（以下「当社」）は、ComiSta（以下「本サービス」）におけるお客様の個人情報の取り扱いについて、以下のとおりプライバシーポリシーを定めます。</p>
           </section>
 
           <section>
@@ -63,20 +63,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-bold text-gray-900 mb-3">5. 外部サービスの利用</h2>
-            <p>本サービスでは、以下の外部サービスを利用しています。各サービスのプライバシーポリシーもご確認ください。</p>
-            <ul className="list-disc ml-5 mt-2 space-y-1">
-              <li>Stripe（決済処理）</li>
-              <li>Supabase（データベース）</li>
-              <li>Vercel（ホスティング）</li>
-              <li>Anthropic Claude（AI口コミ生成）</li>
-              <li>Resend（メール送信）</li>
-              <li>LINE Messaging API（通知）</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-base font-bold text-gray-900 mb-3">6. 情報の安全管理</h2>
+            <h2 className="text-base font-bold text-gray-900 mb-3">5. 情報の安全管理</h2>
             <p>当社は、個人情報の漏洩、滅失またはき損の防止のため、以下の安全管理措置を講じています。</p>
             <ul className="list-disc ml-5 mt-2 space-y-1">
               <li>パスワードのハッシュ化（bcrypt）</li>
@@ -87,12 +74,12 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-bold text-gray-900 mb-3">7. Cookieの使用</h2>
+            <h2 className="text-base font-bold text-gray-900 mb-3">6. Cookieの使用</h2>
             <p>本サービスでは、認証状態の維持のためにCookieを使用しています。ブラウザの設定によりCookieを無効にすることも可能ですが、一部の機能がご利用いただけなくなる場合があります。</p>
           </section>
 
           <section>
-            <h2 className="text-base font-bold text-gray-900 mb-3">8. お客様の権利</h2>
+            <h2 className="text-base font-bold text-gray-900 mb-3">7. お客様の権利</h2>
             <p>お客様は、当社に対して以下の請求を行うことができます。</p>
             <ul className="list-disc ml-5 mt-2 space-y-1">
               <li>個人情報の開示、訂正、追加または削除</li>
@@ -103,15 +90,15 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-base font-bold text-gray-900 mb-3">9. ポリシーの変更</h2>
+            <h2 className="text-base font-bold text-gray-900 mb-3">8. ポリシーの変更</h2>
             <p>当社は、必要に応じて本ポリシーを変更することがあります。重要な変更がある場合は、本サービス上での通知またはメールにてお知らせします。</p>
           </section>
 
           <section>
-            <h2 className="text-base font-bold text-gray-900 mb-3">10. お問い合わせ</h2>
+            <h2 className="text-base font-bold text-gray-900 mb-3">9. お問い合わせ</h2>
             <p>個人情報の取り扱いに関するお問い合わせは、以下までご連絡ください。</p>
             <div className="mt-2 bg-gray-50 rounded-lg p-4">
-              <p>川上玲央</p>
+              <p>RRL</p>
               <p>メール: conestkawakami@gmail.com</p>
               <p>電話: 090-2914-0992</p>
             </div>
