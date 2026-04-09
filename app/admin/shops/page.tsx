@@ -42,13 +42,14 @@ type EditForm = {
   contractEnd: string;
   noContractLimit: boolean;
   staffName: string;
+  planType: string;
 };
 
 const emptyEdit = (): EditForm => ({
   shopName: "", address: "", phone: "", googleBusinessUrl: "", industry: "",
   agencyId: "", monthlyReviewLimit: 100, email: "", password: "",
   contractStart: "", contractEnd: "", noContractLimit: false,
-  staffName: "",
+  staffName: "", planType: "",
 });
 
 export default function ShopsPage() {
@@ -150,6 +151,7 @@ export default function ShopsPage() {
       staffName: shop.name ?? "",
       agencyId: shop.agencyId ?? "",
       monthlyReviewLimit: shop.monthlyReviewLimit,
+      planType: shop.planType ?? "",
       email: "",
       password: "",
     });
@@ -175,6 +177,7 @@ export default function ShopsPage() {
         name: form.staffName.trim() || undefined,
         agencyId: form.agencyId || null,
         monthlyReviewLimit: form.monthlyReviewLimit,
+        planType: form.planType || null,
       };
       if (form.email.trim()) payload.email = form.email.trim();
       if (form.password.trim()) payload.password = form.password.trim();
@@ -550,6 +553,19 @@ export default function ShopsPage() {
                 <select value={form.agencyId} onChange={(e) => setForm({ ...form, agencyId: e.target.value })} className={inputCls}>
                   <option value="">なし</option>
                   {agencies.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">プラン</label>
+                <select value={form.planType} onChange={(e) => setForm({ ...form, planType: e.target.value })} className={inputCls}>
+                  <option value="">未設定</option>
+                  <option value="standard">スタンダード</option>
+                  <option value="premium">プレミアム</option>
+                  <option value="chain3">チェーン3店舗</option>
+                  <option value="chain5">チェーン5店舗</option>
+                  <option value="agency5">エージェンシー5店舗</option>
+                  <option value="agency10">エージェンシー10店舗</option>
+                  <option value="agency30">エージェンシー30店舗〜</option>
                 </select>
               </div>
               <div>
