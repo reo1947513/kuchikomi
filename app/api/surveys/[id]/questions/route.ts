@@ -100,83 +100,84 @@ export async function PUT(request: NextRequest, { params }: Params) {
   const { questions = [] } = body;
 
   try {
-  // Replace all questions in a transaction
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const updatedQuestions = await prisma.$transaction(async (tx: any) => {
-    // Delete answers, choices, then questions (branch questions cascade via onDelete)
-    const qIds = (await tx.question.findMany({ where: { surveyId: params.id }, select: { id: true } })).map((q: {id: string}) => q.id);
-    await tx.answer.deleteMany({ where: { questionId: { in: qIds } } });
-    await tx.choice.deleteMany({ where: { questionId: { in: qIds } } });
-    // Delete branch questions first, then parent questions
-    await tx.question.deleteMany({ where: { surveyId: params.id, parentQuestionId: { not: null } } });
-    await tx.question.deleteMany({ where: { surveyId: params.id } });
-
-    // Create new questions (parent first, then branches)
-    const created = [];
-    for (const q of questions) {
-      const parent = await tx.question.create({
-        data: {
-          text: q.text,
-          order: q.order,
-          type: q.type ?? "choice",
-          isRandom: q.isRandom ?? false,
-          groupName: q.groupName ?? null,
-          surveyId: params.id,
-          choices: {
-            create: (q.choices ?? []).map((c) => ({
-              text: c.text,
-              order: c.order,
-              score: c.score ?? 0,
-            })),
-          },
-        },
-        include: { choices: { orderBy: { order: "asc" } } },
-      });
-
-      // Create branch questions if any
-      const branches = [];
-      if (q.branchQuestions && q.branchQuestions.length > 0) {
-        // Map old triggerChoiceId (index-based) to new choice IDs
-        for (const bq of q.branchQuestions) {
-          let resolvedTriggerChoiceId: string | null = null;
-          if (bq.triggerChoiceId && parent.choices.length > 0) {
-            const idx = parseInt(bq.triggerChoiceId, 10);
-            if (!isNaN(idx) && idx >= 0 && idx < parent.choices.length) {
-              resolvedTriggerChoiceId = parent.choices[idx].id;
-            }
-            // Invalid index or non-numeric → leave as null (skip broken reference)
-          }
-
-          const branch = await tx.question.create({
-            data: {
-              text: bq.text,
-              order: bq.order,
-              type: bq.type ?? "choice",
-              isRandom: false,
-              surveyId: params.id,
-              parentQuestionId: parent.id,
-              triggerChoiceId: resolvedTriggerChoiceId,
-              choices: {
-                create: (bq.choices ?? []).map((c) => ({
-                  text: c.text,
-                  order: c.order,
-                  score: c.score ?? 0,
-                })),
-              },
-            },
-            include: { choices: { orderBy: { order: "asc" } } },
-          });
-          branches.push(branch);
-        }
+    // Replace all questions in a transaction (30s timeout for large surveys)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const updatedQuestions = await prisma.$transaction(async (tx: any) => {
+      // Delete answers, choices, then questions (branch questions cascade via onDelete)
+      const qIds = (await tx.question.findMany({ where: { surveyId: params.id }, select: { id: true } })).map((q: {id: string}) => q.id);
+      if (qIds.length > 0) {
+        await tx.answer.deleteMany({ where: { questionId: { in: qIds } } });
+        await tx.choice.deleteMany({ where: { questionId: { in: qIds } } });
+        // Delete branch questions first, then parent questions
+        await tx.question.deleteMany({ where: { surveyId: params.id, parentQuestionId: { not: null } } });
+        await tx.question.deleteMany({ where: { surveyId: params.id } });
       }
 
-      created.push({ ...parent, branchQuestions: branches });
-    }
+      // Create new questions (parent first, then branches)
+      const created = [];
+      for (const q of questions) {
+        const parent = await tx.question.create({
+          data: {
+            text: q.text,
+            order: q.order,
+            type: q.type ?? "choice",
+            isRandom: q.isRandom ?? false,
+            groupName: q.groupName ?? null,
+            surveyId: params.id,
+            choices: {
+              create: (q.choices ?? []).map((c) => ({
+                text: c.text,
+                order: c.order,
+                score: c.score ?? 0,
+              })),
+            },
+          },
+          include: { choices: { orderBy: { order: "asc" } } },
+        });
 
-    return created;
-  });
+        // Create branch questions if any
+        const branches = [];
+        if (q.branchQuestions && q.branchQuestions.length > 0) {
+          for (const bq of q.branchQuestions) {
+            let resolvedTriggerChoiceId: string | null = null;
+            if (bq.triggerChoiceId && parent.choices.length > 0) {
+              const idx = parseInt(bq.triggerChoiceId, 10);
+              if (!isNaN(idx) && idx >= 0 && idx < parent.choices.length) {
+                resolvedTriggerChoiceId = parent.choices[idx].id;
+              }
+              // Invalid index or non-numeric → leave as null
+            }
 
-  return NextResponse.json(updatedQuestions);
+            const branch = await tx.question.create({
+              data: {
+                text: bq.text,
+                order: bq.order,
+                type: bq.type ?? "choice",
+                isRandom: false,
+                surveyId: params.id,
+                parentQuestionId: parent.id,
+                triggerChoiceId: resolvedTriggerChoiceId,
+                choices: {
+                  create: (bq.choices ?? []).map((c) => ({
+                    text: c.text,
+                    order: c.order,
+                    score: c.score ?? 0,
+                  })),
+                },
+              },
+              include: { choices: { orderBy: { order: "asc" } } },
+            });
+            branches.push(branch);
+          }
+        }
+
+        created.push({ ...parent, branchQuestions: branches });
+      }
+
+      return created;
+    }, { timeout: 30000 });
+
+    return NextResponse.json(updatedQuestions);
   } catch (e) {
     console.error("Questions PUT error:", e);
     return NextResponse.json(
