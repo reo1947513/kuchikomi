@@ -99,6 +99,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
 
   const { questions = [] } = body;
 
+  try {
   // Replace all questions in a transaction
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updatedQuestions = await prisma.$transaction(async (tx: any) => {
@@ -176,4 +177,11 @@ export async function PUT(request: NextRequest, { params }: Params) {
   });
 
   return NextResponse.json(updatedQuestions);
+  } catch (e) {
+    console.error("Questions PUT error:", e);
+    return NextResponse.json(
+      { error: e instanceof Error ? e.message : "質問の保存に失敗しました" },
+      { status: 500 }
+    );
+  }
 }
