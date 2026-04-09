@@ -25,7 +25,7 @@ export async function GET(request: NextRequest, { params }: Params) {
         orderBy: { order: "asc" },
       },
       tones: { orderBy: { order: "asc" } },
-      user: { select: { id: true, name: true, email: true } },
+      user: { select: { id: true, name: true, email: true, planType: true } },
     },
   });
 
@@ -163,7 +163,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
         orderBy: { order: "asc" },
       },
       tones: { orderBy: { order: "asc" } },
-      user: { select: { id: true, name: true, email: true } },
+      user: { select: { id: true, name: true, email: true, planType: true } },
     },
   });
 

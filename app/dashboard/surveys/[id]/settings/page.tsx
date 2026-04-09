@@ -68,6 +68,7 @@ type Survey = {
   toneRandom?: boolean;
   tones: Tone[];
   questions: Question[];
+  user?: { planType?: string | null };
 };
 
 type Tab = "basic" | "ai" | "questions" | "logo" | "color";
@@ -205,7 +206,10 @@ export default function SurveySettingsPage() {
   useEffect(() => {
     fetch("/api/auth/me").then(r => r.json()).then(d => {
       setUserRole(d.role ?? "");
-      setUserPlanType(d.planType ?? null);
+      // For non-super users, use their own planType
+      if (d.role !== "super") {
+        setUserPlanType(d.planType ?? null);
+      }
       if (d.role === "super") setActiveTab("basic");
     }).catch(() => {});
   }, []);
@@ -248,6 +252,10 @@ export default function SurveySettingsPage() {
       setThemeMainColor(data.themeMainColor ?? "#06B6D4");
       setThemeUserColor(data.themeUserColor ?? "#8B5CF6");
       setThemeTextColor(data.themeTextColor ?? "#FFFFFF");
+      // Use survey owner's planType for feature gating (important for super admin viewing other users' surveys)
+      if (data.user?.planType !== undefined) {
+        setUserPlanType(data.user.planType);
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "エラーが発生しました");
     } finally {
@@ -537,7 +545,7 @@ export default function SurveySettingsPage() {
   }
 
   const isPremiumUser = isPremiumPlan(userPlanType);
-  const canEditAll = isPremiumUser || userRole === "super";
+  const canEditAll = isPremiumUser;
 
   const tabs: { key: Tab; label: string; locked?: boolean }[] = [
     { key: "basic" as Tab, label: "基本設定", locked: !canEditAll },
