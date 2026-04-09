@@ -96,6 +96,7 @@ export async function GET(request: NextRequest) {
         id: true, name: true, email: true, loginId: true, shopName: true,
         address: true, industry: true, agencyId: true,
         contractStart: true, contractEnd: true, noContractLimit: true,
+        stripeSubscriptionId: true, planType: true,
         agency: { select: { id: true, name: true } },
         createdAt: true,
         surveys: {
