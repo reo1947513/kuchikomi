@@ -90,6 +90,8 @@ model Survey {
   sessions   ReviewSession[]
   tones      Tone[]
   advices    Advice[]
+
+  @@index([userId])
 }
 
 model Tone {
@@ -139,6 +141,9 @@ model ReviewSession {
   googleClickedAt DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+
+  @@index([surveyId, status, isTest])
+  @@index([surveyId, createdAt])
 }
 
 model Advice {
