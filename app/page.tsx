@@ -988,8 +988,13 @@ export default function LpPage() {
               </a>
             </nav>
           </div>
-          <div className="mt-8 border-t border-gray-800 pt-6 text-center text-xs">
-            &copy; 2026 ComiSta. All Rights Reserved.
+          <div className="mt-8 border-t border-gray-800 pt-6 flex flex-col items-center gap-3 text-xs">
+            <nav className="flex flex-wrap justify-center gap-4">
+              <a href="/legal/terms" className="hover:text-white transition-colors">利用規約</a>
+              <a href="/legal/privacy" className="hover:text-white transition-colors">プライバシーポリシー</a>
+              <a href="/legal/tokushoho" className="hover:text-white transition-colors">特定商取引法に基づく表記</a>
+            </nav>
+            <p>&copy; 2026 ComiSta. All Rights Reserved.</p>
           </div>
         </div>
       </footer>
