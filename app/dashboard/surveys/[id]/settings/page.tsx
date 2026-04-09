@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useToast, Toast } from "@/components/Toast";
+import { isPremiumPlan } from "@/lib/plans";
 
 // ---- Types ----
 type Tone = {
@@ -535,7 +536,7 @@ export default function SurveySettingsPage() {
     );
   }
 
-  const isPremiumUser = userPlanType === "premium" || userPlanType === "lifetime_premium";
+  const isPremiumUser = isPremiumPlan(userPlanType);
   const canEditAll = isPremiumUser || userRole === "super";
 
   const tabs: { key: Tab; label: string; locked?: boolean }[] = [
