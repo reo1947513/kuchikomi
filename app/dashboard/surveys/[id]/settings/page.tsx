@@ -131,12 +131,14 @@ function ChatIconPreview({ iconKey }: { iconKey: string }) {
   );
 }
 
+function tmpId() { return `tmp-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`; }
+
 const DEFAULT_CHOICES: Choice[] = [
-  { text: "非常に満足", order: 0, score: 2 },
-  { text: "満足", order: 1, score: 1 },
-  { text: "どちらとも言えない", order: 2, score: 0 },
-  { text: "やや不満", order: 3, score: -1 },
-  { text: "不満", order: 4, score: -2 },
+  { id: tmpId(), text: "非常に満足", order: 0, score: 2 },
+  { id: tmpId(), text: "満足", order: 1, score: 1 },
+  { id: tmpId(), text: "どちらとも言えない", order: 2, score: 0 },
+  { id: tmpId(), text: "やや不満", order: 3, score: -1 },
+  { id: tmpId(), text: "不満", order: 4, score: -2 },
 ];
 
 export default function SurveySettingsPage() {
@@ -175,7 +177,7 @@ export default function SurveySettingsPage() {
   const [newQText, setNewQText] = useState("");
   const [newQType, setNewQType] = useState<"choice" | "text">("choice");
   const [newQIsRandom, setNewQIsRandom] = useState(false);
-  const [newQChoices, setNewQChoices] = useState<Choice[]>(DEFAULT_CHOICES.map((c) => ({ ...c })));
+  const [newQChoices, setNewQChoices] = useState<Choice[]>(DEFAULT_CHOICES.map((c) => ({ ...c, id: tmpId() })));
   const [questionsSaving, setQuestionsSaving] = useState(false);
   const [useGrouping, setUseGrouping] = useState(false);
   const [groupName, setGroupName] = useState("");
@@ -479,7 +481,7 @@ export default function SurveySettingsPage() {
       setNewQText("");
       setNewQType("choice");
       setNewQIsRandom(false);
-      setNewQChoices(DEFAULT_CHOICES.map((c) => ({ ...c })));
+      setNewQChoices(DEFAULT_CHOICES.map((c) => ({ ...c, id: tmpId() })));
     } catch (e) {
       showToast(e instanceof Error ? e.message : "エラーが発生しました", "error");
     }
@@ -1034,7 +1036,7 @@ export default function SurveySettingsPage() {
                         order: startOrder + i,
                         isRandom: false,
                         groupName: null,
-                        choices: q.choices.map((c, ci) => ({ text: c.text, order: ci, score: c.score })),
+                        choices: q.choices.map((c, ci) => ({ id: `tmp-${Date.now()}-${i}-${ci}`, text: c.text, order: ci, score: c.score })),
                         branchQuestions: [],
                       }));
                       setQuestions((prev) => [...prev, ...newQs]);
@@ -1345,7 +1347,7 @@ export default function SurveySettingsPage() {
                                     <button type="button" onClick={() => setGroupQuestions((prev) => prev.map((q, i) => i === gi ? { ...q, choices: q.choices.filter((_, j) => j !== ci) } : q))} disabled={(gq.choices || []).length <= 1} className="text-gray-300 hover:text-red-400 disabled:opacity-30"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
                                   </div>
                                 ))}
-                                <button type="button" onClick={() => setGroupQuestions((prev) => prev.map((q, i) => i === gi ? { ...q, choices: [...q.choices, { text: "", order: q.choices.length, score: 0 }] } : q))} className="flex items-center gap-1 text-xs text-gray-500 hover:text-violet-500 transition-colors"><svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>選択肢を追加</button>
+                                <button type="button" onClick={() => setGroupQuestions((prev) => prev.map((q, i) => i === gi ? { ...q, choices: [...q.choices, { id: tmpId(), text: "", order: q.choices.length, score: 0 }] } : q))} className="flex items-center gap-1 text-xs text-gray-500 hover:text-violet-500 transition-colors"><svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>選択肢を追加</button>
                               </div>
                             )}
                           </div>
@@ -1456,7 +1458,7 @@ export default function SurveySettingsPage() {
                       onClick={() =>
                         setNewQChoices((prev) => [
                           ...prev,
-                          { text: "", order: prev.length, score: 0 },
+                          { id: tmpId(), text: "", order: prev.length, score: 0 },
                         ])
                       }
                       className="flex items-center gap-1 text-xs text-gray-500 hover:text-violet-600 transition-colors"
