@@ -179,9 +179,8 @@ export async function POST(
 
   // Send email notification for real sessions (Standard+ plans)
   if (!isTest && session.survey.user?.email) {
-    const plan = session.survey.user.planType ?? "";
-    const notifyPlans = ["standard", "lifetime_standard", "premium", "lifetime_premium"];
-    if (notifyPlans.includes(plan)) {
+    const { isStandardOrAbove } = await import("@/lib/plans");
+    if (isStandardOrAbove(session.survey.user.planType)) {
       import("@/lib/mail").then(({ sendReviewNotificationEmail }) => {
         sendReviewNotificationEmail(
           session.survey.user!.email!,
@@ -196,9 +195,8 @@ export async function POST(
 
   // Send LINE notification for real sessions (if user has LINE linked)
   if (!isTest && session.survey.user?.lineUserId) {
-    const plan = session.survey.user.planType ?? "";
-    const notifyPlans = ["standard", "lifetime_standard", "premium", "lifetime_premium"];
-    if (notifyPlans.includes(plan)) {
+    const { isStandardOrAbove: isStdPlus } = await import("@/lib/plans");
+    if (isStdPlus(session.survey.user.planType)) {
       import("@/lib/line").then(({ sendLineReviewNotification }) => {
         sendLineReviewNotification(
           session.survey.user!.lineUserId!,

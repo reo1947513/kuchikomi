@@ -3,8 +3,6 @@ import { NextResponse } from "next/server";
 import { getSessionForRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
-const PREMIUM_PLANS = ["premium", "lifetime_premium"];
-
 export async function GET() {
   const session = getSessionForRole("admin") || getSessionForRole("super");
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -15,7 +13,8 @@ export async function GET() {
     select: { planType: true },
   });
 
-  if (!user || !PREMIUM_PLANS.includes(user.planType ?? "")) {
+  const { isPremiumPlan } = await import("@/lib/plans");
+  if (!user || !isPremiumPlan(user.planType)) {
     return NextResponse.json({ error: "この機能はプレミアムプランでのみご利用いただけます" }, { status: 403 });
   }
 

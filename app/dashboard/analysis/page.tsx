@@ -14,8 +14,7 @@ type AnalysisData = {
   monthlyData: MonthlyItem[];
 };
 
-const LOCKED_PLANS = [null, "light", "lifetime_light"];
-const PREMIUM_PLANS = ["premium", "lifetime_premium"];
+import { isFreePlan, isPremiumPlan } from "@/lib/plans";
 
 export default function AnalysisPage() {
   const [data, setData] = useState<AnalysisData | null>(null);
@@ -55,9 +54,9 @@ export default function AnalysisPage() {
     }
   };
 
-  const isPremium = PREMIUM_PLANS.includes(planType ?? "");
+  const isPremium = isPremiumPlan(planType);
 
-  if (planLoaded && LOCKED_PLANS.includes(planType)) {
+  if (planLoaded && isFreePlan(planType)) {
     return <LockedAnalysis />;
   }
 
@@ -187,7 +186,7 @@ function AnalysisCsvButton() {
     fetch("/api/auth/me").then((r) => r.json()).then((d) => setPt(d.planType ?? null)).catch(() => {});
   }, []);
 
-  const isPremium = pt === "premium" || pt === "lifetime_premium";
+  const isPremium = isPremiumPlan(pt);
 
   const handleExport = async () => {
     setLoading(true);

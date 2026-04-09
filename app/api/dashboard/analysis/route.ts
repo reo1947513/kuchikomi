@@ -85,8 +85,6 @@ export async function GET() {
   return NextResponse.json({ totalSessions: survey.sessions.length, chartData, monthlyData });
 }
 
-const PREMIUM_PLANS = ["premium", "lifetime_premium"];
-
 export async function POST() {
   const session = getSessionForRole("admin") || getSessionForRole("super");
   if (!session || session.role === "super") {
@@ -99,7 +97,8 @@ export async function POST() {
   });
 
   // AI analysis report is premium-only
-  if (!user || !PREMIUM_PLANS.includes(user.planType ?? "")) {
+  const { isPremiumPlan } = await import("@/lib/plans");
+  if (!user || !isPremiumPlan(user.planType)) {
     return NextResponse.json({ error: "AI分析レポートはプレミアムプランでのみご利用いただけます" }, { status: 403 });
   }
 

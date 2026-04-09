@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
+import { isFreePlan } from "@/lib/plans";
 
 const items = [
   { href: "/dashboard/surveys", label: "ダッシュボード", locked: false },
@@ -11,8 +12,6 @@ const items = [
   { href: "/dashboard/faq", label: "Q&A", locked: false },
   { href: "/dashboard/billing", label: "プラン・お支払い", locked: false },
 ];
-
-const LOCKED_PLANS = [null, "light", "lifetime_light"];
 
 export default function DashboardNav() {
   const pathname = usePathname();
@@ -29,7 +28,7 @@ export default function DashboardNav() {
 
   if (pathname === "/dashboard/contact") return null;
 
-  const isLocked = loaded && LOCKED_PLANS.includes(planType);
+  const isLocked = loaded && isFreePlan(planType);
 
   return (
     <div className="bg-white border-b border-gray-200 sticky top-14 z-10">

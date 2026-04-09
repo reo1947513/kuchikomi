@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useToast, Toast } from "@/components/Toast";
+import { isPremiumPlan, isStandardOrAbove } from "@/lib/plans";
 
 // ---- Types ----
 type Choice = { id: string; text: string; order: number };
@@ -240,8 +241,8 @@ function PremiumShortcuts({ surveyId }: { surveyId: string }) {
     fetch("/api/auth/me").then((r) => r.json()).then((d) => setPlanType(d.planType ?? null)).catch(() => {});
   }, []);
 
-  const isPremium = planType === "premium" || planType === "lifetime_premium";
-  const isStandardPlus = isPremium || planType === "standard" || planType === "lifetime_standard";
+  const isPremium = isPremiumPlan(planType);
+  const isStandardPlus = isStandardOrAbove(planType);
 
   const shortcuts = [
     {
