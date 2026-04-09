@@ -180,6 +180,7 @@ export default function SurveySettingsPage() {
   const [newQType, setNewQType] = useState<"choice" | "text">("choice");
   const [newQIsRandom, setNewQIsRandom] = useState(false);
   const [newQChoices, setNewQChoices] = useState<Choice[]>(DEFAULT_CHOICES.map((c) => ({ ...c, id: tmpId() })));
+  const [newQBranches, setNewQBranches] = useState<Record<string, { text: string; type: "choice" | "text" }>>({});
   const [questionsSaving, setQuestionsSaving] = useState(false);
   const [useGrouping, setUseGrouping] = useState(false);
   const [groupName, setGroupName] = useState("");
@@ -491,6 +492,7 @@ export default function SurveySettingsPage() {
       setNewQType("choice");
       setNewQIsRandom(false);
       setNewQChoices(DEFAULT_CHOICES.map((c) => ({ ...c, id: tmpId() })));
+      setNewQBranches({});
     } catch (e) {
       showToast(e instanceof Error ? e.message : "エラーが発生しました", "error");
     }
@@ -1416,52 +1418,86 @@ export default function SurveySettingsPage() {
                 {newQType === "choice" && (
                   <div className="space-y-1.5">
                     <label className="block text-xs font-medium text-gray-600">選択肢</label>
-                    {newQChoices.map((c, ci) => (
-                      <div key={ci} className="flex items-center gap-2">
-                        <input
-                          type="text"
-                          value={c.text}
-                          onChange={(e) =>
-                            setNewQChoices((prev) =>
-                              prev.map((ch, i) => (i === ci ? { ...ch, text: e.target.value } : ch))
-                            )
-                          }
-                          placeholder={`選択肢 ${ci + 1}`}
-                          className="flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent"
-                        />
-                        <select
-                          value={c.score}
-                          onChange={(e) =>
-                            setNewQChoices((prev) =>
-                              prev.map((ch, i) =>
-                                i === ci ? { ...ch, score: Number(e.target.value) } : ch
-                              )
-                            )
-                          }
-                          className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent bg-white"
-                        >
-                          <option value={2}>+2</option>
-                          <option value={1}>+1</option>
-                          <option value={0}>0</option>
-                          <option value={-1}>-1</option>
-                          <option value={-2}>-2</option>
-                        </select>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setNewQChoices((prev) =>
-                              prev.filter((_, i) => i !== ci).map((ch, i) => ({ ...ch, order: i }))
-                            )
-                          }
-                          disabled={newQChoices.length <= 1}
-                          className="text-gray-300 hover:text-red-400 disabled:opacity-30"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </button>
-                      </div>
-                    ))}
+                    {newQChoices.map((c, ci) => {
+                      const cId = c.id || `idx-${ci}`;
+                      const branch = newQBranches[cId];
+                      return (
+                        <div key={ci}>
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="text"
+                              value={c.text}
+                              onChange={(e) =>
+                                setNewQChoices((prev) =>
+                                  prev.map((ch, i) => (i === ci ? { ...ch, text: e.target.value } : ch))
+                                )
+                              }
+                              placeholder={`選択肢 ${ci + 1}`}
+                              className="flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent"
+                            />
+                            <select
+                              value={c.score}
+                              onChange={(e) =>
+                                setNewQChoices((prev) =>
+                                  prev.map((ch, i) =>
+                                    i === ci ? { ...ch, score: Number(e.target.value) } : ch
+                                  )
+                                )
+                              }
+                              className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent bg-white"
+                            >
+                              <option value={2}>+2</option>
+                              <option value={1}>+1</option>
+                              <option value={0}>0</option>
+                              <option value={-1}>-1</option>
+                              <option value={-2}>-2</option>
+                            </select>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setNewQChoices((prev) =>
+                                  prev.filter((_, i) => i !== ci).map((ch, i) => ({ ...ch, order: i }))
+                                );
+                                setNewQBranches((prev) => { const n = { ...prev }; delete n[cId]; return n; });
+                              }}
+                              disabled={newQChoices.length <= 1}
+                              className="text-gray-300 hover:text-red-400 disabled:opacity-30"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+                          </div>
+                          {branch ? (
+                            <div className="ml-6 mt-1.5 mb-1 pl-3 border-l-2 border-violet-200">
+                              <div className="flex items-center gap-1 mb-1">
+                                <span className="text-xs text-violet-500 font-medium">↳ 分岐質問</span>
+                                <button type="button" onClick={() => setNewQBranches((prev) => { const n = { ...prev }; delete n[cId]; return n; })} className="text-gray-300 hover:text-red-400 transition-colors ml-auto">
+                                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                                </button>
+                              </div>
+                              <input type="text" value={branch.text}
+                                onChange={(e) => setNewQBranches((prev) => ({ ...prev, [cId]: { ...prev[cId], text: e.target.value } }))}
+                                placeholder="分岐質問を入力..."
+                                className="w-full border border-violet-100 rounded-lg px-2.5 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-400 bg-violet-50/30" />
+                              <select value={branch.type}
+                                onChange={(e) => setNewQBranches((prev) => ({ ...prev, [cId]: { ...prev[cId], type: e.target.value as "choice" | "text" } }))}
+                                className="mt-1 border border-gray-200 rounded-lg px-2 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-violet-400">
+                                <option value="text">記述式</option>
+                                <option value="choice">選択式</option>
+                              </select>
+                            </div>
+                          ) : (
+                            <button type="button"
+                              onClick={() => setNewQBranches((prev) => ({ ...prev, [cId]: { text: "", type: "text" } }))}
+                              className="ml-6 mt-0.5 mb-1 flex items-center gap-1 text-xs text-violet-400 hover:text-violet-600 transition-colors">
+                              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                              分岐質問を追加
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
                     <button
                       type="button"
                       onClick={() =>
