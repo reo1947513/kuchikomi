@@ -429,12 +429,11 @@ export default function SurveySettingsPage() {
         body: JSON.stringify({
           questions: questions.map((q) => ({
             ...q,
-            branchQuestions: (q.branchQuestions ?? []).map((bq) => ({
-              ...bq,
-              triggerChoiceId: bq.triggerChoiceId
-                ? String(q.choices.findIndex((c) => (c.id || "") === bq.triggerChoiceId))
-                : null,
-            })),
+            branchQuestions: (q.branchQuestions ?? []).map((bq) => {
+              if (!bq.triggerChoiceId) return { ...bq, triggerChoiceId: null };
+              const idx = q.choices.findIndex((c) => (c.id || "") === bq.triggerChoiceId);
+              return { ...bq, triggerChoiceId: idx >= 0 ? String(idx) : null };
+            }),
           })),
         }),
       });

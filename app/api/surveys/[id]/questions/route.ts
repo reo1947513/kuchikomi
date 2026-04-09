@@ -139,13 +139,11 @@ export async function PUT(request: NextRequest, { params }: Params) {
         for (const bq of q.branchQuestions) {
           let resolvedTriggerChoiceId: string | null = null;
           if (bq.triggerChoiceId && parent.choices.length > 0) {
-            // triggerChoiceId may be an index like "0", "1" etc. or actual ID
             const idx = parseInt(bq.triggerChoiceId, 10);
             if (!isNaN(idx) && idx >= 0 && idx < parent.choices.length) {
               resolvedTriggerChoiceId = parent.choices[idx].id;
-            } else {
-              resolvedTriggerChoiceId = bq.triggerChoiceId;
             }
+            // Invalid index or non-numeric → leave as null (skip broken reference)
           }
 
           const branch = await tx.question.create({
