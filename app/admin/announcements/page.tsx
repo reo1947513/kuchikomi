@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useToast, Toast } from "@/components/Toast";
 
 type Announcement = {
   id: string;
@@ -8,6 +9,7 @@ type Announcement = {
   content: string;
   category: string;
   isPublished: boolean;
+  emailSent: boolean;
   publishedAt: string;
   createdAt: string;
 };
@@ -21,7 +23,9 @@ export default function AnnouncementsPage() {
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("お知らせ");
   const [submitting, setSubmitting] = useState(false);
+  const [sending, setSending] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { toast, showToast } = useToast();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
@@ -88,6 +92,20 @@ export default function AnnouncementsPage() {
     setEditingId(null);
     setSubmitting(false);
     fetchItems();
+  };
+
+  const handleSend = async (item: Announcement) => {
+    if (!confirm("全ユーザーにメール＆LINEでお知らせを送信しますか？この操作は取り消せません。")) return;
+    setSending(item.id);
+    try {
+      const res = await fetch(`/api/admin/announcements/${item.id}/send`, { method: "POST" });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.error || "送信に失敗しました");
+      showToast(`${d.sent}件 送信しました`, "success");
+      fetchItems();
+    } catch (e) {
+      showToast(e instanceof Error ? e.message : "送信に失敗しました", "error");
+    } finally { setSending(null); }
   };
 
   const categoryColor = (c: string) => {
@@ -166,6 +184,7 @@ export default function AnnouncementsPage() {
                       <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${categoryColor(item.category)}`}>{item.category}</span>
                       <span className="text-sm font-medium text-gray-800">{item.title}</span>
                       {!item.isPublished && <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-200 text-gray-500">非公開</span>}
+                      {item.emailSent && <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-600">送信済</span>}
                     </div>
                     <p className="text-sm text-gray-600 whitespace-pre-wrap line-clamp-2">{item.content}</p>
                     <p className="text-xs text-gray-400 mt-1">{formatDate(item.publishedAt)}</p>
@@ -174,6 +193,11 @@ export default function AnnouncementsPage() {
                     <button onClick={() => handleTogglePublish(item)}
                       className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${item.isPublished ? "bg-gray-200 hover:bg-gray-300 text-gray-600" : "bg-green-500 hover:bg-green-600 text-white"}`}>
                       {item.isPublished ? "非公開" : "公開"}
+                    </button>
+                    <button onClick={() => handleSend(item)}
+                      disabled={item.emailSent || sending === item.id}
+                      className="px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition-colors disabled:opacity-40">
+                      {sending === item.id ? "送信中..." : item.emailSent ? "送信済" : "通知送信"}
                     </button>
                     <button onClick={() => startEdit(item)} className="px-3 py-1.5 text-xs font-medium rounded-lg bg-violet-500 hover:bg-violet-600 text-white">編集</button>
                     <button onClick={() => handleDelete(item.id)} className="px-3 py-1.5 text-xs font-medium rounded-lg bg-red-500 hover:bg-red-600 text-white">削除</button>
@@ -184,6 +208,7 @@ export default function AnnouncementsPage() {
           ))
         )}
       </div>
+      <Toast toast={toast} />
     </div>
   );
 }

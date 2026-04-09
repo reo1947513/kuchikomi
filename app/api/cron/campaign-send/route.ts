@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
 
     const users = await prisma.user.findMany({
       where: targetFilter,
-      select: { email: true, shopName: true, name: true },
+      select: { email: true, shopName: true, name: true, lineUserId: true },
     });
 
     let sent = 0;
@@ -75,6 +75,35 @@ export async function GET(request: NextRequest) {
         sent++;
       } catch {
         // Continue sending to other users
+      }
+    }
+
+    // Send LINE notifications
+    const lineToken = process.env.LINE_CHANNEL_ACCESS_TOKEN;
+    if (lineToken) {
+      const contentPreview = campaign.content.slice(0, 200) + (campaign.content.length > 200 ? "..." : "");
+      const lineText = `【ComiStaキャンペーン】\n${campaign.title}\n\n${contentPreview}`;
+      for (const user of users) {
+        if (!user.lineUserId) continue;
+        try {
+          const res = await fetch("https://api.line.me/v2/bot/message/push", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${lineToken}`,
+            },
+            body: JSON.stringify({
+              to: user.lineUserId,
+              messages: [{ type: "text", text: lineText }],
+            }),
+          });
+          if (!res.ok) {
+            const text = await res.text();
+            console.error(`LINE push failed for ${user.lineUserId}:`, res.status, text);
+          }
+        } catch {
+          // Continue sending to other users
+        }
       }
     }
 

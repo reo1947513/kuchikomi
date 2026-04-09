@@ -9,7 +9,7 @@ function getToken(): string | undefined {
   return process.env.LINE_CHANNEL_ACCESS_TOKEN;
 }
 
-async function pushMessage(to: string, messages: { type: string; text: string }[]) {
+export async function pushMessage(to: string, messages: { type: string; text: string }[]) {
   const token = getToken();
   if (!token) {
     console.error("LINE_CHANNEL_ACCESS_TOKEN is not set");

@@ -107,7 +107,7 @@ export default function CampaignsPage() {
       const choice = confirm("予約送信が設定されています。\n\n「OK」→ 今すぐ送信\n「キャンセル」→ 何もしない");
       if (!choice) return;
     } else {
-      if (!confirm("対象ユーザーにメールを一斉送信しますか？この操作は取り消せません。")) return;
+      if (!confirm("対象ユーザーにメール＆LINEを一斉送信しますか？この操作は取り消せません。")) return;
     }
     setSending(item.id);
     try {
@@ -239,7 +239,7 @@ export default function CampaignsPage() {
                     {status && <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${status.cls}`}>{status.label}</span>}
                     <span className="text-sm font-medium text-gray-800">{item.title}</span>
                     {!item.isPublished && <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-200 text-gray-500">非公開</span>}
-                    {item.emailSent && <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-600">メール送信済</span>}
+                    {item.emailSent && <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-600">送信済</span>}
                   </div>
                   <p className="text-sm text-gray-600 whitespace-pre-wrap line-clamp-2">{item.content}</p>
                   {editingId === item.id ? (

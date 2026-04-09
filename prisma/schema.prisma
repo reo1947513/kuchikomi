@@ -209,6 +209,8 @@ model Announcement {
   category    String   @default("お知らせ") // "新機能" | "メンテナンス" | "お知らせ" | "重要"
   isPublished Boolean  @default(true)
   publishedAt DateTime @default(now())
+  emailSent   Boolean  @default(false)
+  emailSentAt DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

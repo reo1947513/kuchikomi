@@ -33,7 +33,7 @@ export async function POST(_request: NextRequest, { params }: Params) {
 
   const users = await prisma.user.findMany({
     where: targetFilter,
-    select: { email: true, shopName: true, name: true },
+    select: { email: true, shopName: true, name: true, lineUserId: true },
   });
 
   const resend = new Resend(process.env.RESEND_API_KEY);
@@ -67,6 +67,35 @@ export async function POST(_request: NextRequest, { params }: Params) {
       sent++;
     } catch (e) {
       errors.push(`${user.email}: ${e instanceof Error ? e.message : "unknown"}`);
+    }
+  }
+
+  // Send LINE notifications
+  const lineToken = process.env.LINE_CHANNEL_ACCESS_TOKEN;
+  if (lineToken) {
+    const contentPreview = campaign.content.slice(0, 200) + (campaign.content.length > 200 ? "..." : "");
+    const lineText = `【ComiStaキャンペーン】\n${campaign.title}\n\n${contentPreview}`;
+    for (const user of users) {
+      if (!user.lineUserId) continue;
+      try {
+        const res = await fetch("https://api.line.me/v2/bot/message/push", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${lineToken}`,
+          },
+          body: JSON.stringify({
+            to: user.lineUserId,
+            messages: [{ type: "text", text: lineText }],
+          }),
+        });
+        if (!res.ok) {
+          const text = await res.text();
+          errors.push(`LINE ${user.lineUserId}: ${res.status} ${text}`);
+        }
+      } catch (e) {
+        errors.push(`LINE ${user.lineUserId}: ${e instanceof Error ? e.message : "unknown"}`);
+      }
     }
   }
 
