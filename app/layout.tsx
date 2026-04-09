@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { Providers } from "./providers";
 
@@ -34,6 +35,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
+      <head>
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-JJBNM3P9R3" strategy="afterInteractive" />
+        <Script id="gtag-init" strategy="afterInteractive">{`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-JJBNM3P9R3');
+        `}</Script>
+      </head>
       <body className="antialiased bg-gray-50 text-gray-900">
         <Providers>{children}</Providers>
       </body>
