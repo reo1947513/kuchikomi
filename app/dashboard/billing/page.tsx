@@ -64,6 +64,11 @@ const additionalPacks = [
 const planLabels: Record<string, string> = {
   standard: "スタンダードプラン",
   premium: "プレミアムプラン",
+  chain3: "チェーン3店舗プラン",
+  chain5: "チェーン5店舗プラン",
+  agency5: "エージェンシー5店舗プラン",
+  agency10: "エージェンシー10店舗プラン",
+  agency30: "エージェンシー30店舗〜プラン",
 };
 
 export default function BillingPage() {
