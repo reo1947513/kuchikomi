@@ -51,6 +51,9 @@ export default function SettingsPage() {
     if (lineResult === "success") {
       showToast("LINE連携が完了しました", "success");
       window.history.replaceState({}, "", window.location.pathname);
+    } else if (lineResult === "already") {
+      showToast("このLINEアカウントは既に別のComiStaアカウントと連携されています。", "error");
+      window.history.replaceState({}, "", window.location.pathname);
     } else if (lineResult === "error") {
       showToast("LINE連携に失敗しました。もう一度お試しください。", "error");
       window.history.replaceState({}, "", window.location.pathname);

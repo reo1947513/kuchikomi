@@ -90,6 +90,12 @@ export async function GET(request: NextRequest) {
     const profile = await profileRes.json();
     const lineUserId = profile.userId;
 
+    // Check if this LINE account is already linked to another user
+    const existing = await prisma.user.findUnique({ where: { lineUserId } });
+    if (existing && existing.id !== userId) {
+      return jsRedirectPage(`${dashboardUrl}?line=already`);
+    }
+
     await prisma.user.update({
       where: { id: userId },
       data: { lineUserId },

@@ -49,7 +49,7 @@ model User {
   planReviewLimit      Int      @default(0)
   additionalReviews    Int      @default(0)
 
-  lineUserId           String?  // LINE連携用ユーザーID
+  lineUserId           String?  @unique // LINE連携用ユーザーID（1LINE=1アカウント）
   paymentFailedAt      DateTime? // 支払い失敗日時（3日猶予後にプラン停止）
 
   surveys        Survey[]
