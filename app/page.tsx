@@ -205,8 +205,8 @@ export default function LpPage() {
     "faq.5.a": "いいえ、アプリのインストールは不要です。QRコードを読み取るだけでブラウザ上でアンケートに回答できます。",
     "faq.6.q": "生成された口コミは編集できますか？",
     "faq.6.a": "はい、AIが生成した文章はお客様が自由に編集してから投稿できます。",
-    "cta.title1": "今日から、",
-    "cta.title2": "口コミで差をつけよう。",
+    "cta.title1": "今日から、口コミで差をつけよう。",
+    "cta.title2": "",
     "cta.desc1": "お問い合わせは1分で完了。",
     "cta.desc2": "お気軽にご連絡ください。",
     "cta.campaign": "今なら初月50%OFF キャンペーン実施中",
@@ -1056,9 +1056,9 @@ export default function LpPage() {
           }}
         />
         <div className="relative max-w-3xl mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-5xl font-extrabold mb-4">
-            <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-              {t("cta.title1")}{t("cta.title2")}
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4">
+            <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent whitespace-nowrap">
+              {t("cta.title1")}
             </span>
           </h2>
           <p className="text-gray-300 mb-6 text-lg">
