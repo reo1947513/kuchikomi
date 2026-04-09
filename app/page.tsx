@@ -209,7 +209,6 @@ export default function LpPage() {
     "cta.title2": "",
     "cta.desc1": "お問い合わせは1分で完了。",
     "cta.desc2": "お気軽にご連絡ください。",
-    "cta.campaign": "今なら初月50%OFF キャンペーン実施中",
     "cta.contact": "お問い合わせ",
     "cta.sub": "お問い合わせフォームよりお気軽にご連絡ください",
     "footer.login": "ログイン",
@@ -1064,11 +1063,6 @@ export default function LpPage() {
           <p className="text-gray-300 mb-6 text-lg">
             {t("cta.desc1")}{t("cta.desc2")}
           </p>
-          {/* Urgency badge */}
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-400/30 text-orange-300 font-bold text-sm px-5 py-2.5 rounded-full mb-10">
-            <span>🔥</span>
-            <span>{t("cta.campaign")}</span>
-          </div>
           <div className="block">
             <a
               href="/contact"
