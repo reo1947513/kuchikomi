@@ -119,6 +119,32 @@ export async function POST(request: NextRequest) {
         });
         if (!user) break;
 
+        // Handle past_due / unpaid status — start 3-day grace period
+        if (subscription.status === "past_due" || subscription.status === "unpaid") {
+          if (!user.paymentFailedAt) {
+            await prisma.user.update({
+              where: { id: user.id },
+              data: { paymentFailedAt: new Date() },
+            });
+            // Send notification
+            if (user.email) {
+              import("@/lib/mail").then(({ sendPaymentFailedEmail }) => {
+                sendPaymentFailedEmail(user.email!, user.shopName || user.name).catch(console.error);
+              });
+            }
+            if (user.lineUserId) {
+              import("@/lib/line").then(({ pushMessage }) => {
+                pushMessage(user.lineUserId!, [{
+                  type: "text",
+                  text: `【ComiSta】お支払いの確認ができませんでした。3日以内にお支払い方法を更新してください。更新されない場合、プランが停止されます。\n\nhttps://comista-kuchikomi.com/dashboard/billing`,
+                }]).catch(console.error);
+              });
+            }
+          }
+          break;
+        }
+
+        // Active subscription — clear payment failed flag and update plan
         const item = subscription.items.data[0];
         const priceId = item.price.id;
         const amount = item.price.unit_amount;
@@ -133,7 +159,40 @@ export async function POST(request: NextRequest) {
               stripePriceId: priceId,
               planType: plan.planType,
               planReviewLimit: plan.planReviewLimit,
+              paymentFailedAt: null,
             },
+          });
+        }
+        break;
+      }
+
+      case "invoice.payment_failed": {
+        const invoice = event.data.object as Stripe.Invoice;
+        const customerId = typeof invoice.customer === "string" ? invoice.customer : invoice.customer?.id;
+        if (!customerId) break;
+
+        const user = await prisma.user.findUnique({
+          where: { stripeCustomerId: customerId },
+        });
+        if (!user || user.paymentFailedAt) break;
+
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { paymentFailedAt: new Date() },
+        });
+
+        // Send notification
+        if (user.email) {
+          import("@/lib/mail").then(({ sendPaymentFailedEmail }) => {
+            sendPaymentFailedEmail(user.email!, user.shopName || user.name).catch(console.error);
+          });
+        }
+        if (user.lineUserId) {
+          import("@/lib/line").then(({ pushMessage }) => {
+            pushMessage(user.lineUserId!, [{
+              type: "text",
+              text: `【ComiSta】お支払いの確認ができませんでした。3日以内にお支払い方法を更新してください。更新されない場合、プランが停止されます。\n\nhttps://comista-kuchikomi.com/dashboard/billing`,
+            }]).catch(console.error);
           });
         }
         break;
@@ -186,6 +245,7 @@ export async function POST(request: NextRequest) {
             data: {
               planType: plan.planType,
               planReviewLimit: plan.planReviewLimit,
+              paymentFailedAt: null,
             },
           });
         }

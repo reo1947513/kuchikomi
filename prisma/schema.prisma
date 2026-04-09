@@ -50,6 +50,7 @@ model User {
   additionalReviews    Int      @default(0)
 
   lineUserId           String?  // LINE連携用ユーザーID
+  paymentFailedAt      DateTime? // 支払い失敗日時（3日猶予後にプラン停止）
 
   surveys        Survey[]
   contacts       Contact[]

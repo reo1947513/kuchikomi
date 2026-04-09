@@ -115,3 +115,27 @@ export async function sendRenewalReminderEmail(
     `,
   });
 }
+
+export async function sendPaymentFailedEmail(email: string, shopName: string) {
+  const dashboardUrl = process.env.NEXT_PUBLIC_APP_URL || "https://comista-kuchikomi.com";
+  await getResend().emails.send({
+    from: `ComiSta <${FROM_EMAIL}>`,
+    to: email,
+    subject: "【ComiSta】お支払いの確認ができませんでした",
+    html: `
+      <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto; padding: 24px;">
+        <h2 style="color: #1f2937;">お支払いの確認ができませんでした</h2>
+        <p style="color: #4b5563; line-height: 1.8;">${shopName} 様</p>
+        <p style="color: #4b5563; line-height: 1.8;">ご利用中のComiStaプランのお支払いが確認できませんでした。<strong>3日以内</strong>にお支払い方法を更新してください。</p>
+        <p style="color: #ef4444; font-weight: bold;">更新されない場合、プランが自動的に停止されます。</p>
+        <div style="text-align: center; margin: 32px 0;">
+          <a href="${dashboardUrl}/dashboard/billing" style="background: linear-gradient(to right, #ef4444, #f97316); color: white; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">
+            お支払い方法を更新する
+          </a>
+        </div>
+        <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
+        <p style="color: #9ca3af; font-size: 12px; text-align: center;">© 2026 ComiSta</p>
+      </div>
+    `,
+  });
+}
