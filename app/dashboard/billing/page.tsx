@@ -36,7 +36,7 @@ const subscriptionPlans: PlanCard[] = [
   },
   {
     name: "プレミアムプラン",
-    priceLabel: "¥20,000/月（一括）",
+    priceLabel: "¥30,000/月（一括）",
     reviews: 0, // 0 = unlimited
     priceId: "",
     mode: "subscription",
