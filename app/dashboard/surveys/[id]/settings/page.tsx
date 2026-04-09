@@ -154,8 +154,6 @@ export default function SurveySettingsPage() {
   const [userRole, setUserRole] = useState<string>("");
   const [userPlanType, setUserPlanType] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [saveMsg, setSaveMsg] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   // ---- Basic tab state ----
   const [title, setTitle] = useState("");
@@ -218,7 +216,6 @@ export default function SurveySettingsPage() {
   // ---- Fetch survey ----
   const fetchSurvey = useCallback(async () => {
     setLoading(true);
-    setError(null);
     try {
       const res = await fetch(`/api/surveys/${surveyId}`);
       if (!res.ok) throw new Error("取得に失敗しました");
@@ -258,7 +255,7 @@ export default function SurveySettingsPage() {
         setUserPlanType(data.user.planType);
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : "エラーが発生しました");
+      showToast(e instanceof Error ? e.message : "エラーが発生しました", "error");
     } finally {
       setLoading(false);
     }
@@ -271,8 +268,6 @@ export default function SurveySettingsPage() {
   // ---- Generic save helper ----
   const saveSurvey = async (payload: Record<string, unknown>) => {
     setSaving(true);
-    setSaveMsg(null);
-    setError(null);
     try {
       const res = await fetch(`/api/surveys/${surveyId}`, {
         method: "PUT",
@@ -283,10 +278,9 @@ export default function SurveySettingsPage() {
         const d = await res.json().catch(() => ({}));
         throw new Error(d.error ?? "保存に失敗しました");
       }
-      setSaveMsg("保存しました");
-      setTimeout(() => setSaveMsg(null), 3000);
+      showToast("保存しました", "success");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "エラーが発生しました");
+      showToast(e instanceof Error ? e.message : "エラーが発生しました", "error");
     } finally {
       setSaving(false);
     }
@@ -440,10 +434,9 @@ export default function SurveySettingsPage() {
       if (!res.ok) throw new Error("保存に失敗しました");
       const saved = await res.json();
       setQuestions(saved.map((q: any) => ({ ...q, branchQuestions: q.branchQuestions ?? [] })));
-      setSaveMsg("質問を保存しました");
-      setTimeout(() => setSaveMsg(null), 3000);
+      showToast("質問を保存しました", "success");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "エラーが発生しました");
+      showToast(e instanceof Error ? e.message : "エラーが発生しました", "error");
     } finally {
       setQuestionsSaving(false);
     }
@@ -578,28 +571,7 @@ export default function SurveySettingsPage() {
           </a>
         </div>
 
-        {/* Global messages */}
-        {error && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
-            {error}
-          </div>
-        )}
-        {saveMsg && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none" style={{ animation: "toastIn 0.3s ease-out" }}>
-            <div className="bg-gray-900/90 text-white px-8 py-4 rounded-2xl shadow-2xl flex items-center gap-3 pointer-events-auto" style={{ animation: "toastIn 0.3s ease-out" }}>
-              <svg className="w-6 h-6 text-green-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-              </svg>
-              <span className="text-sm font-semibold">{saveMsg}</span>
-            </div>
-          </div>
-        )}
-        <style>{`
-          @keyframes toastIn {
-            from { opacity: 0; transform: scale(0.85); }
-            to { opacity: 1; transform: scale(1); }
-          }
-        `}</style>
+        <Toast toast={toast} />
 
         {/* Survey URL & QR Code */}
         <div className="bg-white rounded-xl shadow-sm p-3 sm:p-5 mb-6">
