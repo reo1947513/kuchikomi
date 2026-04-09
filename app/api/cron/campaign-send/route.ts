@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Send LINE notifications
+    // Send LINE notifications (scheduled campaigns default to "linked" mode – per-user push)
     const lineToken = process.env.LINE_CHANNEL_ACCESS_TOKEN;
     if (lineToken) {
       const contentPreview = campaign.content.slice(0, 200) + (campaign.content.length > 200 ? "..." : "");

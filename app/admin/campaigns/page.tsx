@@ -102,16 +102,17 @@ export default function CampaignsPage() {
     }
   };
 
-  const handleSendEmail = async (item: Campaign) => {
-    if (item.scheduledSendAt && !item.emailSent) {
-      const choice = confirm("予約送信が設定されています。\n\n「OK」→ 今すぐ送信\n「キャンセル」→ 何もしない");
-      if (!choice) return;
-    } else {
-      if (!confirm("対象ユーザーにメール＆LINEを一斉送信しますか？この操作は取り消せません。")) return;
-    }
+  const [lineModeModal, setLineModeModal] = useState<Campaign | null>(null);
+
+  const handleSendWithMode = async (item: Campaign, lineMode: string) => {
+    setLineModeModal(null);
     setSending(item.id);
     try {
-      const res = await fetch(`/api/admin/campaigns/${item.id}/send`, { method: "POST" });
+      const res = await fetch(`/api/admin/campaigns/${item.id}/send`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lineMode }),
+      });
       const d = await res.json();
       if (!res.ok) throw new Error(d.error || "送信に失敗しました");
       showToast(`${d.sent}/${d.total}件 送信しました`, "success");
@@ -119,6 +120,11 @@ export default function CampaignsPage() {
     } catch (e) {
       showToast(e instanceof Error ? e.message : "送信に失敗しました", "error");
     } finally { setSending(null); }
+  };
+
+  const handleSendEmail = (item: Campaign) => {
+    if (item.emailSent) return;
+    setLineModeModal(item);
   };
 
   const toLocalDatetime = (iso: string) => {
@@ -305,6 +311,34 @@ export default function CampaignsPage() {
           })
         )}
       </div>
+      {/* LINE配信モード選択モーダル */}
+      {lineModeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setLineModeModal(null)} />
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4">
+            <h3 className="text-base font-bold text-gray-900">配信方法を選択</h3>
+            <p className="text-sm text-gray-500">メール送信に加えて、LINE配信方法を選択してください。</p>
+            <div className="space-y-2">
+              <button onClick={() => handleSendWithMode(lineModeModal, "broadcast")}
+                className="w-full px-4 py-3 text-left rounded-xl border border-gray-200 hover:border-violet-400 hover:bg-violet-50 transition-colors">
+                <div className="text-sm font-semibold text-gray-800">LINE友だち全員に配信</div>
+                <div className="text-xs text-gray-500 mt-0.5">公式LINEを追加している全ユーザーにブロードキャスト</div>
+              </button>
+              <button onClick={() => handleSendWithMode(lineModeModal, "linked")}
+                className="w-full px-4 py-3 text-left rounded-xl border border-gray-200 hover:border-cyan-400 hover:bg-cyan-50 transition-colors">
+                <div className="text-sm font-semibold text-gray-800">連携済みユーザーのみ</div>
+                <div className="text-xs text-gray-500 mt-0.5">ComiStaとLINE連携済みの顧客にのみ送信</div>
+              </button>
+              <button onClick={() => handleSendWithMode(lineModeModal, "none")}
+                className="w-full px-4 py-3 text-left rounded-xl border border-gray-200 hover:border-gray-400 hover:bg-gray-50 transition-colors">
+                <div className="text-sm font-semibold text-gray-800">メールのみ（LINEなし）</div>
+                <div className="text-xs text-gray-500 mt-0.5">メール配信のみ、LINE通知はスキップ</div>
+              </button>
+            </div>
+            <button onClick={() => setLineModeModal(null)} className="w-full text-center text-sm text-gray-400 hover:text-gray-600">キャンセル</button>
+          </div>
+        </div>
+      )}
       <Toast toast={toast} />
     </div>
   );

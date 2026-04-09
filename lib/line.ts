@@ -3,7 +3,8 @@
  * 顧客のLINE連携アカウントへプッシュメッセージを送信
  */
 
-const LINE_API_URL = "https://api.line.me/v2/bot/message/push";
+const LINE_PUSH_API_URL = "https://api.line.me/v2/bot/message/push";
+const LINE_BROADCAST_API_URL = "https://api.line.me/v2/bot/message/broadcast";
 
 function getToken(): string | undefined {
   return process.env.LINE_CHANNEL_ACCESS_TOKEN;
@@ -16,7 +17,7 @@ export async function pushMessage(to: string, messages: { type: string; text: st
     return;
   }
 
-  const res = await fetch(LINE_API_URL, {
+  const res = await fetch(LINE_PUSH_API_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -28,6 +29,31 @@ export async function pushMessage(to: string, messages: { type: string; text: st
   if (!res.ok) {
     const text = await res.text();
     console.error("LINE push message failed:", res.status, text);
+  }
+}
+
+/**
+ * LINE Broadcast API で全友だちにメッセージを送信
+ */
+export async function broadcastMessage(messages: { type: string; text: string }[]) {
+  const token = getToken();
+  if (!token) {
+    console.error("LINE_CHANNEL_ACCESS_TOKEN is not set");
+    return;
+  }
+
+  const res = await fetch(LINE_BROADCAST_API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ messages }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`LINE broadcast failed: ${res.status} ${text}`);
   }
 }
 

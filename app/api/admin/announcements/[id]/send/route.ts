@@ -3,14 +3,27 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionForRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { Resend } from "resend";
-import { pushMessage } from "@/lib/line";
+import { pushMessage, broadcastMessage } from "@/lib/line";
+
+type LineMode = "linked" | "broadcast" | "none";
 
 type Params = { params: { id: string } };
 
-export async function POST(_request: NextRequest, { params }: Params) {
+export async function POST(request: NextRequest, { params }: Params) {
   const session = getSessionForRole("super");
   if (!session || session.role !== "super") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  // Parse optional lineMode from request body
+  let lineMode: LineMode = "linked";
+  try {
+    const body = await request.json();
+    if (body.lineMode && ["linked", "broadcast", "none"].includes(body.lineMode)) {
+      lineMode = body.lineMode;
+    }
+  } catch {
+    // No body or invalid JSON – use default "linked"
   }
 
   const announcement = await prisma.announcement.findUnique({ where: { id: params.id } });
@@ -68,9 +81,27 @@ export async function POST(_request: NextRequest, { params }: Params) {
         errors.push(`email:${user.email}: ${e instanceof Error ? e.message : "unknown"}`);
       }
     }
+  }
 
-    // Send LINE push message to users with lineUserId
-    if (user.lineUserId) {
+  // Send LINE notifications based on lineMode
+  if (lineMode === "broadcast") {
+    // Broadcast to ALL LINE friends
+    try {
+      const contentPreview = announcement.content.length > 200
+        ? announcement.content.slice(0, 200) + "..."
+        : announcement.content;
+      const text =
+        `【ComiStaお知らせ】\n` +
+        `[${announcement.category}] ${announcement.title}\n\n` +
+        contentPreview;
+      await broadcastMessage([{ type: "text", text }]);
+    } catch (e) {
+      errors.push(`LINE broadcast: ${e instanceof Error ? e.message : "unknown"}`);
+    }
+  } else if (lineMode === "linked") {
+    // Push to individual users with lineUserId
+    for (const user of users) {
+      if (!user.lineUserId) continue;
       try {
         const contentPreview = announcement.content.length > 200
           ? announcement.content.slice(0, 200) + "..."
@@ -86,6 +117,7 @@ export async function POST(_request: NextRequest, { params }: Params) {
       }
     }
   }
+  // lineMode === "none": skip LINE entirely
 
   // Mark announcement as sent
   await prisma.announcement.update({

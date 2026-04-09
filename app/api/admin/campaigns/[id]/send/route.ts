@@ -3,13 +3,27 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionForRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { Resend } from "resend";
+import { broadcastMessage } from "@/lib/line";
+
+type LineMode = "linked" | "broadcast" | "none";
 
 type Params = { params: { id: string } };
 
-export async function POST(_request: NextRequest, { params }: Params) {
+export async function POST(request: NextRequest, { params }: Params) {
   const session = getSessionForRole("super");
   if (!session || session.role !== "super") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  // Parse optional lineMode from request body
+  let lineMode: LineMode = "linked";
+  try {
+    const body = await request.json();
+    if (body.lineMode && ["linked", "broadcast", "none"].includes(body.lineMode)) {
+      lineMode = body.lineMode;
+    }
+  } catch {
+    // No body or invalid JSON – use default "linked"
   }
 
   const campaign = await prisma.campaign.findUnique({ where: { id: params.id } });
@@ -70,31 +84,42 @@ export async function POST(_request: NextRequest, { params }: Params) {
     }
   }
 
-  // Send LINE notifications
+  // Send LINE notifications based on lineMode
   const lineToken = process.env.LINE_CHANNEL_ACCESS_TOKEN;
-  if (lineToken) {
+  if (lineToken && lineMode !== "none") {
     const contentPreview = campaign.content.slice(0, 200) + (campaign.content.length > 200 ? "..." : "");
     const lineText = `【ComiStaキャンペーン】\n${campaign.title}\n\n${contentPreview}`;
-    for (const user of users) {
-      if (!user.lineUserId) continue;
+
+    if (lineMode === "broadcast") {
+      // Broadcast to ALL LINE friends
       try {
-        const res = await fetch("https://api.line.me/v2/bot/message/push", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${lineToken}`,
-          },
-          body: JSON.stringify({
-            to: user.lineUserId,
-            messages: [{ type: "text", text: lineText }],
-          }),
-        });
-        if (!res.ok) {
-          const text = await res.text();
-          errors.push(`LINE ${user.lineUserId}: ${res.status} ${text}`);
-        }
+        await broadcastMessage([{ type: "text", text: lineText }]);
       } catch (e) {
-        errors.push(`LINE ${user.lineUserId}: ${e instanceof Error ? e.message : "unknown"}`);
+        errors.push(`LINE broadcast: ${e instanceof Error ? e.message : "unknown"}`);
+      }
+    } else {
+      // "linked" mode: push to individual users with lineUserId
+      for (const user of users) {
+        if (!user.lineUserId) continue;
+        try {
+          const res = await fetch("https://api.line.me/v2/bot/message/push", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${lineToken}`,
+            },
+            body: JSON.stringify({
+              to: user.lineUserId,
+              messages: [{ type: "text", text: lineText }],
+            }),
+          });
+          if (!res.ok) {
+            const text = await res.text();
+            errors.push(`LINE ${user.lineUserId}: ${res.status} ${text}`);
+          }
+        } catch (e) {
+          errors.push(`LINE ${user.lineUserId}: ${e instanceof Error ? e.message : "unknown"}`);
+        }
       }
     }
   }
