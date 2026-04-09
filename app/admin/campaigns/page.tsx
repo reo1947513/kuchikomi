@@ -317,22 +317,22 @@ export default function CampaignsPage() {
           <div className="absolute inset-0 bg-black/40" onClick={() => setLineModeModal(null)} />
           <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4">
             <h3 className="text-base font-bold text-gray-900">配信方法を選択</h3>
-            <p className="text-sm text-gray-500">メール送信に加えて、LINE配信方法を選択してください。</p>
+            <p className="text-sm text-gray-500">対象ユーザーへのメール送信と合わせて、LINE配信方法を選択してください。</p>
             <div className="space-y-2">
               <button onClick={() => handleSendWithMode(lineModeModal, "broadcast")}
                 className="w-full px-4 py-3 text-left rounded-xl border border-gray-200 hover:border-violet-400 hover:bg-violet-50 transition-colors">
-                <div className="text-sm font-semibold text-gray-800">LINE友だち全員に配信</div>
-                <div className="text-xs text-gray-500 mt-0.5">公式LINEを追加している全ユーザーにブロードキャスト</div>
+                <div className="text-sm font-semibold text-gray-800">メール＋LINE友だち全員に配信</div>
+                <div className="text-xs text-gray-500 mt-0.5">対象ユーザーにメール送信＋公式LINE友だち全員にブロードキャスト</div>
               </button>
               <button onClick={() => handleSendWithMode(lineModeModal, "linked")}
                 className="w-full px-4 py-3 text-left rounded-xl border border-gray-200 hover:border-cyan-400 hover:bg-cyan-50 transition-colors">
-                <div className="text-sm font-semibold text-gray-800">連携済みユーザーのみ</div>
-                <div className="text-xs text-gray-500 mt-0.5">ComiStaとLINE連携済みの顧客にのみ送信</div>
+                <div className="text-sm font-semibold text-gray-800">メール＋連携済みユーザーのみ</div>
+                <div className="text-xs text-gray-500 mt-0.5">対象ユーザーにメール送信＋LINE連携済みの顧客にのみLINE通知</div>
               </button>
               <button onClick={() => handleSendWithMode(lineModeModal, "none")}
                 className="w-full px-4 py-3 text-left rounded-xl border border-gray-200 hover:border-gray-400 hover:bg-gray-50 transition-colors">
                 <div className="text-sm font-semibold text-gray-800">メールのみ（LINEなし）</div>
-                <div className="text-xs text-gray-500 mt-0.5">メール配信のみ、LINE通知はスキップ</div>
+                <div className="text-xs text-gray-500 mt-0.5">対象ユーザーにメール配信のみ、LINE通知はスキップ</div>
               </button>
             </div>
             <button onClick={() => setLineModeModal(null)} className="w-full text-center text-sm text-gray-400 hover:text-gray-600">キャンセル</button>
