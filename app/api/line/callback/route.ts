@@ -12,54 +12,9 @@ function escapeHtml(str: string): string {
 }
 
 /**
- * Polling page for the no-params case (LINE in-app browser prefetch).
- *
- * The LINE in-app browser loads the callback URL without parameters before
- * the actual OAuth callback fires. The actual callback (with params) may
- * process in the background via a separate HTTP request, saving lineUserId.
- *
- * This page polls /api/auth/me to detect when linking completes, then
- * redirects to the dashboard with a success message.
- */
-function pollingPage(dashboardUrl: string): NextResponse {
-  return new NextResponse(
-    `<!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>LINE連携処理中</title><meta name="robots" content="noindex">
-<style>@keyframes spin{to{transform:rotate(360deg)}}</style></head>
-<body style="display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;color:#555;margin:0;">
-<div style="text-align:center;">
-<div style="width:40px;height:40px;border:3px solid #e5e7eb;border-top-color:#06C755;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto;"></div>
-<p style="margin-top:16px;font-size:15px;">LINE連携処理中...</p>
-<p style="font-size:12px;color:#999;margin-top:8px;">しばらくお待ちください</p>
-</div>
-<script>
-var a=0;
-function c(){
-  fetch("/api/auth/me",{credentials:"include"})
-    .then(function(r){return r.json()})
-    .then(function(d){
-      if(d.lineUserId){
-        window.location.href="${escapeHtml(dashboardUrl)}?line=success";
-      }else if(++a<15){
-        setTimeout(c,1000);
-      }else{
-        window.location.href="${escapeHtml(dashboardUrl)}";
-      }
-    })
-    .catch(function(){
-      if(++a<15){setTimeout(c,1000)}
-      else{window.location.href="${escapeHtml(dashboardUrl)}";}
-    });
-}
-setTimeout(c,1000);
-</script>
-</body></html>`,
-    { status: 200, headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" } }
-  );
-}
-
-/**
- * JS redirect page — used instead of 302 to avoid prefetch issues.
+ * Returns a 200 HTML page with JS redirect instead of 302.
+ * LINE in-app browser prefetches callback URLs; a 302 response to
+ * prefetch causes navigation, but a 200 HTML response does not.
  */
 function jsRedirectPage(url: string): NextResponse {
   return new NextResponse(
@@ -85,13 +40,13 @@ export async function GET(request: NextRequest) {
   }
 
   // No code/state = prefetch or direct navigation.
-  // Return a polling page that checks /api/auth/me for lineUserId.
-  // The actual OAuth callback may process in the background.
+  // Return 200 HTML (not 302) to prevent prefetch from hijacking navigation.
+  // The settings page will auto-detect LINE linking via visibilitychange.
   if (!code || !state) {
-    return pollingPage(dashboardUrl);
+    return jsRedirectPage(dashboardUrl);
   }
 
-  // Has code and state — process OAuth token exchange server-side.
+  // Process OAuth callback server-side
   const parts = state.split(":");
   const userId = parts[1];
   if (!userId) {

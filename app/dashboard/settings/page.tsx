@@ -45,7 +45,7 @@ export default function SettingsPage() {
       .catch(() => setError("情報の取得に失敗しました"))
       .finally(() => setLoading(false));
 
-    // Handle LINE callback result
+    // Handle LINE callback result from URL params
     const params = new URLSearchParams(window.location.search);
     const lineResult = params.get("line");
     if (lineResult === "success") {
@@ -56,6 +56,34 @@ export default function SettingsPage() {
       window.history.replaceState({}, "", window.location.pathname);
     }
   }, []);
+
+  // Auto-detect LINE linking when user returns to the page.
+  // Handles cases where the OAuth callback completes in the background
+  // (e.g., LINE in-app browser) and the user returns to this page.
+  useEffect(() => {
+    const checkLineLinking = () => {
+      if (document.visibilityState !== "visible") return;
+      fetch("/api/auth/me")
+        .then((r) => r.json())
+        .then((data) => {
+          if (!data.lineUserId) return;
+          setMe((prev) => {
+            if (prev && !prev.lineUserId) {
+              showToast("LINE連携が完了しました", "success");
+            }
+            return prev ? { ...prev, lineUserId: data.lineUserId } : prev;
+          });
+        })
+        .catch(() => {});
+    };
+
+    document.addEventListener("visibilitychange", checkLineLinking);
+    window.addEventListener("focus", checkLineLinking);
+    return () => {
+      document.removeEventListener("visibilitychange", checkLineLinking);
+      window.removeEventListener("focus", checkLineLinking);
+    };
+  }, [showToast]);
 
   const handleSaveProfile = async () => {
     setSaving(true);
