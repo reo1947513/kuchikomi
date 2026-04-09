@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useToast, Toast } from "@/components/Toast";
 
 type Me = {
   id: string;
@@ -21,6 +22,7 @@ export default function SettingsPage() {
   const [saveMsg, setSaveMsg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [unlinking, setUnlinking] = useState(false);
+  const { toast, showToast } = useToast();
 
   const [name, setName] = useState("");
   const [shopName, setShopName] = useState("");
@@ -47,11 +49,10 @@ export default function SettingsPage() {
     const params = new URLSearchParams(window.location.search);
     const lineResult = params.get("line");
     if (lineResult === "success") {
-      setSaveMsg("LINE連携が完了しました");
+      showToast("LINE連携が完了しました", "success");
       window.history.replaceState({}, "", window.location.pathname);
-      setTimeout(() => setSaveMsg(null), 5000);
     } else if (lineResult === "error") {
-      setError("LINE連携に失敗しました。もう一度お試しください。");
+      showToast("LINE連携に失敗しました。もう一度お試しください。", "error");
       window.history.replaceState({}, "", window.location.pathname);
     }
   }, []);
@@ -134,6 +135,7 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6 max-w-2xl">
+      <Toast toast={toast} />
       <h1 className="text-lg sm:text-xl font-bold text-gray-900">アカウント設定</h1>
 
       {error && (
