@@ -65,6 +65,11 @@ export default function SuperAdminDashboard() {
       .then(setStats)
       .catch(console.error)
       .finally(() => setLoading(false));
+
+    // Prefetch other admin APIs in background to warm serverless functions
+    ["/api/admin/shops?page=1&limit=1", "/api/admin/announcements", "/api/admin/payments?limit=1"].forEach((url) =>
+      fetch(url).catch(() => {})
+    );
   }, []);
 
   if (loading) {
