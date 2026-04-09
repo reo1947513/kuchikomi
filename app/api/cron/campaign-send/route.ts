@@ -33,9 +33,8 @@ export async function GET(request: NextRequest) {
   const results: { campaignId: string; title: string; sent: number; total: number }[] = [];
 
   for (const campaign of campaigns) {
-    // Build target filter
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const targetFilter: any = { role: "admin", email: { not: null } };
+    // Build target filter (exclude demo users)
+    const targetFilter: Record<string, unknown> = { role: "admin", email: { not: null }, id: { not: { startsWith: "demo-" } } };
     if (campaign.target === "free") {
       targetFilter.planType = null;
     } else if (campaign.target === "paid") {

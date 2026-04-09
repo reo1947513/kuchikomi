@@ -35,7 +35,11 @@ export async function POST(request: NextRequest, { params }: Params) {
   }
 
   // Build target filter
-  const targetFilter: any = { role: "admin", email: { not: null } };
+  const targetFilter: Record<string, unknown> = {
+    role: "admin",
+    email: { not: null },
+    id: { not: { startsWith: "demo-" } },
+  };
   if (campaign.target === "free") {
     targetFilter.planType = null;
   } else if (campaign.target === "paid") {
