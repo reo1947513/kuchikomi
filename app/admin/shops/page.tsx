@@ -382,12 +382,13 @@ export default function ShopsPage() {
                     const p = shop.planType;
                     if (!p) return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">無料</span>;
                     const labels: Record<string, { label: string; cls: string }> = {
-                      light: { label: "ライト", cls: "bg-blue-100 text-blue-700" },
                       standard: { label: "スタンダード", cls: "bg-violet-100 text-violet-700" },
                       premium: { label: "プレミアム", cls: "bg-amber-100 text-amber-700" },
-                      lifetime_light: { label: "永年ライト", cls: "bg-blue-100 text-blue-700" },
-                      lifetime_standard: { label: "永年スタンダード", cls: "bg-violet-100 text-violet-700" },
-                      lifetime_premium: { label: "永年プレミアム", cls: "bg-amber-100 text-amber-700" },
+                      chain3: { label: "チェーン3店舗", cls: "bg-emerald-100 text-emerald-700" },
+                      chain5: { label: "チェーン5店舗", cls: "bg-emerald-100 text-emerald-700" },
+                      agency5: { label: "代理店5店舗", cls: "bg-rose-100 text-rose-700" },
+                      agency10: { label: "代理店10店舗", cls: "bg-rose-100 text-rose-700" },
+                      agency30: { label: "代理店30店舗〜", cls: "bg-rose-100 text-rose-700" },
                     };
                     const info = labels[p] || { label: p, cls: "bg-gray-100 text-gray-600" };
                     return <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${info.cls}`}>{info.label}</span>;
@@ -442,12 +443,13 @@ export default function ShopsPage() {
         {!loading && shops.length === 0 && <p className="text-center py-8 text-gray-400 text-sm">ショップが見つかりません</p>}
         {!loading && shops.map((shop) => {
           const planLabelsM: Record<string, { label: string; cls: string }> = {
-            light: { label: "ライト", cls: "bg-blue-100 text-blue-700" },
             standard: { label: "スタンダード", cls: "bg-violet-100 text-violet-700" },
             premium: { label: "プレミアム", cls: "bg-amber-100 text-amber-700" },
-            lifetime_light: { label: "永年ライト", cls: "bg-blue-100 text-blue-700" },
-            lifetime_standard: { label: "永年スタンダード", cls: "bg-violet-100 text-violet-700" },
-            lifetime_premium: { label: "永年プレミアム", cls: "bg-amber-100 text-amber-700" },
+            chain3: { label: "チェーン3店舗", cls: "bg-emerald-100 text-emerald-700" },
+            chain5: { label: "チェーン5店舗", cls: "bg-emerald-100 text-emerald-700" },
+            agency5: { label: "代理店5店舗", cls: "bg-rose-100 text-rose-700" },
+            agency10: { label: "代理店10店舗", cls: "bg-rose-100 text-rose-700" },
+            agency30: { label: "代理店30店舗〜", cls: "bg-rose-100 text-rose-700" },
           };
           const planInfo = shop.planType ? planLabelsM[shop.planType] || { label: shop.planType, cls: "bg-gray-100 text-gray-600" } : { label: "無料", cls: "bg-gray-100 text-gray-500" };
           const contractLabel = shop.noContractLimit ? "無期限" : shop.contractEnd ? (() => {
