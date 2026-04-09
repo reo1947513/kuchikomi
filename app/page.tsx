@@ -705,7 +705,7 @@ export default function LpPage() {
               },
               {
                 name: "プレミアムプラン",
-                price: "20,000",
+                price: "30,000",
                 limit: "無制限",
                 target: "大規模・複数店舗",
                 popular: false,
@@ -765,8 +765,8 @@ export default function LpPage() {
           <h3 className="text-lg font-bold text-gray-800 mt-20 mb-6 text-center">チェーン・複数店舗パック</h3>
           <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {([
-              { name: "3店舗パック", price: "50,000", save: "¥10,000お得", target: "小規模チェーン", features: ["プレミアム機能 × 3店舗", "店舗横断ダッシュボード", "一括管理・レポート"] },
-              { name: "5店舗パック", price: "80,000", save: "¥20,000お得", target: "中規模チェーン", features: ["プレミアム機能 × 5店舗", "店舗横断ダッシュボード", "一括管理・レポート", "専任サポート"] },
+              { name: "3店舗パック", price: "80,000", save: "¥10,000お得", target: "小規模チェーン", features: ["プレミアム機能 × 3店舗", "店舗横断ダッシュボード", "一括管理・レポート"] },
+              { name: "5店舗パック", price: "130,000", save: "¥20,000お得", target: "中規模チェーン", features: ["プレミアム機能 × 5店舗", "店舗横断ダッシュボード", "一括管理・レポート", "専任サポート"] },
             ] as { name: string; price: string; save: string; target: string; features: string[] }[]).map((plan) => (
               <div key={plan.name} className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 border border-gray-200 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
                 <div className="flex items-center gap-2 mb-1">
@@ -863,9 +863,42 @@ export default function LpPage() {
                 </div>
               </div>
             </div>
+
+            {/* Initial setup option */}
+            <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 border border-gray-200 shadow-lg mt-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <h4 className="font-bold text-base text-gray-800">初期セットアップ代行</h4>
+                    <span className="text-xs font-bold text-violet-600 bg-violet-50 px-2 py-0.5 rounded-full">初回オプション</span>
+                  </div>
+                  <p className="text-sm text-gray-500 mb-2">セルフ導入は0円。プロに任せたい方向けの代行プランです。</p>
+                  <ul className="space-y-1 text-sm text-gray-600">
+                    <li className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-cyan-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                      アンケート設計・質問内容カスタマイズ
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-cyan-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                      QRコード作成・設置アドバイス
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-cyan-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                      スタッフ向け運用マニュアル・説明サポート
+                    </li>
+                  </ul>
+                </div>
+                <div className="text-right shrink-0">
+                  <p className="text-sm text-gray-400 mb-1">料金</p>
+                  <p className="text-2xl font-black bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">¥15,000〜</p>
+                  <p className="text-xs text-gray-400 mt-1">内容に応じてお見積り</p>
+                  <button onClick={() => scrollTo("contact")} className="mt-3 px-6 py-2 rounded-full text-sm font-semibold border border-gray-300 text-gray-700 hover:bg-gray-50 transition-all">お問い合わせ</button>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <p className="text-center text-sm text-gray-400 mt-10">全プラン初期費用0円・最低契約期間6ヶ月</p>
+          <p className="text-center text-sm text-gray-400 mt-10">セルフ導入は初期費用0円・最低契約期間6ヶ月</p>
         </div>
       </Section>
 
