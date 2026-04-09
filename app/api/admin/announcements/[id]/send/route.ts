@@ -34,11 +34,12 @@ export async function POST(request: NextRequest, { params }: Params) {
     return NextResponse.json({ error: "このお知らせは既に送信済みです" }, { status: 400 });
   }
 
-  // Query all admin users with email or lineUserId (exclude demo users)
+  // Exclude emails with known non-deliverable domains
+  const BLOCKED_DOMAINS = ["kuchikomi.jp"];
+
   const users = await prisma.user.findMany({
     where: {
       role: "admin",
-      id: { not: { startsWith: "demo-" } },
       OR: [
         { email: { not: null } },
         { lineUserId: { not: null } },
@@ -55,8 +56,9 @@ export async function POST(request: NextRequest, { params }: Params) {
   const errors: string[] = [];
 
   for (const user of users) {
-    // Send email to users with email
-    if (user.email) {
+    // Send email to users with email (skip blocked domains)
+    const emailDomain = user.email?.split("@")[1]?.toLowerCase();
+    if (user.email && !(emailDomain && BLOCKED_DOMAINS.includes(emailDomain))) {
       try {
         await resend.emails.send({
           from: `ComiSta <${fromEmail}>`,

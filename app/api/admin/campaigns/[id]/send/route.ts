@@ -35,10 +35,11 @@ export async function POST(request: NextRequest, { params }: Params) {
   }
 
   // Build target filter
+  // Exclude emails with known non-deliverable domains
+  const BLOCKED_DOMAINS = ["kuchikomi.jp"];
   const targetFilter: Record<string, unknown> = {
     role: "admin",
     email: { not: null },
-    id: { not: { startsWith: "demo-" } },
   };
   if (campaign.target === "free") {
     targetFilter.planType = null;
@@ -63,6 +64,8 @@ export async function POST(request: NextRequest, { params }: Params) {
 
   for (const user of users) {
     if (!user.email) continue;
+    const domain = user.email.split("@")[1]?.toLowerCase();
+    if (domain && BLOCKED_DOMAINS.includes(domain)) continue;
     try {
       await resend.emails.send({
         from: `ComiSta <${fromEmail}>`,

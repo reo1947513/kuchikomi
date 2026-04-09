@@ -33,8 +33,9 @@ export async function GET(request: NextRequest) {
   const results: { campaignId: string; title: string; sent: number; total: number }[] = [];
 
   for (const campaign of campaigns) {
-    // Build target filter (exclude demo users)
-    const targetFilter: Record<string, unknown> = { role: "admin", email: { not: null }, id: { not: { startsWith: "demo-" } } };
+    // Build target filter
+    const BLOCKED_DOMAINS = ["kuchikomi.jp"];
+    const targetFilter: Record<string, unknown> = { role: "admin", email: { not: null } };
     if (campaign.target === "free") {
       targetFilter.planType = null;
     } else if (campaign.target === "paid") {
@@ -52,6 +53,8 @@ export async function GET(request: NextRequest) {
     let sent = 0;
     for (const user of users) {
       if (!user.email) continue;
+      const domain = user.email.split("@")[1]?.toLowerCase();
+      if (domain && BLOCKED_DOMAINS.includes(domain)) continue;
       try {
         await resend.emails.send({
           from: `ComiSta <${fromEmail}>`,
