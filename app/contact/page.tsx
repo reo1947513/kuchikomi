@@ -7,7 +7,7 @@ import { Suspense } from "react";
 
 type Phase = "input" | "confirm" | "complete";
 
-const CATEGORY_KEYS = ["contact.cat.service", "contact.cat.pricing", "contact.cat.intro", "contact.cat.other"];
+const CATEGORY_KEYS = ["contact.cat.document", "contact.cat.service", "contact.cat.pricing", "contact.cat.intro", "contact.cat.other"];
 
 function RequiredBadge({ label }: { label: string }) {
   return <span className="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold bg-red-500 text-white">{label}</span>;
@@ -42,6 +42,7 @@ function ContactForm() {
     "contact.required": "必須",
     "contact.category": "お問い合わせ項目",
     "contact.selectPlaceholder": "選択してください",
+    "contact.cat.document": "資料請求",
     "contact.cat.service": "サービスについて",
     "contact.cat.pricing": "料金について",
     "contact.cat.intro": "導入について",
