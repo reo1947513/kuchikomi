@@ -53,6 +53,13 @@ function LoginForm() {
         return;
       }
 
+      if (json.user?.role === "super") {
+        // Super admin should use /admin/login
+        await fetch("/api/auth/logout", { method: "POST" });
+        setServerError("管理者アカウントは管理者専用ログインからログインしてください");
+        return;
+      }
+
       if (redirectTo && redirectTo.startsWith("/api/")) {
         window.location.href = redirectTo;
       } else if (redirectTo) {

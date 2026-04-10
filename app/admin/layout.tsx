@@ -4,7 +4,7 @@ import AdminNav from "./AdminNav";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = getSessionForRole("super");
-  if (!session) redirect("/login");
+  if (!session) redirect("/admin-login");
   if (session.role !== "super") redirect("/dashboard");
 
   return (
