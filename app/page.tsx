@@ -1088,7 +1088,7 @@ export default function LpPage() {
         />
         <div className="relative max-w-3xl mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4">
-            <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent whitespace-nowrap">
+            <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent md:whitespace-nowrap">
               {t("cta.title1")}
             </span>
           </h2>
