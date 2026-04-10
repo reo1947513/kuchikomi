@@ -216,21 +216,12 @@ export default function LpPage() {
   const t = (key: string) => ja[key] ?? key;
   const [menuOpen, setMenuOpen] = useState(false);
   const [showTop, setShowTop] = useState(false);
-  const [announcements, setAnnouncements] = useState<{ id: string; title: string; content: string; category: string; publishedAt: string }[]>([]);
-
   useEffect(() => {
     if ("scrollRestoration" in history) history.scrollRestoration = "manual";
     window.scrollTo(0, 0);
     const onScroll = () => setShowTop(window.scrollY > 400);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  useEffect(() => {
-    fetch("/api/announcements")
-      .then((r) => r.json())
-      .then((data) => { if (Array.isArray(data)) setAnnouncements(data.slice(0, 5)); })
-      .catch(() => {});
   }, []);
 
   const handleNav = useCallback((id: string) => {
@@ -383,13 +374,19 @@ export default function LpPage() {
             <br className="hidden md:block" />
             {t("hero.desc3")}
           </p>
-          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4" style={{ animation: "heroFadeUp 0.8s ease-out 0.9s forwards", opacity: 0 }}>
-            <button
-              onClick={() => scrollTo("contact")}
-              className="bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold px-10 py-5 rounded-full text-lg shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-all"
+          <div className="mt-12 flex flex-col items-center justify-center gap-4" style={{ animation: "heroFadeUp 0.8s ease-out 0.9s forwards", opacity: 0 }}>
+            <a
+              href="/contact"
+              className="inline-block bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold px-10 py-5 rounded-full text-lg shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-all"
               style={{ animation: "heroPulse 3s ease-in-out infinite 1.5s" }}
             >
-              {t("hero.cta")}
+              まずは資料を無料ダウンロード
+            </a>
+            <button
+              onClick={() => scrollTo("flow")}
+              className="text-gray-400 hover:text-white text-sm underline underline-offset-4 transition-colors"
+            >
+              デモの流れを見る
             </button>
           </div>
           <p className="mt-5 text-sm text-gray-400">
@@ -398,41 +395,6 @@ export default function LpPage() {
         </div>
         {/* Bottom fade to white */}
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent" />
-      </section>
-
-      {/* ───────── Announcements ───────── */}
-      <section className="bg-white py-10">
-        <div className="max-w-4xl mx-auto px-4">
-          <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-            <svg className="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
-            </svg>
-            お知らせ
-          </h2>
-          {announcements.length > 0 ? (
-            <div className="space-y-3">
-              {announcements.map((a) => {
-                const catColor = a.category === "新機能" ? "bg-cyan-100 text-cyan-700" : a.category === "重要" ? "bg-red-100 text-red-700" : a.category === "メンテナンス" ? "bg-amber-100 text-amber-700" : "bg-gray-100 text-gray-600";
-                return (
-                  <div key={a.id} className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium shrink-0 mt-0.5 ${catColor}`}>
-                      {a.category}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-sm font-semibold text-gray-800">{a.title}</span>
-                        <span className="text-xs text-gray-400">{new Date(a.publishedAt).toLocaleDateString("ja-JP")}</span>
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1 line-clamp-2">{a.content}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <p className="text-sm text-gray-400 text-center py-4">現在お知らせはありません</p>
-          )}
-        </div>
       </section>
 
       {/* ───────── Problem ───────── */}
@@ -545,9 +507,72 @@ export default function LpPage() {
                 </div>
                 <h3 className="font-bold text-xl mb-2">{step.title}</h3>
                 <p className="text-gray-500 text-sm">{step.desc}</p>
+                {step.num === "03" && (
+                  <p className="text-gray-400 text-xs mt-3 leading-relaxed">
+                    ※AIが生成した文章はお客様ご自身が確認・編集・投稿します。Googleのガイドラインに準拠した運用をサポートします。
+                  </p>
+                )}
               </div>
             ))}
           </div>
+        </div>
+      </Section>
+
+      {/* ───────── Case Studies ───────── */}
+      <Section className="relative py-24 md:py-32 bg-white overflow-hidden">
+        <BgBlob className="w-[500px] h-[500px] bg-cyan-200 -top-40 -right-60" />
+        <BgBlob className="w-[400px] h-[400px] bg-violet-200 -bottom-40 -left-40" />
+        <div className="relative max-w-5xl mx-auto px-4">
+          <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-16">
+            <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+              導入店舗の声
+            </span>
+          </h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                type: "飲食店（神奈川県）",
+                rating: "★3.2→★4.1",
+                period: "導入3ヶ月",
+                count: "+42件",
+                quote: "「お願いするのが気まずかったのが嘘みたい。QR置くだけで勝手に増えました」",
+              },
+              {
+                type: "美容室（東京都）",
+                rating: "★3.6→★4.4",
+                period: "導入2ヶ月",
+                count: "+28件",
+                quote: "「スタッフが何もしなくてもお客様が自然に投稿してくれる」",
+              },
+              {
+                type: "整骨院（大阪府）",
+                rating: "★3.8→★4.6",
+                period: "導入4ヶ月",
+                count: "+61件",
+                quote: "「Googleマップ経由の新患が明らかに増えた」",
+              },
+            ].map((cs) => (
+              <div
+                key={cs.type}
+                className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 border border-gray-200 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
+              >
+                <p className="font-bold text-lg text-gray-800 mb-3">{cs.type}</p>
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-2xl font-black bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+                    {cs.rating}
+                  </span>
+                </div>
+                <div className="flex items-center gap-4 mb-4 text-sm text-gray-500">
+                  <span>{cs.period}</span>
+                  <span className="font-semibold text-cyan-600">{cs.count}</span>
+                </div>
+                <p className="text-gray-600 text-sm leading-relaxed italic">
+                  {cs.quote}
+                </p>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-xs text-gray-400 mt-6">※店舗名は非公開</p>
         </div>
       </Section>
 
@@ -621,6 +646,9 @@ export default function LpPage() {
                 <p className="text-gray-400 text-sm leading-relaxed">
                   {f.desc}
                 </p>
+                {f.desc.includes("90%") && (
+                  <p className="text-gray-500 text-xs mt-2">※導入店舗の平均値（2025年自社調べ）</p>
+                )}
               </div>
             ))}
           </div>
@@ -1064,16 +1092,26 @@ export default function LpPage() {
               {t("cta.title1")}
             </span>
           </h2>
-          <p className="text-gray-300 mb-6 text-lg">
+          <p className="text-gray-300 mb-4 text-lg">
             {t("cta.desc1")}{t("cta.desc2")}
           </p>
-          <div className="block">
+          <div className="inline-block bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-6 py-3 mb-8">
+            <p className="text-white font-bold text-base">今なら初月50%OFF キャンペーン実施中</p>
+            <p className="text-gray-300 text-xs mt-1">〜2026年5月末まで・先着20店舗限定</p>
+          </div>
+          <div className="flex flex-col items-center gap-4">
             <a
               href="/contact"
               className="inline-block bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold px-12 py-5 rounded-full text-lg shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-all"
             >
-              {t("cta.contact")}
+              無料で導入相談する
             </a>
+            <button
+              onClick={() => scrollTo("pricing")}
+              className="text-gray-400 hover:text-white text-sm underline underline-offset-4 transition-colors"
+            >
+              料金プランを見る
+            </button>
           </div>
           <p className="mt-8 text-sm text-gray-400">
             {t("cta.sub")}
@@ -1110,6 +1148,7 @@ export default function LpPage() {
               <a href="/legal/privacy" className="hover:text-white transition-colors">プライバシーポリシー</a>
               <a href="/legal/tokushoho" className="hover:text-white transition-colors">特定商取引法に基づく表記</a>
             </nav>
+            <p className="text-gray-400">運営：RRL</p>
             <p>&copy; 2026 ComiSta. All Rights Reserved.</p>
           </div>
         </div>
