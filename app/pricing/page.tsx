@@ -42,74 +42,10 @@ function Check() {
 
 /* ─── Dash icon ─── */
 function Dash() {
-  return <span className="text-gray-300 text-lg">—</span>;
+  return <span className="text-gray-300 text-lg">&mdash;</span>;
 }
 
 export default function PricingPage() {
-  const ja: Record<string, string> = {
-    "pricing.page.title": "料金プラン",
-    "pricing.page.subtitle": "ComiStaの料金プランをご紹介します。すべてのプランで初期費用は無料です。",
-    "pricing.page.taxNote": "※ 表示価格はすべて税別です。",
-    "pricing.page.contactNote": "プランの詳細やお見積もりについてはお気軽にお問い合わせください。",
-    "pricing.page.cta": "まずは相談してみる",
-    "pricing.page.ctaSub": "初期費用0円 ・ 最短即日導入 ・ 1店舗から利用可能",
-    "pricing.standard": "スタンダードプラン",
-    "pricing.premium": "プレミアムプラン",
-    "pricing.standard.limit": "月100件",
-    "pricing.premium.limit": "無制限",
-    "pricing.standard.target": "中規模店舗",
-    "pricing.premium.target": "大規模・複数店舗",
-    "pricing.perMonth": "/月",
-    "pricing.popular": "🏆 人気No.1",
-    "pricing.contact": "お問い合わせ",
-    "pricing.feat.ai": "AIによる口コミ下書き作成",
-    "pricing.feat.chat": "チャット形式アンケート",
-    "pricing.feat.qr": "QRコード発行",
-    "pricing.feat.analytics": "リアルタイム分析",
-    "pricing.feat.support": "カスタマーサポート",
-    "pricing.compare.title": "プラン機能比較",
-    "pricing.compare.feature": "機能",
-    "pricing.compare.monthlyLimit": "月間レビュー生成数",
-    "pricing.compare.aiDraft": "AIによる口コミ下書き作成",
-    "pricing.compare.chatSurvey": "チャット形式アンケート",
-    "pricing.compare.qrCode": "QRコード発行",
-    "pricing.compare.analytics": "回答データ分析",
-    "pricing.compare.customDesign": "アンケートデザインカスタマイズ",
-    "pricing.compare.support": "カスタマーサポート",
-    "pricing.compare.email": "メールサポート",
-    "pricing.compare.priority": "優先サポート",
-    "pricing.compare.multiStore": "複数店舗管理",
-    "pricing.compare.unlimited": "無制限",
-    "pricing.compare.100": "月100件",
-    "pricing.fit.title": "どのプランが最適？",
-    "pricing.fit.standard.title": "スタンダードプランがおすすめの方",
-    "pricing.fit.standard.1": "1店舗で口コミ運用を始めたい方",
-    "pricing.fit.standard.2": "月間の来店数が100名程度までの店舗",
-    "pricing.fit.standard.3": "まずは手軽に導入してみたい方",
-    "pricing.fit.premium.title": "プレミアムプランがおすすめの方",
-    "pricing.fit.premium.1": "複数店舗を運営されている方",
-    "pricing.fit.premium.2": "月間の来店数が多い店舗",
-    "pricing.fit.premium.3": "優先サポートが必要な方",
-    "pricing.faq.title": "料金に関するよくある質問",
-    "pricing.faq.1.q": "初期費用はかかりますか？",
-    "pricing.faq.1.a": "いいえ、すべてのプランで初期費用は無料です。月額料金のみでご利用いただけます。",
-    "pricing.faq.2.q": "契約期間の縛りはありますか？",
-    "pricing.faq.2.a": "最低6ヶ月からのご契約となります。詳しくはお問い合わせください。",
-    "pricing.faq.3.q": "途中でプラン変更できますか？",
-    "pricing.faq.3.a": "はい、プランのアップグレード・ダウングレードは随時可能です。次回請求時から新しいプランが適用されます。",
-    "pricing.faq.4.q": "月間レビュー生成数の上限を超えた場合はどうなりますか？",
-    "pricing.faq.4.a": "上限に達した場合、追加レビューパックをご購入いただくか、翌月のリセットをお待ちいただくことになります。",
-    "pricing.faq.5.q": "支払い方法を教えてください。",
-    "pricing.faq.5.a": "クレジットカード（Visa、Mastercard、JCBなど）でのお支払いに対応しています。請求書払いについてはお問い合わせください。",
-    "pricing.faq.6.q": "解約はいつでもできますか？",
-    "pricing.faq.6.a": "契約期間中はご利用いただき、契約期間満了後に解約が可能です。詳しくはお問い合わせください。",
-    "nav.contact": "お問い合わせ",
-    "nav.features": "特徴",
-    "nav.flow": "導入の流れ",
-    "nav.faq": "FAQ",
-    "footer.login": "ログイン",
-  };
-  const t = (key: string) => ja[key] ?? key;
   const [showTop, setShowTop] = useState(false);
 
   useEffect(() => {
@@ -119,38 +55,41 @@ export default function PricingPage() {
   }, []);
 
   const navLinks = [
-    { label: t("pricing.page.title"), href: "#plans" },
-    { label: t("pricing.compare.title"), href: "#comparison" },
-    { label: t("pricing.fit.title"), href: "#fit" },
-    { label: t("pricing.faq.title"), href: "#faq" },
+    { label: "店舗向けプラン", href: "#plans" },
+    { label: "チェーン・複数店舗", href: "#chain" },
+    { label: "エージェンシー", href: "#agency" },
+    { label: "オプション", href: "#options" },
+    { label: "機能比較", href: "#comparison" },
+    { label: "FAQ", href: "#faq" },
   ];
 
-  const plans = [
+  /* ── Store Plans ── */
+  const storePlans = [
     {
-      name: t("pricing.standard"),
+      name: "スタンダードプラン",
       price: "10,000",
-      limit: t("pricing.standard.limit"),
-      target: t("pricing.standard.target"),
+      limit: "月100件",
+      target: "中規模店舗",
       popular: true,
       features: [
-        t("pricing.feat.ai"),
-        t("pricing.feat.chat"),
-        t("pricing.feat.qr"),
+        "AIによる口コミ下書き作成",
+        "チャット形式アンケート",
+        "QRコード発行",
         "分析ページ（グラフ）",
         "メール通知",
-        t("pricing.feat.support"),
+        "カスタマーサポート",
       ],
     },
     {
-      name: t("pricing.premium"),
-      price: "20,000",
-      limit: t("pricing.premium.limit"),
-      target: t("pricing.premium.target"),
+      name: "プレミアムプラン",
+      price: "30,000",
+      limit: "無制限",
+      target: "大規模・複数店舗",
       popular: false,
       features: [
-        t("pricing.feat.ai"),
-        t("pricing.feat.chat"),
-        t("pricing.feat.qr"),
+        "AIによる口コミ下書き作成",
+        "チャット形式アンケート",
+        "QRコード発行",
         "分析ページ（グラフ）",
         "AI分析レポート",
         "CSVエクスポート",
@@ -162,19 +101,61 @@ export default function PricingPage() {
     },
   ];
 
+  /* ── Chain Packs ── */
+  const chainPacks = [
+    {
+      name: "チェーン3店舗パック",
+      price: "80,000",
+      save: "¥10,000お得",
+      target: "小規模チェーン",
+      features: ["プレミアム機能 × 3店舗", "店舗横断ダッシュボード", "一括管理・レポート"],
+    },
+    {
+      name: "チェーン5店舗パック",
+      price: "130,000",
+      save: "¥20,000お得",
+      target: "中規模チェーン",
+      features: ["プレミアム機能 × 5店舗", "店舗横断ダッシュボード", "一括管理・レポート", "専任サポート"],
+    },
+  ];
+
+  /* ── Agency Plans ── */
+  const agencyPlans = [
+    { name: "エージェンシー5店舗", price: "40,000", target: "小規模代理店" },
+    { name: "エージェンシー10店舗", price: "70,000", target: "中規模代理店" },
+    { name: "エージェンシー30店舗〜", price: null, label: "要見積", target: "大規模代理店" },
+  ];
+
+  /* ── Options ── */
+  const options = [
+    { name: "Google口コミ管理代行", price: null, label: "要相談", desc: "口コミ返信の代行や評価改善のコンサルティング" },
+    { name: "初期セットアップ代行", price: "15,000〜", desc: "アカウント作成からQRコード設置まで完全代行" },
+  ];
+
+  /* ── Comparison Table ── */
   const comparisonRows: { label: string; standard: React.ReactNode; premium: React.ReactNode }[] = [
-    { label: t("pricing.compare.monthlyLimit"), standard: t("pricing.compare.100"), premium: t("pricing.compare.unlimited") },
-    { label: t("pricing.compare.aiDraft"), standard: <Check />, premium: <Check /> },
-    { label: t("pricing.compare.chatSurvey"), standard: <Check />, premium: <Check /> },
-    { label: t("pricing.compare.qrCode"), standard: <Check />, premium: <Check /> },
-    { label: t("pricing.compare.analytics"), standard: <Check />, premium: <Check /> },
+    { label: "月間レビュー生成数", standard: "月100件", premium: "無制限" },
+    { label: "AIによる口コミ下書き作成", standard: <Check />, premium: <Check /> },
+    { label: "チャット形式アンケート", standard: <Check />, premium: <Check /> },
+    { label: "QRコード発行", standard: <Check />, premium: <Check /> },
+    { label: "回答データ分析", standard: <Check />, premium: <Check /> },
     { label: "AI分析レポート", standard: <Dash />, premium: <Check /> },
     { label: "CSVエクスポート", standard: <Dash />, premium: <Check /> },
     { label: "AIプロンプト編集", standard: <Dash />, premium: <Check /> },
-    { label: t("pricing.compare.customDesign"), standard: <Check />, premium: <Check /> },
-    { label: t("pricing.compare.support"), standard: t("pricing.compare.email"), premium: t("pricing.compare.priority") },
-    { label: t("pricing.compare.multiStore"), standard: <Dash />, premium: <Check /> },
+    { label: "アンケートデザインカスタマイズ", standard: <Check />, premium: <Check /> },
+    { label: "カスタマーサポート", standard: "メールサポート", premium: "優先サポート" },
+    { label: "複数店舗管理", standard: <Dash />, premium: <Check /> },
     { label: "メール通知", standard: <Check />, premium: <Check /> },
+  ];
+
+  /* ── FAQ ── */
+  const faqs = [
+    { q: "初期費用はかかりますか？", a: "いいえ、すべてのプランで初期費用は無料です。月額料金のみでご利用いただけます。" },
+    { q: "契約期間の縛りはありますか？", a: "最低6ヶ月からのご契約となります。詳しくはお問い合わせください。" },
+    { q: "途中でプラン変更できますか？", a: "はい、プランのアップグレード・ダウングレードは随時可能です。次回請求時から新しいプランが適用されます。" },
+    { q: "月間レビュー生成数の上限を超えた場合はどうなりますか？", a: "上限に達した場合、追加レビューパックをご購入いただくか、翌月のリセットをお待ちいただくことになります。" },
+    { q: "支払い方法を教えてください。", a: "クレジットカード（Visa、Mastercard、JCBなど）でのお支払いに対応しています。請求書払いについてはお問い合わせください。" },
+    { q: "解約はいつでもできますか？", a: "契約期間中はご利用いただき、契約期間満了後に解約が可能です。詳しくはお問い合わせください。" },
   ];
 
   return (
@@ -199,7 +180,7 @@ export default function PricingPage() {
               href="/contact"
               className="bg-gradient-to-r from-cyan-500 to-violet-500 text-white text-sm font-semibold px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity shadow-lg shadow-cyan-500/25"
             >
-              {t("nav.contact")}
+              お問い合わせ
             </a>
           </nav>
         </div>
@@ -210,20 +191,26 @@ export default function PricingPage() {
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h1 className="text-3xl md:text-5xl font-extrabold mb-4">
             <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
-              {t("pricing.page.title")}
+              料金プラン
             </span>
           </h1>
           <p className="text-gray-500 text-lg max-w-2xl mx-auto">
-            {t("pricing.page.subtitle")}
+            ComiStaの料金プランをご紹介します。すべてのプランで初期費用は無料です。
           </p>
         </div>
       </section>
 
-      {/* ───────── Plan Cards ───────── */}
+      {/* ───────── Store Plan Cards ───────── */}
       <section id="plans" className="py-16 md:py-24">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-6 items-start">
-            {plans.map((plan) => (
+        <div className="max-w-5xl mx-auto px-4">
+          <h2 className="text-2xl md:text-4xl font-extrabold text-center mb-4">
+            <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+              店舗向けプラン
+            </span>
+          </h2>
+          <p className="text-center text-gray-500 mb-12">1店舗から導入できるベーシックなプラン</p>
+          <div className="grid md:grid-cols-2 gap-6 items-start max-w-4xl mx-auto">
+            {storePlans.map((plan) => (
               <div
                 key={plan.name}
                 className={`relative bg-white rounded-3xl p-8 border transition-all hover:-translate-y-1 ${
@@ -236,7 +223,7 @@ export default function PricingPage() {
                   <>
                     <div className="absolute -inset-[2px] rounded-3xl bg-gradient-to-r from-cyan-500 via-violet-500 to-fuchsia-500 opacity-20 blur-md -z-10" />
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-500 to-violet-500 text-white text-xs font-bold px-5 py-1.5 rounded-full shadow-lg">
-                      {t("pricing.popular")}
+                      人気No.1
                     </div>
                   </>
                 )}
@@ -244,9 +231,9 @@ export default function PricingPage() {
                 <p className="text-xs text-gray-500 mb-4">{plan.target}</p>
                 <div className="mb-6">
                   <span className="text-5xl font-black bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
-                    ¥{plan.price}
+                    &yen;{plan.price}
                   </span>
-                  <span className="text-gray-500 text-sm">{t("pricing.perMonth")}</span>
+                  <span className="text-gray-500 text-sm">/月</span>
                 </div>
                 <p className="text-sm text-cyan-600 font-semibold mb-6">{plan.limit}</p>
                 <ul className="space-y-3 text-sm text-gray-600">
@@ -265,12 +252,139 @@ export default function PricingPage() {
                       : "border border-gray-300 text-gray-700 hover:bg-gray-50"
                   }`}
                 >
-                  {t("pricing.contact")}
+                  お問い合わせ
                 </a>
               </div>
             ))}
           </div>
-          <p className="text-center text-sm text-gray-400 mt-8">{t("pricing.page.taxNote")}</p>
+          <p className="text-center text-sm text-gray-400 mt-8">※ 表示価格はすべて税別です。</p>
+        </div>
+      </section>
+
+      {/* ───────── Chain / Multi-Store Packs ───────── */}
+      <section id="chain" className="py-16 md:py-24 bg-gradient-to-br from-indigo-50 via-white to-violet-50">
+        <div className="max-w-5xl mx-auto px-4">
+          <h2 className="text-2xl md:text-4xl font-extrabold text-center mb-4">
+            <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+              チェーン・複数店舗パック
+            </span>
+          </h2>
+          <p className="text-center text-gray-500 mb-12">複数店舗をまとめて導入するとお得なパックプラン</p>
+          <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {chainPacks.map((pack) => (
+              <div
+                key={pack.name}
+                className="relative bg-white/70 backdrop-blur-sm rounded-3xl p-8 border border-gray-200 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="font-bold text-lg">{pack.name}</h3>
+                  <span className="text-xs bg-gradient-to-r from-emerald-400 to-cyan-400 text-white px-3 py-0.5 rounded-full font-semibold">
+                    {pack.save}
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500 mb-4">{pack.target}</p>
+                <div className="mb-6">
+                  <span className="text-4xl font-black bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+                    &yen;{pack.price}
+                  </span>
+                  <span className="text-gray-500 text-sm">/月</span>
+                </div>
+                <ul className="space-y-3 text-sm text-gray-600">
+                  {pack.features.map((feat) => (
+                    <li key={feat} className="flex items-center gap-2">
+                      <Check />
+                      {feat}
+                    </li>
+                  ))}
+                </ul>
+                <a
+                  href="/contact"
+                  className="mt-8 block w-full py-3.5 rounded-full font-semibold text-center border border-gray-300 text-gray-700 hover:bg-gray-50 transition-all"
+                >
+                  お問い合わせ
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ───────── Agency Plans ───────── */}
+      <section id="agency" className="py-16 md:py-24">
+        <div className="max-w-5xl mx-auto px-4">
+          <h2 className="text-2xl md:text-4xl font-extrabold text-center mb-4">
+            <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+              エージェンシープラン
+            </span>
+          </h2>
+          <p className="text-center text-gray-500 mb-12">代理店・コンサル企業向けのプラン</p>
+          <div className="grid sm:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {agencyPlans.map((plan) => (
+              <div
+                key={plan.name}
+                className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 border border-gray-200 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all text-center"
+              >
+                <h3 className="font-bold text-lg mb-1">{plan.name}</h3>
+                <p className="text-xs text-gray-500 mb-6">{plan.target}</p>
+                <div className="mb-6">
+                  {plan.price ? (
+                    <>
+                      <span className="text-4xl font-black bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+                        &yen;{plan.price}
+                      </span>
+                      <span className="text-gray-500 text-sm">/月</span>
+                    </>
+                  ) : (
+                    <span className="text-3xl font-black bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+                      {plan.label}
+                    </span>
+                  )}
+                </div>
+                <a
+                  href="/contact"
+                  className="block w-full py-3.5 rounded-full font-semibold text-center border border-gray-300 text-gray-700 hover:bg-gray-50 transition-all"
+                >
+                  お問い合わせ
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ───────── Options ───────── */}
+      <section id="options" className="py-16 md:py-24 bg-gradient-to-br from-indigo-50 via-white to-violet-50">
+        <div className="max-w-4xl mx-auto px-4">
+          <h2 className="text-2xl md:text-4xl font-extrabold text-center mb-4">
+            <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+              オプション
+            </span>
+          </h2>
+          <p className="text-center text-gray-500 mb-12">プランに追加できるオプションサービス</p>
+          <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+            {options.map((opt) => (
+              <div
+                key={opt.name}
+                className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 border border-gray-200 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
+              >
+                <h3 className="font-bold text-lg mb-2">{opt.name}</h3>
+                <p className="text-sm text-gray-500 mb-4">{opt.desc}</p>
+                <div className="mb-2">
+                  {opt.price ? (
+                    <>
+                      <span className="text-3xl font-black bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+                        &yen;{opt.price}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-2xl font-black bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+                      {opt.label}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -279,7 +393,7 @@ export default function PricingPage() {
         <div className="max-w-4xl mx-auto px-4">
           <h2 className="text-2xl md:text-4xl font-extrabold text-center mb-12">
             <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
-              {t("pricing.compare.title")}
+              プラン機能比較
             </span>
           </h2>
           <div className="overflow-x-auto">
@@ -287,18 +401,18 @@ export default function PricingPage() {
               <thead>
                 <tr className="border-b-2 border-gray-200">
                   <th className="text-left py-4 px-4 font-semibold text-gray-700 w-2/5">
-                    {t("pricing.compare.feature")}
+                    機能
                   </th>
                   <th className="text-center py-4 px-4 font-bold text-gray-900 w-[30%]">
                     <div className="inline-flex flex-col items-center">
-                      <span>{t("pricing.standard")}</span>
-                      <span className="text-xs font-normal text-gray-400 mt-0.5">¥10,000{t("pricing.perMonth")}</span>
+                      <span>スタンダードプラン</span>
+                      <span className="text-xs font-normal text-gray-400 mt-0.5">&yen;10,000/月</span>
                     </div>
                   </th>
                   <th className="text-center py-4 px-4 font-bold text-gray-900 w-[30%]">
                     <div className="inline-flex flex-col items-center">
-                      <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">{t("pricing.premium")}</span>
-                      <span className="text-xs font-normal text-gray-400 mt-0.5">¥20,000{t("pricing.perMonth")}</span>
+                      <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">プレミアムプラン</span>
+                      <span className="text-xs font-normal text-gray-400 mt-0.5">&yen;30,000/月</span>
                     </div>
                   </th>
                 </tr>
@@ -322,11 +436,11 @@ export default function PricingPage() {
       </section>
 
       {/* ───────── Which Plan Is Right ───────── */}
-      <section id="fit" className="py-16 md:py-24 bg-gradient-to-br from-indigo-50 via-white to-violet-50">
+      <section className="py-16 md:py-24 bg-gradient-to-br from-indigo-50 via-white to-violet-50">
         <div className="max-w-4xl mx-auto px-4">
           <h2 className="text-2xl md:text-4xl font-extrabold text-center mb-12">
             <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
-              {t("pricing.fit.title")}
+              どのプランが最適？
             </span>
           </h2>
           <div className="grid md:grid-cols-2 gap-6">
@@ -334,10 +448,10 @@ export default function PricingPage() {
             <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200">
               <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
                 <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-violet-100 text-violet-600 text-sm font-black">S</span>
-                {t("pricing.fit.standard.title")}
+                スタンダードプランがおすすめの方
               </h3>
               <ul className="space-y-3 text-sm text-gray-600">
-                {[t("pricing.fit.standard.1"), t("pricing.fit.standard.2"), t("pricing.fit.standard.3")].map((item) => (
+                {["1店舗で口コミ運用を始めたい方", "月間の来店数が100名程度までの店舗", "まずは手軽に導入してみたい方"].map((item) => (
                   <li key={item} className="flex items-start gap-2">
                     <Check />
                     <span>{item}</span>
@@ -349,10 +463,10 @@ export default function PricingPage() {
             <div className="bg-white rounded-2xl p-8 shadow-lg border-2 border-violet-200">
               <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
                 <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-r from-cyan-500 to-violet-500 text-white text-sm font-black">P</span>
-                {t("pricing.fit.premium.title")}
+                プレミアムプランがおすすめの方
               </h3>
               <ul className="space-y-3 text-sm text-gray-600">
-                {[t("pricing.fit.premium.1"), t("pricing.fit.premium.2"), t("pricing.fit.premium.3")].map((item) => (
+                {["複数店舗を運営されている方", "月間の来店数が多い店舗", "優先サポートが必要な方"].map((item) => (
                   <li key={item} className="flex items-start gap-2">
                     <Check />
                     <span>{item}</span>
@@ -369,12 +483,12 @@ export default function PricingPage() {
         <div className="max-w-3xl mx-auto px-4">
           <h2 className="text-2xl md:text-4xl font-extrabold text-center mb-12">
             <span className="bg-gradient-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
-              {t("pricing.faq.title")}
+              料金に関するよくある質問
             </span>
           </h2>
           <div className="space-y-4">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <FaqItem key={i} q={t(`pricing.faq.${i}.q`)} a={t(`pricing.faq.${i}.a`)} />
+            {faqs.map((faq, i) => (
+              <FaqItem key={i} q={faq.q} a={faq.a} />
             ))}
           </div>
         </div>
@@ -385,7 +499,7 @@ export default function PricingPage() {
         <div className="max-w-3xl mx-auto px-4 text-center">
           <h2 className="text-2xl md:text-4xl font-extrabold mb-4">
             <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-              {t("pricing.page.contactNote")}
+              プランの詳細やお見積もりについてはお気軽にお問い合わせください。
             </span>
           </h2>
           <div className="mt-8">
@@ -393,10 +507,10 @@ export default function PricingPage() {
               href="/contact"
               className="inline-block bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold px-12 py-5 rounded-full text-lg shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:scale-105 transition-all"
             >
-              {t("pricing.page.cta")}
+              まずは相談してみる
             </a>
           </div>
-          <p className="mt-6 text-sm text-gray-400">{t("pricing.page.ctaSub")}</p>
+          <p className="mt-6 text-sm text-gray-400">初期費用0円 ・ 最短即日導入 ・ 1店舗から利用可能</p>
         </div>
       </section>
 
@@ -408,24 +522,12 @@ export default function PricingPage() {
               <Image src="/logo.png" alt="ComiSta" width={100} height={30} />
             </a>
             <nav className="flex flex-wrap items-center justify-center gap-6 text-sm">
-              <a href="/" className="hover:text-white transition-colors">
-                {"トップ"}
-              </a>
-              <a href="/#features" className="hover:text-white transition-colors">
-                {t("nav.features")}
-              </a>
-              <a href="/#flow" className="hover:text-white transition-colors">
-                {t("nav.flow")}
-              </a>
-              <a href="/#faq" className="hover:text-white transition-colors">
-                {t("nav.faq")}
-              </a>
-              <a href="/contact" className="hover:text-white transition-colors">
-                {t("nav.contact")}
-              </a>
-              <a href="/login" className="hover:text-white transition-colors">
-                {t("footer.login")}
-              </a>
+              <a href="/" className="hover:text-white transition-colors">トップ</a>
+              <a href="/#features" className="hover:text-white transition-colors">特徴</a>
+              <a href="/#flow" className="hover:text-white transition-colors">導入の流れ</a>
+              <a href="/#faq" className="hover:text-white transition-colors">FAQ</a>
+              <a href="/contact" className="hover:text-white transition-colors">お問い合わせ</a>
+              <a href="/login" className="hover:text-white transition-colors">ログイン</a>
             </nav>
           </div>
           <div className="mt-8 border-t border-gray-800 pt-6 text-center text-xs">
