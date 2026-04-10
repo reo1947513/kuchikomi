@@ -235,8 +235,8 @@ export default function ContactsPage() {
                   <td className="px-4 py-3 text-gray-500 text-xs">{c.user?.loginId || "—"}</td>
                   <td className="px-4 py-3 text-gray-800 text-xs">{c.user?.shopName || "—"}</td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${c.source === "hp" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"}`}>
-                      {c.source === "hp" ? "HP" : "管理画面"}
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${c.source === "line" ? "bg-green-100 text-green-700" : c.source === "hp" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"}`}>
+                      {c.source === "line" ? "LINE" : c.source === "hp" ? "HP" : "管理画面"}
                     </span>
                   </td>
                   <td className="px-4 py-3">

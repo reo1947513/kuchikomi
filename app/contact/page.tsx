@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 type Phase = "input" | "confirm" | "complete";
 
@@ -22,6 +24,17 @@ function CheckIcon() {
 }
 
 export default function PublicContactPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center py-24 text-gray-400">読み込み中...</div>}>
+      <ContactForm />
+    </Suspense>
+  );
+}
+
+function ContactForm() {
+  const searchParams = useSearchParams();
+  const fromParam = searchParams.get("from");
+  const source = fromParam === "line" ? "line" : "hp";
   const ja: Record<string, string> = {
     "contact.title": "お問い合わせ",
     "contact.subtitle": "ComiStaに関するお問い合わせはこちらからお気軽にどうぞ。",
@@ -101,7 +114,7 @@ export default function PublicContactPage() {
           email,
           phone: `${phone1}-${phone2}-${phone3}`,
           content,
-          source: "hp",
+          source,
         }),
       });
       if (!res.ok) throw new Error();

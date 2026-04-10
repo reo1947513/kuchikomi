@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
           to: lineUserId,
           messages: [{
             type: "text",
-            text: `【新規お問い合わせ】\n${data.category}\n${data.companyName}\n${data.lastName} ${data.firstName}\n${data.email}\n${data.phone}\n経由: ${source === "hp" ? "HP" : "管理画面"}\n\n${data.content.slice(0, 200)}`,
+            text: `【新規お問い合わせ】\n${data.category}\n${data.companyName}\n${data.lastName} ${data.firstName}\n${data.email}\n${data.phone}\n経由: ${source === "line" ? "LINE" : source === "hp" ? "HP" : "管理画面"}\n\n${data.content.slice(0, 200)}`,
           }],
         }),
       }).catch((e) => console.error("LINE notification failed:", e));
