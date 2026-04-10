@@ -1,21 +1,11 @@
 export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
-import { getSession, getSessionForRole } from "@/lib/auth";
+import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
 
-export async function GET(request: NextRequest) {
-  // Determine session based on request context
-  // Dashboard pages should prefer shop admin, admin pages should prefer super
-  const referer = request.headers.get("referer") || "";
-  const isAdminContext = referer.includes("/admin");
-
-  let session;
-  if (isAdminContext) {
-    session = getSessionForRole("super") || getSessionForRole("admin");
-  } else {
-    session = getSessionForRole("admin") || getSessionForRole("super");
-  }
+export async function GET() {
+  const session = getSession();
 
   if (!session) {
     return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
@@ -59,11 +49,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
-  const referer = request.headers.get("referer") || "";
-  const isAdminCtx = referer.includes("/admin");
-  const session = isAdminCtx
-    ? (getSessionForRole("super") || getSessionForRole("admin"))
-    : (getSessionForRole("admin") || getSessionForRole("super"));
+  const session = getSession();
   if (!session) {
     return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
   }

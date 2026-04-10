@@ -55,10 +55,9 @@ export async function POST(request: NextRequest) {
       maxAge: 60 * 60 * 24 * 7,
     });
 
-    // Clear other role's cookie to prevent session conflicts across tabs
-    const otherCookie = user.role === "super" ? "auth_token_shop" : "auth_token_super";
-    response.cookies.set(otherCookie, "", { path: "/", maxAge: 0 });
-    response.cookies.set("auth_token", "", { path: "/", maxAge: 0 });
+    // Clear legacy cookies to prevent session conflicts
+    response.cookies.set("auth_token_super", "", { path: "/", maxAge: 0 });
+    response.cookies.set("auth_token_shop", "", { path: "/", maxAge: 0 });
 
     return response;
   } catch (error) {

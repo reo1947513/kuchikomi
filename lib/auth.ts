@@ -20,49 +20,33 @@ export function verifyToken(token: string): { userId: string; role: string } | n
   }
 }
 
-export function cookieNameForRole(role: string): string {
-  return role === "super" ? "auth_token_super" : "auth_token_shop";
+// Single cookie name for all roles
+const AUTH_COOKIE = "auth_token";
+
+export function cookieNameForRole(_role: string): string {
+  return AUTH_COOKIE;
 }
 
-// Check both cookies, return whichever is valid
-// Prefers shop admin cookie first (for dashboard context),
-// then super admin, then legacy cookie.
+// Get the current session (single cookie, single session)
 export function getSession(): { userId: string; role: string } | null {
   const jar = cookies();
-
-  // Try shop admin cookie first (most common context)
-  const shopToken = jar.get("auth_token_shop")?.value;
-  if (shopToken) {
-    const session = verifyToken(shopToken);
-    if (session) return session;
-  }
-
-  // Try super admin cookie
-  const superToken = jar.get("auth_token_super")?.value;
-  if (superToken) {
-    const session = verifyToken(superToken);
-    if (session) return session;
-  }
-
-  // Fallback: old auth_token cookie (backward compat)
-  const oldToken = jar.get("auth_token")?.value;
-  if (oldToken) {
-    const session = verifyToken(oldToken);
-    if (session) return session;
-  }
-
-  return null;
-}
-
-// Get session for a specific role context - NO fallback
-export function getSessionForRole(preferredRole: "super" | "admin"): { userId: string; role: string } | null {
-  const jar = cookies();
-  const cookieName = preferredRole === "super" ? "auth_token_super" : "auth_token_shop";
-
-  const token = jar.get(cookieName)?.value;
+  const token = jar.get(AUTH_COOKIE)?.value;
   if (token) {
     return verifyToken(token);
   }
+  // Fallback: check legacy cookies for backward compat (one-time migration)
+  const legacySuper = jar.get("auth_token_super")?.value;
+  if (legacySuper) return verifyToken(legacySuper);
+  const legacyShop = jar.get("auth_token_shop")?.value;
+  if (legacyShop) return verifyToken(legacyShop);
+  return null;
+}
 
+// Get session only if the role matches
+export function getSessionForRole(preferredRole: "super" | "admin"): { userId: string; role: string } | null {
+  const session = getSession();
+  if (!session) return null;
+  if (preferredRole === "super" && session.role === "super") return session;
+  if (preferredRole === "admin" && session.role !== "super") return session;
   return null;
 }
