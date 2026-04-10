@@ -25,20 +25,22 @@ export function cookieNameForRole(role: string): string {
 }
 
 // Check both cookies, return whichever is valid
+// Prefers shop admin cookie first (for dashboard context),
+// then super admin, then legacy cookie.
 export function getSession(): { userId: string; role: string } | null {
   const jar = cookies();
+
+  // Try shop admin cookie first (most common context)
+  const shopToken = jar.get("auth_token_shop")?.value;
+  if (shopToken) {
+    const session = verifyToken(shopToken);
+    if (session) return session;
+  }
 
   // Try super admin cookie
   const superToken = jar.get("auth_token_super")?.value;
   if (superToken) {
     const session = verifyToken(superToken);
-    if (session) return session;
-  }
-
-  // Try shop admin cookie
-  const shopToken = jar.get("auth_token_shop")?.value;
-  if (shopToken) {
-    const session = verifyToken(shopToken);
     if (session) return session;
   }
 
