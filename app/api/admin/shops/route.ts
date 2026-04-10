@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
         where,
         select: {
           id: true, name: true, email: true, loginId: true, shopName: true,
-          address: true, industry: true, agencyId: true,
+          address: true, phone: true, industry: true, agencyId: true,
           contractStart: true, contractEnd: true, noContractLimit: true,
           stripeSubscriptionId: true, planType: true,
           agency: { select: { id: true, name: true } },

@@ -73,6 +73,8 @@ export default function ShopsPage() {
   const [form, setForm] = useState<EditForm>(emptyEdit());
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showAddPassword, setShowAddPassword] = useState(false);
 
   // Add modal
   const [addOpen, setAddOpen] = useState(false);
@@ -596,7 +598,16 @@ export default function ShopsPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">新しいパスワード（変更する場合）</label>
-                <input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className={inputCls} />
+                <div className="relative">
+                  <input type={showPassword ? "text" : "password"} value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className={inputCls} />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                    {showPassword ? (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" /></svg>
+                    ) : (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                    )}
+                  </button>
+                </div>
               </div>
               <div className="flex items-center gap-3 pt-2">
                 {editingShop.firstSurveyId && (
@@ -659,13 +670,31 @@ export default function ShopsPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     {label}{required && <span className="text-red-500 ml-1">*</span>}
                   </label>
-                  <input
-                    type={type}
-                    value={(addForm as Record<string, unknown>)[key] as string}
-                    onChange={(e) => setAddForm({ ...addForm, [key]: e.target.value })}
-                    placeholder={placeholder} readOnly={readOnly} disabled={readOnly}
-                    className={inputCls}
-                  />
+                  {type === "password" ? (
+                    <div className="relative">
+                      <input
+                        type={showAddPassword ? "text" : "password"}
+                        value={(addForm as Record<string, unknown>)[key] as string}
+                        onChange={(e) => setAddForm({ ...addForm, [key]: e.target.value })}
+                        className={inputCls}
+                      />
+                      <button type="button" onClick={() => setShowAddPassword(!showAddPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                        {showAddPassword ? (
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" /></svg>
+                        ) : (
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                        )}
+                      </button>
+                    </div>
+                  ) : (
+                    <input
+                      type={type}
+                      value={(addForm as Record<string, unknown>)[key] as string}
+                      onChange={(e) => setAddForm({ ...addForm, [key]: e.target.value })}
+                      placeholder={placeholder} readOnly={readOnly} disabled={readOnly}
+                      className={inputCls}
+                    />
+                  )}
                 </div>
               ))}
               <div>
